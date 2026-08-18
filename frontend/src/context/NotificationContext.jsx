@@ -1,24 +1,23 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 
-const NotificationContext =
-  createContext(null);
+import API from "../services/api";
 
-export function NotificationProvider({
-  children,
-}) {
-  const [notificationOpen, setNotificationOpen] =
-    useState(false);
+const NotificationContext = createContext(null);
 
-  const [notifications, setNotifications] =
-    useState([]);
+export function NotificationProvider({ children }) {
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const openNotifications = () => {
     setNotificationOpen(true);
+    fetchNotifications();
   };
 
   const closeNotifications = () => {
@@ -26,107 +25,215 @@ export function NotificationProvider({
   };
 
   const toggleNotifications = () => {
-    setNotificationOpen(
-      (current) => !current
-    );
+    setNotificationOpen((current) => {
+      const nextState = !current;
+
+      if (nextState) {
+        fetchNotifications();
+      }
+
+      return nextState;
+    });
   };
 
-  const addNotification = (notification) => {
+  const fetchNotifications = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setNotifications([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const response = await API.get("/notifications");
+
+      const serverNotifications =
+        response.data?.notifications || [];
+
+      const formattedNotifications =
+        serverNotifications.map((notification) => ({
+          id: notification._id,
+          title: notification.title || "Notification",
+          message: notification.message || "",
+          type: notification.type || "info",
+          source: notification.source || "system",
+          sourceId: notification.sourceId || null,
+          reminderKey: notification.reminderKey || null,
+          time: notification.time || notification.createdAt,
+          read: notification.read === true,
+        }));
+
+      setNotifications(formattedNotifications);
+    } catch (error) {
+      console.error(
+        "Fetch Notifications Error:",
+        error.response?.data || error.message
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addNotification = async (notification) => {
     if (!notification) {
       return;
     }
 
-    const newNotification = {
-      id:
-        notification.id ||
-        `${Date.now()}-${Math.random()}`,
+    try {
+      const response = await API.post(
+        "/notifications",
+        notification
+      );
 
-      title:
-        notification.title ||
-        "Notification",
+      const createdNotification =
+        response.data?.notification;
 
-      message:
-        notification.message ||
-        "",
+      if (!createdNotification) {
+        await fetchNotifications();
+        return;
+      }
 
-      type:
-        notification.type ||
-        "info",
+      const formattedNotification = {
+        id: createdNotification._id,
+        title:
+          createdNotification.title ||
+          "Notification",
+        message:
+          createdNotification.message || "",
+        type:
+          createdNotification.type || "info",
+        source:
+          createdNotification.source ||
+          "system",
+        sourceId:
+          createdNotification.sourceId ||
+          null,
+        reminderKey:
+          createdNotification.reminderKey ||
+          null,
+        time:
+          createdNotification.time ||
+          createdNotification.createdAt,
+        read:
+          createdNotification.read === true,
+      };
 
-      time:
-        notification.time ||
-        new Date(),
-
-      read:
-        notification.read === true,
-    };
-
-    setNotifications(
-      (current) => [
-        newNotification,
-        ...current,
-      ]
-    );
+      setNotifications((current) => [
+        formattedNotification,
+        ...current.filter(
+          (item) =>
+            item.id !== formattedNotification.id
+        ),
+      ]);
+    } catch (error) {
+      console.error(
+        "Add Notification Error:",
+        error.response?.data || error.message
+      );
+    }
   };
 
-  const removeNotification = (id) => {
-    setNotifications(
-      (current) =>
+  const removeNotification = async (id) => {
+    try {
+      await API.delete(`/notifications/${id}`);
+
+      setNotifications((current) =>
         current.filter(
           (notification) =>
             notification.id !== id
         )
-    );
+      );
+    } catch (error) {
+      console.error(
+        "Delete Notification Error:",
+        error.response?.data || error.message
+      );
+    }
   };
 
-  const markAsRead = (id) => {
-    setNotifications(
-      (current) =>
-        current.map(
-          (notification) =>
-            notification.id === id
-              ? {
-                  ...notification,
-                  read: true,
-                }
-              : notification
+  const markAsRead = async (id) => {
+    try {
+      await API.put(
+        `/notifications/${id}/read`
+      );
+
+      setNotifications((current) =>
+        current.map((notification) =>
+          notification.id === id
+            ? {
+                ...notification,
+                read: true,
+              }
+            : notification
         )
-    );
+      );
+    } catch (error) {
+      console.error(
+        "Mark Notification Read Error:",
+        error.response?.data || error.message
+      );
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications(
-      (current) =>
-        current.map(
-          (notification) => ({
-            ...notification,
-            read: true,
-          })
-        )
-    );
+  const markAllAsRead = async () => {
+    try {
+      await API.put("/notifications/read-all");
+
+      setNotifications((current) =>
+        current.map((notification) => ({
+          ...notification,
+          read: true,
+        }))
+      );
+    } catch (error) {
+      console.error(
+        "Mark All Notifications Error:",
+        error.response?.data || error.message
+      );
+    }
   };
 
-  const clearAllNotifications = () => {
-    setNotifications([]);
+  const clearAllNotifications = async () => {
+    try {
+      await API.delete("/notifications");
+
+      setNotifications([]);
+    } catch (error) {
+      console.error(
+        "Clear Notifications Error:",
+        error.response?.data || error.message
+      );
+    }
   };
 
-  const unreadCount =
-    notifications.reduce(
-      (count, notification) =>
-        count +
-        (notification.read ? 0 : 1),
-      0
-    );
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      fetchNotifications();
+    }
+  }, []);
+
+  const unreadCount = notifications.reduce(
+    (count, notification) =>
+      count + (notification.read ? 0 : 1),
+    0
+  );
 
   const value = useMemo(
     () => ({
       notificationOpen,
       notifications,
       unreadCount,
+      loading,
 
       openNotifications,
       closeNotifications,
       toggleNotifications,
+
+      fetchNotifications,
 
       addNotification,
       removeNotification,
@@ -140,21 +247,19 @@ export function NotificationProvider({
       notificationOpen,
       notifications,
       unreadCount,
+      loading,
     ]
   );
 
   return (
-    <NotificationContext.Provider
-      value={value}
-    >
+    <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
   );
 }
 
 export function useNotifications() {
-  const context =
-    useContext(NotificationContext);
+  const context = useContext(NotificationContext);
 
   if (!context) {
     throw new Error(

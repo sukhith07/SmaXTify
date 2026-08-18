@@ -46,6 +46,12 @@ const reportRoutes =
 const currencyRoutes =
   require("./routes/currencyRoutes");
 
+const subscriptionRoutes =
+  require("./routes/subscriptionRoutes");
+
+  const notificationRoutes =
+  require("./routes/notificationRoutes");
+
 app.use(
   "/api/auth",
   authRoutes
@@ -84,6 +90,16 @@ app.use(
 app.use(
   "/api/currency",
   currencyRoutes
+);
+
+app.use(
+  "/api/subscriptions",
+  subscriptionRoutes
+);
+
+app.use(
+  "/api/notifications",
+  notificationRoutes
 );
 
 app.get("/", (req, res) => {

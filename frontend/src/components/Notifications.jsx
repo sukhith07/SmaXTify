@@ -13,13 +13,18 @@ import {
   FaCreditCard,
 } from "react-icons/fa";
 
-import { useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
 import { useNotifications } from "../context/NotificationContext";
 
 import "./styles/notifications.css";
 
 function Notifications() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     notifications,
@@ -33,7 +38,16 @@ function Notifications() {
 
   const handleClose = () => {
     closeNotifications();
-    navigate("/dashboard");
+
+    if (
+      location.state?.from &&
+      location.state.from !== location.pathname
+    ) {
+      navigate(location.state.from);
+      return;
+    }
+
+    navigate(-1);
   };
 
   const getNotificationIcon = (type) => {
