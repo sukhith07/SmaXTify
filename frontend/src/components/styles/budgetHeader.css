@@ -1,0 +1,352 @@
+/* ==========================================================
+   BUDGET HEADER
+   Same professional style as Reports
+========================================================== */
+
+.budget-header {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    min-height: 120px;
+
+    padding: 28px 32px;
+
+    margin-bottom: 30px;
+
+    border-radius: 24px;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 88% 20%,
+            rgba(255, 255, 255, 0.16) 0,
+            rgba(255, 255, 255, 0) 30%
+        ),
+        linear-gradient(
+            135deg,
+            #2563eb 0%,
+            #4338ca 50%,
+            #7c3aed 100%
+        );
+
+    box-shadow:
+        0 18px 40px rgba(37, 99, 235, 0.22);
+
+    color: #ffffff;
+
+    animation: budgetHeaderFade 0.5s ease;
+}
+
+
+/* ==========================================================
+   DECORATIVE BACKGROUND CIRCLES
+========================================================== */
+
+.budget-header::before {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: 80px;
+    top: -100px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    pointer-events: none;
+}
+
+
+.budget-header::after {
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+    height: 150px;
+
+    left: 38%;
+
+    bottom: -110px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.07);
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   HEADER ICON
+========================================================== */
+
+.budget-header-icon {
+    position: relative;
+    z-index: 2;
+
+    flex-shrink: 0;
+
+    width: 68px;
+    height: 68px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    color: #ffffff;
+
+    font-size: 30px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 10px 25px rgba(0, 0, 0, 0.12);
+
+    backdrop-filter: blur(8px);
+}
+
+
+/* ==========================================================
+   HEADER CONTENT
+========================================================== */
+
+.budget-header > div {
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.budget-header h1 {
+    position: relative;
+
+    z-index: 2;
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+
+    line-height: 1.2;
+}
+
+
+.budget-header p {
+    position: relative;
+
+    z-index: 2;
+
+    margin: 8px 0 0;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   OPTIONAL HEADER BUTTON / ACTION AREA
+========================================================== */
+
+.budget-header-actions {
+    position: relative;
+
+    z-index: 3;
+
+    margin-left: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.budget-header-actions button {
+    height: 46px;
+
+    padding: 0 18px;
+
+    border-radius: 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    background: rgba(255, 255, 255, 0.12);
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(8px);
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.budget-header-actions button:hover {
+    transform: translateY(-2px);
+
+    background: rgba(255, 255, 255, 0.20);
+
+    box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+@keyframes budgetHeaderFade {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 900px) {
+
+    .budget-header {
+        padding: 25px;
+
+        min-height: 125px;
+    }
+
+    .budget-header h1 {
+        font-size: 27px;
+    }
+
+    .budget-header-icon {
+        width: 62px;
+        height: 62px;
+
+        font-size: 27px;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .budget-header {
+        flex-direction: column;
+
+        justify-content: center;
+
+        text-align: center;
+
+        padding: 28px 20px;
+
+        min-height: auto;
+
+        gap: 14px;
+    }
+
+    .budget-header-icon {
+        width: 62px;
+        height: 62px;
+
+        border-radius: 16px;
+    }
+
+    .budget-header h1 {
+        font-size: 25px;
+    }
+
+    .budget-header p {
+        font-size: 14px;
+
+        max-width: 500px;
+    }
+
+    .budget-header-actions {
+        margin-left: 0;
+
+        justify-content: center;
+
+        width: 100%;
+    }
+
+}
+
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 480px) {
+
+    .budget-header {
+        padding: 24px 16px;
+
+        border-radius: 20px;
+    }
+
+    .budget-header h1 {
+        font-size: 22px;
+    }
+
+    .budget-header p {
+        font-size: 13px;
+    }
+
+    .budget-header-actions {
+        flex-direction: column;
+    }
+
+    .budget-header-actions button {
+        width: 100%;
+    }
+
+}

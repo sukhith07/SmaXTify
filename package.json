@@ -1,0 +1,17 @@
+{
+  "name": "smart-et",
+  "version": "1.0.0",
+  "scripts": {
+    "backend": "cd backend && node server.js",
+    "frontend": "cd frontend && npm run dev",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.4"
+  },
+  "dependencies": {
+    "framer-motion": "^12.42.2",
+    "react-icons": "^5.7.0",
+    "react-toastify": "^11.1.0"
+  }
+}

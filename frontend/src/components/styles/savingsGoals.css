@@ -1,0 +1,480 @@
+/* ==========================================================
+   SAVINGS GOALS PAGE
+========================================================== */
+
+.budget-page-header {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    min-height: 120px;
+
+    padding: 28px 32px;
+
+    margin-bottom: 32px;
+
+    border-radius: 24px;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 88% 20%,
+            rgba(255, 255, 255, 0.16) 0,
+            rgba(255, 255, 255, 0) 30%
+        ),
+        linear-gradient(
+            135deg,
+            #2563eb 0%,
+            #4338ca 50%,
+            #7c3aed 100%
+        );
+
+    border: none;
+
+    box-shadow:
+        0 18px 40px rgba(37, 99, 235, 0.22);
+
+    animation: fadeGoals 0.5s ease;
+
+    color: #ffffff;
+}
+
+
+/* ==========================================================
+   DECORATIVE BACKGROUND
+========================================================== */
+
+.budget-page-header::before {
+    content: "";
+
+    position: absolute;
+
+    width: 190px;
+    height: 190px;
+
+    right: 70px;
+    top: -105px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    pointer-events: none;
+}
+
+
+.budget-page-header::after {
+    content: "";
+
+    position: absolute;
+
+    width: 150px;
+    height: 150px;
+
+    left: 38%;
+    bottom: -105px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.07);
+
+    pointer-events: none;
+}
+
+
+/* ==========================================================
+   HEADER ICON
+========================================================== */
+
+.budget-page-icon {
+    position: relative;
+
+    z-index: 2;
+
+    width: 68px;
+    height: 68px;
+
+    min-width: 68px;
+
+    border-radius: 18px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    color: #ffffff;
+
+    font-size: 30px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 10px 25px rgba(0, 0, 0, 0.12);
+
+    backdrop-filter: blur(8px);
+}
+
+
+/* ==========================================================
+   HEADER CONTENT
+========================================================== */
+
+.budget-page-content {
+    position: relative;
+
+    z-index: 2;
+
+    flex: 1;
+}
+
+
+.budget-page-content h1 {
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    letter-spacing: -0.5px;
+}
+
+
+.budget-page-content p {
+    margin: 8px 0 0;
+
+    max-width: 720px;
+
+    color: rgba(255, 255, 255, 0.82);
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   ADD GOAL BUTTON
+========================================================== */
+
+.goal-add-btn {
+    position: relative;
+
+    z-index: 3;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    height: 46px;
+
+    padding: 0 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    backdrop-filter: blur(8px);
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.10);
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.goal-add-btn:hover {
+    transform: translateY(-2px);
+
+    background: rgba(255, 255, 255, 0.22);
+
+    box-shadow:
+        0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+
+.goal-add-btn:active {
+    transform: translateY(0);
+}
+
+
+.goal-add-btn svg {
+    font-size: 17px;
+}
+
+
+/* ==========================================================
+   GOAL GRID
+========================================================== */
+
+.goal-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(360px, 1fr)
+        );
+
+    gap: 28px;
+
+    animation: fadeGoals 0.45s ease;
+}
+
+
+/* ==========================================================
+   EMPTY STATE
+========================================================== */
+
+.empty-goals {
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 24px;
+
+    padding: 70px 30px;
+
+    text-align: center;
+
+    box-shadow:
+        0 12px 35px rgba(15, 23, 42, 0.08);
+
+    animation: fadeGoals 0.45s ease;
+}
+
+
+.empty-goals h2 {
+    margin: 0 0 14px;
+
+    color: #0f172a;
+
+    font-size: 32px;
+
+    font-weight: 800;
+}
+
+
+.empty-goals p {
+    max-width: 560px;
+
+    margin: auto;
+
+    color: #64748b;
+
+    font-size: 17px;
+
+    line-height: 1.8;
+}
+
+
+/* ==========================================================
+   LOADING
+========================================================== */
+
+.loading-goals {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    min-height: 260px;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    color: #2563eb;
+}
+
+
+/* ==========================================================
+   PAGE ANIMATION
+========================================================== */
+
+@keyframes fadeGoals {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 992px) {
+
+    .budget-page-header {
+        flex-wrap: wrap;
+
+        align-items: flex-start;
+
+        padding: 25px;
+    }
+
+    .budget-page-content {
+        width: auto;
+    }
+
+    .budget-page-content h1 {
+        font-size: 28px;
+    }
+
+    .goal-add-btn {
+        margin-left: auto;
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .budget-page-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 16px;
+
+        padding: 25px 22px;
+
+        min-height: auto;
+    }
+
+    .budget-page-icon {
+        width: 62px;
+        height: 62px;
+
+        min-width: 62px;
+
+        border-radius: 17px;
+
+        font-size: 27px;
+    }
+
+    .budget-page-content {
+        width: 100%;
+    }
+
+    .budget-page-content h1 {
+        font-size: 27px;
+    }
+
+    .budget-page-content p {
+        font-size: 14px;
+    }
+
+    .goal-add-btn {
+        width: 100%;
+
+        margin-left: 0;
+
+        height: 48px;
+    }
+
+    .goal-grid {
+        grid-template-columns: 1fr;
+
+        gap: 22px;
+    }
+
+    .empty-goals {
+        padding: 48px 22px;
+    }
+
+    .empty-goals h2 {
+        font-size: 26px;
+    }
+
+}
+
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 480px) {
+
+    .budget-page-header {
+        padding: 22px 18px;
+
+        border-radius: 20px;
+    }
+
+    .budget-page-icon {
+        width: 58px;
+        height: 58px;
+
+        min-width: 58px;
+
+        border-radius: 16px;
+
+        font-size: 23px;
+    }
+
+    .budget-page-content h1 {
+        font-size: 24px;
+    }
+
+    .budget-page-content p {
+        font-size: 13px;
+
+        line-height: 1.6;
+    }
+
+    .goal-add-btn {
+        height: 48px;
+
+        font-size: 14px;
+
+        border-radius: 12px;
+    }
+
+}

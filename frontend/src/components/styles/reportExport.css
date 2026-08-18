@@ -1,0 +1,965 @@
+/* ==========================================================
+   REPORT EXPORT
+========================================================== */
+
+.report-export {
+    margin-top: 28px;
+
+    padding: 28px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #f8faff
+        );
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(15, 23, 42, 0.07);
+
+    animation:
+        exportFadeIn .45s ease;
+}
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.report-export-heading {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding-bottom: 22px;
+
+    border-bottom:
+        1px solid #edf1f7;
+}
+
+
+.report-export-heading h2 {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 21px;
+
+    font-weight: 800;
+
+    letter-spacing: -.3px;
+}
+
+
+.report-export-heading p {
+    margin: 7px 0 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    line-height: 1.6;
+}
+
+
+/* ==========================================================
+   ACTIONS
+========================================================== */
+
+.report-export-actions {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 16px;
+
+    margin-top: 22px;
+}
+
+
+/* ==========================================================
+   EXPORT BUTTON
+========================================================== */
+
+.export-btn {
+    position: relative;
+
+    min-height: 58px;
+
+    padding: 0 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 11px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 15px;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease,
+        background .25s ease;
+}
+
+
+/* ==========================================================
+   BUTTON ICON
+========================================================== */
+
+.export-btn svg {
+    font-size: 19px;
+
+    flex-shrink: 0;
+
+    transition:
+        transform .25s ease;
+}
+
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.export-btn:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 25px
+        rgba(15, 23, 42, 0.10);
+}
+
+
+.export-btn:hover svg {
+    transform: scale(1.12);
+}
+
+
+/* ==========================================================
+   ACTIVE
+========================================================== */
+
+.export-btn:active {
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================================
+   PDF
+========================================================== */
+
+.export-pdf {
+    color: #dc2626;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff7f7,
+            #ffffff
+        );
+}
+
+
+.export-pdf:hover {
+    border-color: #fecaca;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff1f2,
+            #ffffff
+        );
+}
+
+
+/* ==========================================================
+   EXCEL
+========================================================== */
+
+.export-excel {
+    color: #15803d;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f0fdf4,
+            #ffffff
+        );
+}
+
+
+.export-excel:hover {
+    border-color: #bbf7d0;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ecfdf5,
+            #ffffff
+        );
+}
+
+
+/* ==========================================================
+   PRINT
+========================================================== */
+
+.export-print {
+    color: #4f46e5;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5f3ff,
+            #ffffff
+        );
+}
+
+
+.export-print:hover {
+    border-color: #c7d2fe;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #ffffff
+        );
+}
+
+
+/* ==========================================================
+   FOCUS ACCESSIBILITY
+========================================================== */
+
+.export-btn:focus-visible {
+    outline: none;
+
+    border-color: #6366f1;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(99, 102, 241, .12);
+}
+
+
+/* ==========================================================
+   DISABLED
+========================================================== */
+
+.export-btn:disabled {
+    opacity: .6;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+@keyframes exportFadeIn {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 900px) {
+
+    .report-export {
+        padding: 24px;
+    }
+
+
+    .report-export-actions {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 650px) {
+
+    .report-export {
+        padding: 20px;
+
+        border-radius: 19px;
+    }
+
+
+    .report-export-heading {
+        padding-bottom: 18px;
+    }
+
+
+    .report-export-heading h2 {
+        font-size: 19px;
+    }
+
+
+    .report-export-heading p {
+        font-size: 12px;
+    }
+
+
+    .report-export-actions {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+
+    .export-btn {
+        width: 100%;
+
+        min-height: 54px;
+
+        border-radius: 13px;
+    }
+
+}
+/* ==========================================================
+   PROFESSIONAL FULL REPORT PRINT
+========================================================== */
+
+@media print {
+
+    /* ------------------------------------------------------
+       A4 PAGE
+    ------------------------------------------------------ */
+
+    @page {
+        size: A4 portrait;
+        margin: 12mm;
+    }
+
+
+    /* ------------------------------------------------------
+       GLOBAL PRINT RESET
+    ------------------------------------------------------ */
+
+    html,
+    body,
+    #root {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        background: #ffffff !important;
+
+        overflow: visible !important;
+
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+
+    /* ------------------------------------------------------
+       REMOVE FIXED DASHBOARD LAYOUT
+    ------------------------------------------------------ */
+
+    body.printing-report * {
+        overflow: visible !important;
+    }
+
+
+    body.printing-report {
+        overflow: visible !important;
+    }
+
+
+    /* ------------------------------------------------------
+       HIDE SIDEBAR
+    ------------------------------------------------------ */
+
+    body.printing-report .sidebar,
+    body.printing-report aside {
+        display: none !important;
+    }
+
+
+    /* ------------------------------------------------------
+       HIDE NAVBAR / TOP BAR
+    ------------------------------------------------------ */
+
+    body.printing-report .navbar,
+    body.printing-report nav {
+        display: none !important;
+    }
+
+
+    /* ------------------------------------------------------
+       HIDE EXPORT BUTTONS
+    ------------------------------------------------------ */
+
+    body.printing-report .report-export {
+        display: none !important;
+    }
+
+
+    body.printing-report button {
+        display: none !important;
+    }
+
+
+    /* ------------------------------------------------------
+       MAIN DASHBOARD CONTAINERS
+    ------------------------------------------------------ */
+
+    body.printing-report .dashboard,
+    body.printing-report .dashboard-layout,
+    body.printing-report .main-content,
+    body.printing-report .content,
+    body.printing-report .page-content,
+    body.printing-report .reports-page {
+
+        width: 100% !important;
+
+        height: auto !important;
+
+        min-height: 0 !important;
+
+        max-height: none !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        overflow: visible !important;
+
+        position: static !important;
+
+        transform: none !important;
+    }
+
+
+    /* ------------------------------------------------------
+       REPORT PAGE
+    ------------------------------------------------------ */
+
+    body.printing-report .reports-page {
+
+        display: block !important;
+
+        background: #ffffff !important;
+    }
+
+
+    body.printing-report .reports-section {
+
+        width: 100% !important;
+
+        height: auto !important;
+
+        min-height: 0 !important;
+
+        overflow: visible !important;
+
+        display: block !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+    }
+
+
+    /* ------------------------------------------------------
+       REPORT HEADER
+    ------------------------------------------------------ */
+
+    body.printing-report .report-header {
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+
+        width: 100% !important;
+
+        margin-bottom: 16px !important;
+    }
+
+
+    /* ------------------------------------------------------
+       FILTERS
+    ------------------------------------------------------ */
+
+    body.printing-report .report-filters {
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+
+        margin-bottom: 16px !important;
+    }
+
+
+    /* ------------------------------------------------------
+       SUMMARY CARDS
+    ------------------------------------------------------ */
+
+    body.printing-report .report-summary {
+
+        width: 100% !important;
+
+        height: auto !important;
+
+        overflow: visible !important;
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+
+        margin-bottom: 18px !important;
+    }
+
+
+    body.printing-report .report-summary-card {
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+    }
+
+
+    /* ------------------------------------------------------
+       RESULT INFORMATION
+    ------------------------------------------------------ */
+
+    body.printing-report .report-result-info {
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+
+        margin: 12px 0 !important;
+    }
+
+
+    /* ------------------------------------------------------
+       CHART CONTAINERS
+    ------------------------------------------------------ */
+
+    body.printing-report .report-category-chart,
+    body.printing-report .report-bar-chart,
+    body.printing-report .report-line-chart,
+    body.printing-report .report-chart,
+    body.printing-report .chart-container {
+
+        width: 100% !important;
+
+        height: auto !important;
+
+        min-height: 0 !important;
+
+        max-height: none !important;
+
+        overflow: visible !important;
+
+        position: static !important;
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+
+        margin-bottom: 18px !important;
+    }
+
+
+    /* ------------------------------------------------------
+       CHART WRAPPERS
+    ------------------------------------------------------ */
+
+    body.printing-report .chart-wrapper {
+
+        height: auto !important;
+
+        min-height: 0 !important;
+
+        max-height: none !important;
+
+        overflow: visible !important;
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+    }
+
+
+    /* ------------------------------------------------------
+       CANVAS
+    ------------------------------------------------------ */
+
+    body.printing-report canvas {
+
+        max-width: 100% !important;
+
+        height: auto !important;
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+    }
+
+
+    /* ------------------------------------------------------
+       FINANCIAL ANALYTICS
+    ------------------------------------------------------ */
+
+    body.printing-report .report-analytics {
+
+        width: 100% !important;
+
+        height: auto !important;
+
+        min-height: 0 !important;
+
+        overflow: visible !important;
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+
+        margin-top: 18px !important;
+
+        margin-bottom: 18px !important;
+    }
+
+
+    body.printing-report .report-analytics-grid {
+
+        width: 100% !important;
+
+        height: auto !important;
+
+        overflow: visible !important;
+
+        display: grid !important;
+
+        grid-template-columns:
+            repeat(2, 1fr) !important;
+
+        gap: 10px !important;
+    }
+
+
+    body.printing-report .report-analytics-card {
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+
+        min-height: 100px !important;
+    }
+
+
+    /* ------------------------------------------------------
+       AI INSIGHTS
+    ------------------------------------------------------ */
+
+    body.printing-report .report-ai-card {
+
+        width: 100% !important;
+
+        height: auto !important;
+
+        min-height: 0 !important;
+
+        overflow: visible !important;
+
+        break-inside: auto !important;
+
+        page-break-inside: auto !important;
+
+        margin-top: 18px !important;
+    }
+
+
+    body.printing-report .report-ai-insight {
+
+        break-inside: avoid !important;
+
+        page-break-inside: avoid !important;
+
+        margin-bottom: 10px !important;
+    }
+
+
+    body.printing-report .report-ai-refresh {
+
+        display: none !important;
+    }
+
+
+    /* ------------------------------------------------------
+       REMOVE LOADING / ANIMATION
+    ------------------------------------------------------ */
+
+    body.printing-report * {
+
+        animation: none !important;
+
+        transition: none !important;
+
+        transform: none !important;
+    }
+
+
+    /* ------------------------------------------------------
+       PREVENT HORIZONTAL OVERFLOW
+    ------------------------------------------------------ */
+
+    body.printing-report {
+
+        overflow-x: visible !important;
+    }
+
+
+    /* ------------------------------------------------------
+       LINKS
+    ------------------------------------------------------ */
+
+    body.printing-report a {
+
+        color: inherit !important;
+
+        text-decoration: none !important;
+    }
+
+
+    /* ------------------------------------------------------
+       PAGE BREAK HELPERS
+    ------------------------------------------------------ */
+
+    body.printing-report .report-analytics {
+        page-break-before: auto;
+    }
+
+
+    body.printing-report .report-ai-card {
+        page-break-before: auto;
+    }
+
+
+    /* ------------------------------------------------------
+       PRINT COLORS
+    ------------------------------------------------------ */
+
+    body.printing-report .analytics-green,
+    body.printing-report .analytics-blue,
+    body.printing-report .analytics-purple,
+    body.printing-report .analytics-red,
+    body.printing-report .analytics-orange {
+
+        -webkit-print-color-adjust: exact !important;
+
+        print-color-adjust: exact !important;
+    }
+
+}
+/* ==========================================================
+   FINAL PRINT POSITION FIX
+========================================================== */
+
+@media print {
+
+    /* Remove sidebar space completely */
+    body.printing-report .sidebar,
+    body.printing-report aside {
+        display: none !important;
+        width: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+
+    /* Reset the main application layout */
+    body.printing-report .app,
+    body.printing-report .app-layout,
+    body.printing-report .dashboard-layout,
+    body.printing-report .main-layout {
+        display: block !important;
+
+        width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        left: 0 !important;
+
+        position: static !important;
+
+        transform: none !important;
+
+        overflow: visible !important;
+    }
+
+
+    /* Reset main content/sidebar offset */
+    body.printing-report main,
+    body.printing-report .main-content,
+    body.printing-report .content,
+    body.printing-report .page-content {
+
+        width: 100% !important;
+
+        max-width: none !important;
+
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+
+        left: 0 !important;
+
+        position: static !important;
+
+        transform: none !important;
+
+        overflow: visible !important;
+    }
+
+
+    /* Reports page itself */
+    body.printing-report .reports-page {
+
+        width: 100% !important;
+
+        max-width: none !important;
+
+        margin: 0 !important;
+
+        padding: 0 !important;
+
+        left: 0 !important;
+
+        position: static !important;
+
+        transform: none !important;
+
+        overflow: visible !important;
+    }
+
+
+    /* Prevent report cards from being wider than paper */
+    body.printing-report .reports-page * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+
+    /* Keep charts inside printable width */
+    body.printing-report canvas {
+        max-width: 100% !important;
+    }
+
+}
+@media print {
+
+    body.printing-report {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    body.printing-report #root {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+}
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 420px) {
+
+    .report-export {
+        padding: 17px;
+
+        margin-top: 22px;
+    }
+
+
+    .report-export-heading h2 {
+        font-size: 18px;
+    }
+
+
+    .report-export-heading p {
+        font-size: 11px;
+    }
+
+
+    .export-btn {
+        min-height: 51px;
+
+        font-size: 13px;
+    }
+
+
+    .export-btn svg {
+        font-size: 17px;
+    }
+
+}

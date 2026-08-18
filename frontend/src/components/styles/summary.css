@@ -1,0 +1,218 @@
+/* ==========================
+   SUMMARY SECTION
+========================== */
+
+.summary-section{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+
+    gap:25px;
+
+    margin-bottom:30px;
+
+}
+
+/* ==========================
+   CARD
+========================== */
+
+.summary-card{
+
+    position:relative;
+
+    overflow:hidden;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:25px;
+
+    border-radius:22px;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    transition:.35s;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+}
+
+.summary-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 25px 45px rgba(0,0,0,.22);
+
+}
+
+.summary-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:170px;
+    height:170px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.12);
+
+    top:-70px;
+    right:-60px;
+
+}
+
+.summary-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:90px;
+    height:90px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.08);
+
+    bottom:-30px;
+    left:-25px;
+
+}
+
+/* ==========================
+   ICON
+========================== */
+
+.summary-icon{
+
+    width:70px;
+
+    height:70px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:rgba(255,255,255,.18);
+
+    backdrop-filter:blur(10px);
+
+    font-size:30px;
+
+}
+
+/* ==========================
+   CONTENT
+========================== */
+
+.summary-content{
+
+    text-align:right;
+
+}
+
+.summary-content h4{
+
+    font-size:15px;
+
+    font-weight:500;
+
+    opacity:.9;
+
+}
+
+.summary-content h2{
+
+    margin-top:8px;
+
+    font-size:28px;
+
+    font-weight:700;
+
+}
+
+/* ==========================
+   CARD COLORS
+========================== */
+
+.balance-card{
+
+    background:linear-gradient(135deg,#7c3aed,#4338ca);
+
+}
+
+.income-card{
+
+    background:linear-gradient(135deg,#10b981,#059669);
+
+}
+
+.expense-card{
+
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+
+}
+
+.saving-card{
+
+    background:linear-gradient(135deg,#0ea5e9,#2563eb);
+
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media(max-width:992px){
+
+    .summary-section{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .summary-section{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .summary-card{
+
+        padding:20px;
+
+    }
+
+    .summary-icon{
+
+        width:60px;
+        height:60px;
+
+        font-size:26px;
+
+    }
+
+    .summary-content h2{
+
+        font-size:24px;
+
+    }
+
+}

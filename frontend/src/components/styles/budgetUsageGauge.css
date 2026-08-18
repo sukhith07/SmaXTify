@@ -1,0 +1,63 @@
+.budget-gauge-card{
+
+    background:#fff;
+
+    border-radius:22px;
+
+    padding:30px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    text-align:center;
+
+}
+
+.budget-gauge-card h2{
+
+    margin-bottom:25px;
+
+    color:#0f172a;
+
+}
+
+.budget-gauge{
+
+    width:220px;
+
+    height:220px;
+
+    margin:auto;
+
+}
+
+.budget-gauge-footer{
+
+    display:flex;
+
+    justify-content:space-around;
+
+    margin-top:30px;
+
+}
+
+.budget-gauge-footer span{
+
+    display:flex;
+
+    flex-direction:column;
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+.budget-gauge-footer strong{
+
+    margin-top:8px;
+
+    color:#0f172a;
+
+    font-size:22px;
+
+}

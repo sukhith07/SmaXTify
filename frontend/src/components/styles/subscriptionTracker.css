@@ -1,0 +1,6953 @@
+/* =====================================================
+   SUBSCRIPTION PAGE
+===================================================== */
+
+.subscription-page {
+  min-height: 100vh;
+}
+
+.subscription-main {
+  padding-bottom: 45px;
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.subscription-hero {
+  position: relative;
+
+  min-height: 120px;
+
+  padding: 25px 30px;
+
+  margin-bottom: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  overflow: hidden;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      115deg,
+      #2563eb 0%,
+      #4246e8 48%,
+      #7c3aed 100%
+    );
+
+  box-shadow:
+    0 12px 35px
+    rgba(79, 70, 229, 0.20);
+}
+
+.subscription-hero::before {
+  content: "";
+
+  position: absolute;
+
+  width: 270px;
+  height: 270px;
+
+  right: 100px;
+  top: -205px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 255, 255, 0.06);
+
+  pointer-events: none;
+}
+
+.subscription-hero::after {
+  content: "";
+
+  position: absolute;
+
+  width: 230px;
+  height: 230px;
+
+  right: 855px;
+  bottom: -175px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 255, 255, 0.08);
+
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   HERO TITLE
+===================================================== */
+
+.subscription-title-row {
+  position: relative;
+
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+}
+
+.subscription-title-icon {
+  width: 68px;
+  height: 68px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 17px;
+
+  color: #ffffff;
+
+  background:
+    rgba(255, 255, 255, 0.15);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.22);
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.15);
+
+  font-size: 23px;
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.subscription-heading-line {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.subscription-hero h1 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 30px !important;
+
+  font-weight: 800;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.7px;
+}
+
+.subscription-hero p {
+  margin: 10px 0 0;
+
+  max-width: 700px;
+
+  color:
+    rgba(255, 255, 255, 0.86);
+
+  font-size: 16px !important;
+
+  font-weight: 500;
+
+  line-height: 1.5;
+}
+
+.subscription-live {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px 9px;
+
+  border-radius: 20px;
+
+  color: #ffffff;
+
+  background:
+    rgba(255, 255, 255, 0.14);
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.18);
+
+  font-size: 10px !important;
+
+  font-weight: 800;
+
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.subscription-live span {
+  width: 7px;
+  height: 7px;
+
+  margin: 0;
+
+  border-radius: 50%;
+
+  background: #4ade80;
+}
+
+
+/* =====================================================
+   ADD BUTTON
+===================================================== */
+
+.subscription-add-btn {
+  position: relative;
+
+  z-index: 3;
+
+  height: 50px !important;
+
+  min-width: 190px !important;
+
+  padding: 0 20px !important;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.25);
+
+  border-radius: 11px;
+
+  background:
+    rgba(255, 255, 255, 0.15);
+
+  color: #ffffff;
+
+  font-size: 14px !important;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 7px 20px
+    rgba(15, 23, 42, 0.08);
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.subscription-add-btn:hover {
+  background:
+    rgba(255, 255, 255, 0.24);
+
+  transform: translateY(-1px);
+}
+
+.subscription-add-btn:active {
+  transform: scale(0.97);
+}
+
+
+/* =====================================================
+   SUMMARY
+===================================================== */
+
+.subscription-summary {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 24px;
+
+  margin-bottom: 28px;
+}
+
+.subscription-summary-card {
+  position: relative;
+
+  min-height: 122px;
+
+  padding: 22px 24px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border:
+    1px solid #e5eaf2;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 10px 28px
+    rgba(15, 23, 42, 0.06);
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.subscription-summary-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 14px 35px
+    rgba(15, 23, 42, 0.09);
+}
+
+.subscription-summary-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 4px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #2563eb,
+      #7c3aed
+    );
+}
+
+.subscription-summary-icon {
+  width: 69px;
+  height: 69px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 15px;
+
+  font-size: 29px;
+
+  box-shadow:
+    0 14px 35px
+    rgba(15, 23, 42, 0.09);
+}
+
+.subscription-summary-icon.blue {
+  color: #2563eb;
+  background: #f2efff;
+}
+
+.subscription-summary-icon.green {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.subscription-summary-icon.purple {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.subscription-summary-icon.orange {
+  color: #d97706;
+  background: #fffbeb;
+}
+
+.subscription-summary-icon.indigo {
+  color: #4f46e5;
+  background: #eef2ff;
+}
+
+.subscription-summary-icon.gold {
+  color: #ca8a04;
+  background: #fefce8;
+}
+
+.subscription-summary-icon.cyan {
+  color: #0891b2;
+  background: #ecfeff;
+}
+
+.subscription-summary-icon.violet {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.subscription-summary-content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.subscription-summary-content span {
+  display: block;
+
+  color: #64748b;
+
+  font-size: 13px !important;
+
+  font-weight: 800;
+
+  letter-spacing: 0.65px;
+
+  text-transform: uppercase;
+}
+
+.subscription-summary-content strong {
+  display: block;
+
+  margin-top: 7px;
+
+  overflow: hidden;
+
+  color: #172033;
+
+  font-size: 27px !important;
+
+  font-weight: 800;
+
+  line-height: 1.12;
+
+  letter-spacing: -0.4px;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.subscription-summary-content strong.summary-name {
+  font-size: 23px !important;
+}
+
+.subscription-summary-content small {
+  display: block;
+
+  margin-top: 7px;
+
+  overflow: hidden;
+
+  color: #8190a5;
+
+  font-size: 11px !important;
+
+  line-height: 1.35;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* =====================================================
+   RENEWAL TEXT
+===================================================== */
+
+.renewal-text.overdue,
+.subscription-days.overdue,
+.upcoming-renewal-status.overdue {
+  color: #dc2626 !important;
+}
+
+.renewal-text.today,
+.subscription-days.today,
+.upcoming-renewal-status.today {
+  color: #dc2626 !important;
+}
+
+.renewal-text.tomorrow,
+.subscription-days.tomorrow,
+.upcoming-renewal-status.tomorrow {
+  color: #d97706 !important;
+}
+
+.renewal-text.soon,
+.subscription-days.soon,
+.upcoming-renewal-status.soon {
+  color: #d97706 !important;
+}
+
+.renewal-text.upcoming,
+.subscription-days.upcoming,
+.upcoming-renewal-status.upcoming {
+  color: #059669 !important;
+}
+
+
+/* =====================================================
+   RENEWAL ALERT
+===================================================== */
+
+.subscription-renewal-alert {
+  margin-bottom: 20px;
+
+  min-height: 58px;
+
+  padding: 11px 15px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  border:
+    1px solid #fed7aa;
+
+  border-radius: 12px;
+
+  background: #fffaf2;
+
+  animation:
+    renewalAlertIn
+    0.25s ease both;
+}
+
+.subscription-renewal-alert-icon {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  color: #d97706;
+
+  background: #ffedd5;
+
+  font-size: 13px;
+}
+
+.subscription-renewal-alert-content {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.subscription-renewal-alert-content strong {
+  color: #92400e;
+
+  font-size: 12px;
+
+  font-weight: 800;
+}
+
+.subscription-renewal-alert-content span {
+  color: #a16207;
+
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   CATEGORY SPENDING
+===================================================== */
+
+.subscription-category-section {
+  margin-bottom: 20px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border:
+    1px solid #e5eaf2;
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 9px 27px
+    rgba(15, 23, 42, 0.045);
+}
+
+.subscription-category-header {
+  min-height: 82px;
+
+  padding: 14px 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  border-bottom:
+    1px solid #edf1f6;
+}
+
+.subscription-category-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+}
+
+.subscription-category-main-icon {
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  color: #4f46e5;
+
+  background: #eef2ff;
+
+  font-size: 15px;
+}
+
+.subscription-category-title h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 19px;
+
+  font-weight: 800;
+}
+
+.subscription-category-title p {
+  margin: 5px 0 0;
+
+  color: #8190a5;
+
+  font-size: 11px;
+
+  line-height: 1.4;
+}
+
+.subscription-category-highlight {
+  min-width: 150px;
+
+  padding: 9px 12px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 3px;
+
+  border-radius: 10px;
+
+  background: #f8fafc;
+
+  border:
+    1px solid #edf1f6;
+}
+
+.subscription-category-highlight span {
+  color: #8b98aa;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.7px;
+}
+
+.subscription-category-highlight strong {
+  color: #4f46e5;
+
+  font-size: 12px;
+
+  font-weight: 800;
+}
+
+.subscription-category-highlight small {
+  color: #64748b;
+
+  font-size: 9px;
+}
+
+.subscription-category-grid {
+  padding: 18px 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 14px;
+}
+
+.subscription-category-card {
+  min-width: 0;
+
+  padding: 15px;
+
+  border:
+    1px solid #edf1f6;
+
+  border-radius: 11px;
+
+  background: #fafbfe;
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.subscription-category-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #e0e7ff;
+
+  box-shadow:
+    0 8px 20px
+    rgba(15, 23, 42, 0.06);
+}
+
+.subscription-category-card-top {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.subscription-category-icon {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  font-size: 13px;
+}
+
+.subscription-category-info {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.subscription-category-info strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 12px;
+
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.subscription-category-info span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.subscription-category-amount {
+  flex-shrink: 0;
+
+  color: #172033;
+
+  font-size: 11px;
+
+  font-weight: 800;
+}
+
+.subscription-category-card.entertainment .subscription-category-icon {
+  color: #db2777;
+  background: #fdf2f8;
+}
+
+.subscription-category-card.education .subscription-category-icon {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.subscription-category-card.software .subscription-category-icon {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.subscription-category-card.health .subscription-category-icon {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.subscription-category-card.shopping .subscription-category-icon {
+  color: #d97706;
+  background: #fffbeb;
+}
+
+.subscription-category-card.gaming .subscription-category-icon {
+  color: #0891b2;
+  background: #ecfeff;
+}
+
+.subscription-category-card.other .subscription-category-icon {
+  color: #64748b;
+  background: #f1f5f9;
+}
+
+.subscription-category-progress {
+  margin-top: 13px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.subscription-category-progress-track {
+  height: 6px;
+
+  overflow: hidden;
+
+  flex: 1;
+
+  border-radius: 20px;
+
+  background: #e8edf5;
+}
+
+.subscription-category-progress-fill {
+  height: 100%;
+
+  min-width: 2px;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #6366f1,
+      #4f46e5
+    );
+
+  transition:
+    width 0.5s
+    cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
+    );
+}
+
+.subscription-category-progress > span {
+  min-width: 30px;
+
+  color: #64748b;
+
+  font-size: 9px;
+
+  font-weight: 800;
+
+  text-align: right;
+}
+
+.subscription-category-caption {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #8b98aa;
+
+  font-size: 8px;
+}
+
+
+/* =====================================================
+   SPENDING & RENEWAL OVERVIEW
+===================================================== */
+
+.subscription-overview-section {
+  margin-bottom: 20px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border:
+    1px solid #e5eaf2;
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 9px 27px
+    rgba(15, 23, 42, 0.045);
+}
+
+.subscription-overview-header {
+  min-height: 82px;
+
+  padding: 14px 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  border-bottom:
+    1px solid #edf1f6;
+}
+
+.subscription-overview-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+}
+
+.subscription-overview-main-icon {
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  color: #4f46e5;
+
+  background: #eef2ff;
+
+  font-size: 16px;
+}
+
+.subscription-overview-title h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 19px;
+
+  font-weight: 800;
+}
+
+.subscription-overview-title p {
+  margin: 5px 0 0;
+
+  color: #8190a5;
+
+  font-size: 11px;
+
+  line-height: 1.4;
+}
+
+.subscription-overview-grid {
+  padding: 18px 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 14px;
+}
+
+.subscription-overview-card {
+  min-width: 0;
+
+  min-height: 125px;
+
+  padding: 17px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 13px;
+
+  border:
+    1px solid #edf1f6;
+
+  border-radius: 13px;
+
+  background: #fafbfe;
+
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.subscription-overview-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px
+    rgba(15, 23, 42, 0.06);
+}
+
+.subscription-overview-icon {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  font-size: 15px;
+}
+
+.subscription-overview-card.blue .subscription-overview-icon {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.subscription-overview-card.purple .subscription-overview-icon {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.subscription-overview-card.orange .subscription-overview-icon {
+  color: #d97706;
+  background: #fffbeb;
+}
+
+.subscription-overview-card.cyan .subscription-overview-icon {
+  color: #0891b2;
+  background: #ecfeff;
+}
+
+.subscription-overview-card.green .subscription-overview-icon {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.subscription-overview-card.violet .subscription-overview-icon {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.subscription-overview-content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.subscription-overview-card-top {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+.subscription-overview-card-top span {
+  display: block;
+
+  color: #334155;
+
+  font-size: 12px;
+
+  font-weight: 800;
+}
+
+.subscription-overview-card-top small {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.subscription-overview-card-top > strong {
+  flex-shrink: 0;
+
+  color: #172033;
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+  text-align: right;
+}
+
+.subscription-overview-content > p {
+  margin: 12px 0 0;
+
+  color: #8b98aa;
+
+  font-size: 9px;
+
+  line-height: 1.45;
+}
+
+
+/* =====================================================
+   SUBSCRIPTION HEALTH
+===================================================== */
+
+.subscription-health-section {
+  margin-bottom: 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 20px;
+}
+
+.subscription-health-card,
+.subscription-insights-card {
+  min-width: 0;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border:
+    1px solid #e5eaf2;
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 9px 27px
+    rgba(15, 23, 42, 0.045);
+}
+
+.subscription-health-header {
+  min-height: 92px;
+
+  padding: 18px 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  border-bottom:
+    1px solid #edf1f6;
+}
+
+.subscription-health-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  min-width: 0;
+}
+
+.subscription-health-icon {
+  width: 46px;
+  height: 46px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  font-size: 17px;
+}
+
+.subscription-health-icon.excellent,
+.subscription-health-icon.healthy {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.subscription-health-icon.attention {
+  color: #d97706;
+  background: #fffbeb;
+}
+
+.subscription-health-icon.risk {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.subscription-health-title h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 19px;
+
+  font-weight: 800;
+}
+
+.subscription-health-title p {
+  margin: 5px 0 0;
+
+  color: #8190a5;
+
+  font-size: 10px;
+
+  line-height: 1.45;
+}
+
+.subscription-health-score {
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 2px;
+}
+
+.subscription-health-score strong {
+  font-size: 29px;
+
+  font-weight: 850;
+}
+
+.subscription-health-score span {
+  color: #94a3b8;
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+.subscription-health-score.excellent strong,
+.subscription-health-score.healthy strong {
+  color: #059669;
+}
+
+.subscription-health-score.attention strong {
+  color: #d97706;
+}
+
+.subscription-health-score.risk strong {
+  color: #dc2626;
+}
+
+.subscription-health-progress {
+  padding: 19px 20px 0;
+}
+
+.subscription-health-progress-track {
+  width: 100%;
+
+  height: 9px;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background: #edf1f6;
+}
+
+.subscription-health-progress-fill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  transition:
+    width 0.5s ease;
+}
+
+.subscription-health-progress-fill.excellent,
+.subscription-health-progress-fill.healthy {
+  background:
+    linear-gradient(
+      90deg,
+      #10b981,
+      #059669
+    );
+}
+
+.subscription-health-progress-fill.attention {
+  background:
+    linear-gradient(
+      90deg,
+      #f59e0b,
+      #d97706
+    );
+}
+
+.subscription-health-progress-fill.risk {
+  background:
+    linear-gradient(
+      90deg,
+      #f87171,
+      #dc2626
+    );
+}
+
+.subscription-health-status-row {
+  margin-top: 9px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+.subscription-health-status-row strong {
+  font-size: 11px;
+
+  font-weight: 800;
+}
+
+.subscription-health-status-row strong.excellent,
+.subscription-health-status-row strong.healthy {
+  color: #059669;
+}
+
+.subscription-health-status-row strong.attention {
+  color: #d97706;
+}
+
+.subscription-health-status-row strong.risk {
+  color: #dc2626;
+}
+
+.subscription-health-status-row span {
+  color: #94a3b8;
+
+  font-size: 9px;
+
+  text-align: right;
+}
+
+.subscription-health-metrics {
+  margin: 18px 20px 20px;
+
+  padding-top: 16px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  border-top:
+    1px solid #edf1f6;
+}
+
+.subscription-health-metrics div {
+  padding: 0 10px;
+
+  border-right:
+    1px solid #edf1f6;
+
+  text-align: center;
+}
+
+.subscription-health-metrics div:first-child {
+  padding-left: 0;
+}
+
+.subscription-health-metrics div:last-child {
+  padding-right: 0;
+
+  border-right: 0;
+}
+
+.subscription-health-metrics span {
+  display: block;
+
+  color: #94a3b8;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.4px;
+}
+
+.subscription-health-metrics strong {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #334155;
+
+  font-size: 17px;
+
+  font-weight: 800;
+}
+
+
+/* =====================================================
+   SMART INSIGHTS
+===================================================== */
+
+.subscription-insights-header {
+  min-height: 92px;
+
+  padding: 18px 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  border-bottom:
+    1px solid #edf1f6;
+}
+
+.subscription-insights-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  min-width: 0;
+}
+
+.subscription-insights-main-icon {
+  width: 46px;
+  height: 46px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  color: #4f46e5;
+
+  background: #eef2ff;
+
+  font-size: 17px;
+}
+
+.subscription-insights-title h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 19px;
+
+  font-weight: 800;
+}
+
+.subscription-insights-title p {
+  margin: 5px 0 0;
+
+  color: #8190a5;
+
+  font-size: 10px;
+
+  line-height: 1.45;
+}
+
+.subscription-insights-badge {
+  flex-shrink: 0;
+
+  padding: 6px 9px;
+
+  border-radius: 20px;
+
+  color: #4f46e5;
+
+  background: #eef2ff;
+
+  font-size: 8px;
+
+  font-weight: 850;
+
+  letter-spacing: 0.5px;
+}
+
+.subscription-insights-list {
+  padding: 6px 20px 16px;
+}
+
+.subscription-insight {
+  padding: 13px 0;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 11px;
+
+  border-bottom:
+    1px solid #f1f4f8;
+}
+
+.subscription-insight:last-child {
+  border-bottom: 0;
+}
+
+.subscription-insight-icon {
+  width: 35px;
+  height: 35px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  font-size: 12px;
+}
+
+.subscription-insight-icon.purple {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.subscription-insight-icon.blue {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.subscription-insight-icon.orange {
+  color: #d97706;
+  background: #fffbeb;
+}
+
+.subscription-insight-icon.green {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.subscription-insight-icon.cyan {
+  color: #0891b2;
+  background: #ecfeff;
+}
+
+.subscription-insight-icon.violet {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.subscription-insight-icon.gold {
+  color: #ca8a04;
+  background: #fefce8;
+}
+
+.subscription-insight-content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.subscription-insight-content strong {
+  display: block;
+
+  color: #334155;
+
+  font-size: 11px;
+
+  font-weight: 800;
+}
+
+.subscription-insight-content p {
+  margin: 4px 0 0;
+
+  color: #8190a5;
+
+  font-size: 9px;
+
+  line-height: 1.5;
+}
+
+.subscription-insights-empty {
+  min-height: 190px;
+
+  padding: 30px 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  color: #94a3b8;
+}
+
+.subscription-insights-empty svg {
+  font-size: 25px;
+
+  color: #6366f1;
+}
+
+.subscription-insights-empty p {
+  margin: 10px 0 0;
+
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   STEP 2 — RENEWAL INTELLIGENCE
+===================================================== */
+
+.subscription-renewal-intelligence {
+  margin-bottom: 20px;
+
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border:
+    1px solid #e5eaf2;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 10px 30px
+    rgba(15, 23, 42, 0.05);
+}
+
+
+/* =====================================================
+   RENEWAL INTELLIGENCE HEADER
+===================================================== */
+
+.subscription-renewal-intelligence-header {
+  min-height: 82px;
+
+  padding: 14px 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  border-bottom:
+    1px solid #edf1f6;
+}
+
+.subscription-renewal-intelligence-title {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  min-width: 0;
+}
+
+.subscription-renewal-intelligence-icon {
+  width: 45px;
+  height: 45px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  color: #4f46e5;
+
+  background: #eef2ff;
+
+  font-size: 16px;
+}
+
+.subscription-renewal-intelligence-title h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 19px;
+
+  font-weight: 800;
+}
+
+.subscription-renewal-intelligence-title p {
+  margin: 5px 0 0;
+
+  color: #8190a5;
+
+  font-size: 10px;
+
+  line-height: 1.45;
+}
+
+.subscription-renewal-smart-badge {
+  flex-shrink: 0;
+
+  padding: 7px 10px;
+
+  border-radius: 20px;
+
+  color: #4f46e5;
+
+  background: #eef2ff;
+
+  font-size: 8px;
+
+  font-weight: 850;
+
+  letter-spacing: 0.6px;
+}
+
+
+/* =====================================================
+   RENEWAL INTELLIGENCE GRID
+===================================================== */
+
+.subscription-renewal-intelligence-grid {
+  padding: 18px 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 15px;
+}
+
+
+/* =====================================================
+   NEXT RENEWAL
+===================================================== */
+
+.subscription-renewal-next {
+  min-width: 0;
+
+  padding: 18px;
+
+  border:
+    1px solid #e5e7ff;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8f9ff,
+      #ffffff
+    );
+}
+
+.subscription-renewal-next-top {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+.subscription-renewal-label {
+  display: block;
+
+  color: #8b98aa;
+
+  font-size: 8px;
+
+  font-weight: 850;
+
+  letter-spacing: 0.7px;
+}
+
+.subscription-renewal-next h3 {
+  margin: 6px 0 0;
+
+  color: #172033;
+
+  font-size: 20px;
+
+  font-weight: 850;
+
+  line-height: 1.25;
+}
+
+.subscription-renewal-next-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  color: #4f46e5;
+
+  background: #eef2ff;
+
+  font-size: 14px;
+}
+
+.subscription-renewal-next-details {
+  margin-top: 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 10px;
+}
+
+.subscription-renewal-next-details div {
+  min-width: 0;
+}
+
+.subscription-renewal-next-details span {
+  display: block;
+
+  color: #94a3b8;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.45px;
+}
+
+.subscription-renewal-next-details strong {
+  display: block;
+
+  margin-top: 5px;
+
+  overflow: hidden;
+
+  color: #475569;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.subscription-renewal-next-status {
+  margin-top: 16px;
+
+  min-height: 32px;
+
+  padding: 6px 9px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  border-radius: 8px;
+
+  font-size: 9px;
+
+  font-weight: 800;
+}
+
+.subscription-renewal-next-status svg {
+  font-size: 9px;
+}
+
+.subscription-renewal-next-status.upcoming {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.subscription-renewal-next-status.soon,
+.subscription-renewal-next-status.tomorrow {
+  color: #b45309;
+  background: #fffbeb;
+}
+
+.subscription-renewal-next-status.today,
+.subscription-renewal-next-status.overdue {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.subscription-renewal-next-status.none {
+  color: #64748b;
+  background: #f8fafc;
+}
+
+.subscription-renewal-no-data {
+  min-height: 100px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  color: #059669;
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   RENEWAL SPEND
+===================================================== */
+
+.subscription-renewal-spend,
+.subscription-renewal-urgency,
+.subscription-renewal-auto {
+  min-width: 0;
+
+  padding: 18px;
+
+  border:
+    1px solid #edf1f6;
+
+  border-radius: 14px;
+
+  background: #fafbfe;
+}
+
+.subscription-renewal-card-heading {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.subscription-renewal-small-icon {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+}
+
+.subscription-renewal-small-icon.blue {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.subscription-renewal-small-icon.orange {
+  color: #d97706;
+  background: #fffbeb;
+}
+
+.subscription-renewal-small-icon.violet {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.subscription-renewal-card-heading h3 {
+  margin: 0;
+
+  color: #334155;
+
+  font-size: 13px;
+
+  font-weight: 800;
+}
+
+.subscription-renewal-card-heading p {
+  margin: 4px 0 0;
+
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.subscription-renewal-spend-grid {
+  margin-top: 18px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 10px;
+}
+
+.subscription-renewal-spend-grid div {
+  min-width: 0;
+
+  padding: 11px;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  border:
+    1px solid #edf1f6;
+}
+
+.subscription-renewal-spend-grid span {
+  display: block;
+
+  color: #94a3b8;
+
+  font-size: 7px;
+
+  font-weight: 850;
+
+  letter-spacing: 0.5px;
+}
+
+.subscription-renewal-spend-grid strong {
+  display: block;
+
+  margin-top: 6px;
+
+  color: #172033;
+
+  font-size: 14px;
+
+  font-weight: 850;
+}
+
+.subscription-renewal-spend-grid small {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #94a3b8;
+
+  font-size: 8px;
+}
+
+
+/* =====================================================
+   URGENCY
+===================================================== */
+
+.subscription-renewal-urgency-list {
+  margin-top: 17px;
+
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 8px;
+}
+
+.renewal-urgency-item {
+  min-height: 40px;
+
+  padding: 0 10px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 8px;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  border:
+    1px solid #edf1f6;
+}
+
+.renewal-urgency-item span {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color: #64748b;
+
+  font-size: 9px;
+
+  font-weight: 750;
+}
+
+.renewal-urgency-item span i {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #94a3b8;
+}
+
+.renewal-urgency-item strong {
+  color: #334155;
+
+  font-size: 13px;
+
+  font-weight: 850;
+}
+
+.renewal-urgency-item.overdue span i,
+.renewal-urgency-item.today span i {
+  background: #ef4444;
+}
+
+.renewal-urgency-item.tomorrow span i {
+  background: #f59e0b;
+}
+
+.renewal-urgency-item.soon span i {
+  background: #fbbf24;
+}
+
+.renewal-urgency-item.overdue strong,
+.renewal-urgency-item.today strong {
+  color: #dc2626;
+}
+
+.renewal-urgency-item.tomorrow strong,
+.renewal-urgency-item.soon strong {
+  color: #d97706;
+}
+
+
+/* =====================================================
+   AUTO RENEW EXPOSURE
+===================================================== */
+
+.subscription-renewal-auto-value {
+  margin-top: 17px;
+
+  padding: 12px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 11px;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  border:
+    1px solid #edf1f6;
+}
+
+.subscription-renewal-auto-value strong {
+  color: #7c3aed;
+
+  font-size: 25px;
+
+  font-weight: 850;
+}
+
+.subscription-renewal-auto-value span {
+  color: #64748b;
+
+  font-size: 9px;
+
+  line-height: 1.4;
+}
+
+.subscription-renewal-auto-amount {
+  margin-top: 11px;
+
+  padding-top: 11px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  border-top:
+    1px solid #edf1f6;
+}
+
+.subscription-renewal-auto-amount span {
+  color: #94a3b8;
+
+  font-size: 7px;
+
+  font-weight: 850;
+
+  letter-spacing: 0.45px;
+}
+
+.subscription-renewal-auto-amount strong {
+  color: #172033;
+
+  font-size: 14px;
+
+  font-weight: 850;
+}
+
+
+/* =====================================================
+   RENEWAL TIMELINE
+===================================================== */
+
+.subscription-renewal-timeline {
+  margin: 0 20px 20px;
+
+  overflow: hidden;
+
+  border:
+    1px solid #edf1f6;
+
+  border-radius: 14px;
+
+  background: #fafbfe;
+}
+
+.subscription-renewal-timeline-header {
+  min-height: 68px;
+
+  padding: 0 16px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  border-bottom:
+    1px solid #edf1f6;
+}
+
+.subscription-renewal-timeline-header h3 {
+  margin: 0;
+
+  color: #334155;
+
+  font-size: 14px;
+
+  font-weight: 800;
+}
+
+.subscription-renewal-timeline-header p {
+  margin: 4px 0 0;
+
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.subscription-renewal-timeline-header > span {
+  flex-shrink: 0;
+
+  padding: 6px 9px;
+
+  border-radius: 7px;
+
+  color: #64748b;
+
+  background: #ffffff;
+
+  border:
+    1px solid #edf1f6;
+
+  font-size: 8px;
+
+  font-weight: 750;
+}
+
+.subscription-renewal-timeline-list {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.subscription-renewal-timeline-item {
+  min-height: 76px;
+
+  padding: 12px 15px;
+
+  display: grid;
+
+  grid-template-columns:
+    50px
+    minmax(130px, 1fr)
+    minmax(150px, auto)
+    auto;
+
+  align-items: center;
+
+  gap: 13px;
+
+  border-bottom:
+    1px solid #edf1f6;
+
+  background: #ffffff;
+
+  transition:
+    background 0.18s ease;
+}
+
+.subscription-renewal-timeline-item:last-child {
+  border-bottom: 0;
+}
+
+.subscription-renewal-timeline-item:hover {
+  background: #fafbfe;
+}
+
+.subscription-renewal-timeline-item.overdue {
+  border-left:
+    3px solid #ef4444;
+}
+
+.subscription-renewal-timeline-item.today {
+  border-left:
+    3px solid #ef4444;
+}
+
+.subscription-renewal-timeline-item.tomorrow,
+.subscription-renewal-timeline-item.soon {
+  border-left:
+    3px solid #f59e0b;
+}
+
+.subscription-renewal-timeline-item.upcoming {
+  border-left:
+    3px solid #6366f1;
+}
+
+.subscription-renewal-timeline-date {
+  width: 46px;
+  height: 48px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  color: #4f46e5;
+
+  background: #eef2ff;
+}
+
+.subscription-renewal-timeline-date strong {
+  font-size: 16px;
+
+  line-height: 1;
+}
+
+.subscription-renewal-timeline-date span {
+  margin-top: 4px;
+
+  font-size: 8px;
+
+  font-weight: 750;
+}
+
+.subscription-renewal-timeline-info {
+  min-width: 0;
+}
+
+.subscription-renewal-timeline-info strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.subscription-renewal-timeline-info span {
+  display: block;
+
+  margin-top: 4px;
+
+  overflow: hidden;
+
+  color: #94a3b8;
+
+  font-size: 8px;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.subscription-renewal-timeline-status {
+  min-width: 0;
+}
+
+.subscription-renewal-timeline-status > span {
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  font-size: 8px;
+
+  font-weight: 750;
+}
+
+.subscription-renewal-timeline-status > span svg {
+  font-size: 8px;
+}
+
+.subscription-renewal-timeline-item.upcoming
+.subscription-renewal-timeline-status > span {
+  color: #059669;
+}
+
+.subscription-renewal-timeline-item.soon
+.subscription-renewal-timeline-status > span,
+.subscription-renewal-timeline-item.tomorrow
+.subscription-renewal-timeline-status > span {
+  color: #d97706;
+}
+
+.subscription-renewal-timeline-item.today
+.subscription-renewal-timeline-status > span,
+.subscription-renewal-timeline-item.overdue
+.subscription-renewal-timeline-status > span {
+  color: #dc2626;
+}
+
+.subscription-renewal-timeline-status > strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #172033;
+
+  font-size: 12px;
+
+  font-weight: 850;
+}
+
+.subscription-renewal-auto-badge {
+  min-height: 25px;
+
+  padding: 4px 7px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 4px;
+
+  border-radius: 6px;
+
+  color: #7c3aed;
+
+  background: #f5f3ff;
+
+  font-size: 7px;
+
+  font-weight: 800;
+
+  white-space: nowrap;
+}
+
+.subscription-renewal-auto-badge svg {
+  font-size: 7px;
+}
+
+.subscription-renewal-timeline-empty {
+  min-height: 130px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  color: #059669;
+
+  font-size: 10px;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   RENEWAL CONTROL CENTER
+===================================================== */
+
+.subscription-renewal-control-center {
+  margin: 0 20px 20px;
+
+  overflow: hidden;
+
+  border:
+    1px solid #e5eaf2;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+}
+
+.subscription-renewal-control-header {
+  min-height: 65px;
+
+  padding: 0 16px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  border-bottom:
+    1px solid #edf1f6;
+}
+
+.subscription-renewal-control-header h3 {
+  margin: 0;
+
+  color: #334155;
+
+  font-size: 14px;
+
+  font-weight: 800;
+}
+
+.subscription-renewal-control-header p {
+  margin: 4px 0 0;
+
+  color: #94a3b8;
+
+  font-size: 9px;
+}
+
+.subscription-renewal-control-summary {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  flex-wrap: wrap;
+}
+
+.subscription-renewal-window-row {
+  padding: 12px 16px;
+
+  display: flex;
+
+  gap: 7px;
+
+  overflow-x: auto;
+
+  border-bottom:
+    1px solid #edf1f6;
+
+  background: #fafbfe;
+}
+
+.subscription-renewal-window-row button {
+  height: 32px;
+
+  padding: 0 12px;
+
+  flex-shrink: 0;
+
+  border:
+    1px solid #dfe6ef;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #64748b;
+
+  font-size: 9px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition: 0.18s ease;
+}
+
+.subscription-renewal-window-row button:hover {
+  color: #4f46e5;
+
+  border-color: #c7d2fe;
+
+  background: #eef2ff;
+}
+
+.subscription-renewal-control-list {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.subscription-renewal-control-item {
+  min-height: 70px;
+
+  padding: 11px 16px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(150px, 1fr)
+    95px
+    100px
+    auto;
+
+  align-items: center;
+
+  gap: 13px;
+
+  border-bottom:
+    1px solid #edf1f6;
+}
+
+.subscription-renewal-control-item:last-child {
+  border-bottom: 0;
+}
+
+.subscription-renewal-control-info {
+  min-width: 0;
+}
+
+.subscription-renewal-control-info strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #334155;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.subscription-renewal-control-info span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #94a3b8;
+
+  font-size: 8px;
+}
+
+.subscription-renewal-control-date {
+  color: #64748b;
+
+  font-size: 9px;
+
+  font-weight: 750;
+}
+
+.subscription-renewal-control-amount {
+  color: #172033;
+
+  font-size: 11px;
+
+  font-weight: 850;
+}
+
+.subscription-renewal-control-actions {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: flex-end;
+
+  gap: 5px;
+}
+
+.subscription-renewal-control-actions button {
+  width: 31px;
+  height: 31px;
+
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+
+  border-radius: 7px;
+
+  background: #f8fafc;
+
+  color: #94a3b8;
+
+  cursor: pointer;
+
+  transition: 0.18s ease;
+}
+
+.subscription-renewal-control-actions button:hover {
+  color: #4f46e5;
+
+  background: #eef2ff;
+}
+
+.subscription-renewal-control-actions button.danger:hover {
+  color: #dc2626;
+
+  background: #fef2f2;
+}
+
+.subscription-renewal-review-btn {
+  height: 31px;
+
+  padding: 0 9px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  border:
+    1px solid #dfe6ef;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #64748b;
+
+  font-size: 8px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+.subscription-renewal-review-btn:hover {
+  color: #4f46e5;
+
+  border-color: #c7d2fe;
+
+  background: #eef2ff;
+}
+
+.subscription-renewal-control-empty {
+  min-height: 150px;
+
+  padding: 30px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  color: #94a3b8;
+
+  text-align: center;
+}
+
+.subscription-renewal-control-empty svg {
+  color: #6366f1;
+
+  font-size: 24px;
+}
+
+.subscription-renewal-control-empty p {
+  margin: 0;
+
+  font-size: 10px;
+}
+
+
+/* =====================================================
+   SEARCH + FILTER
+===================================================== */
+
+.subscription-toolbar {
+  min-height: 62px;
+
+  margin-bottom: 18px;
+
+  padding: 11px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  background: #ffffff;
+
+  border:
+    1px solid #e5eaf2;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 7px 22px
+    rgba(15, 23, 42, 0.035);
+}
+
+.subscription-search {
+  width:
+    min(400px, 100%);
+
+  height: 42px;
+
+  padding: 0 13px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  border:
+    1px solid #dbe3ee;
+
+  border-radius: 9px;
+
+  background: #f8fafc;
+}
+
+.subscription-search svg {
+  flex-shrink: 0;
+
+  color: #94a3b8;
+
+  font-size: 13px;
+}
+
+.subscription-search input {
+  width: 100%;
+  height: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: #334155;
+
+  font-size: 13px !important;
+
+  font-family: inherit;
+}
+
+.subscription-search input::placeholder {
+  color: #94a3b8;
+}
+
+.subscription-filters {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.subscription-filters button {
+  height: 38px;
+
+  padding: 0 15px;
+
+  border:
+    1px solid #dfe6ef;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #64748b;
+
+  font-size: 11px !important;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  transition: 0.18s ease;
+}
+
+.subscription-filters button:hover {
+  color: #4f46e5;
+
+  border-color: #c7d2fe;
+
+  background: #eef2ff;
+}
+
+.subscription-filters button.active {
+  color: #ffffff;
+
+  border-color: transparent;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #4f46e5
+    );
+
+  box-shadow:
+    0 5px 12px
+    rgba(79, 70, 229, 0.18);
+}
+
+
+/* =====================================================
+   MAIN LAYOUT
+===================================================== */
+
+.subscription-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.65fr)
+    minmax(300px, 0.75fr);
+
+  gap: 20px;
+
+  align-items: start;
+}
+
+.subscription-list-panel,
+.subscription-upcoming-panel {
+  overflow: hidden;
+
+  background: #ffffff;
+
+  border:
+    1px solid #e5eaf2;
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 9px 27px
+    rgba(15, 23, 42, 0.045);
+}
+
+.subscription-section-header {
+  min-height: 78px;
+
+  padding: 0 20px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom:
+    1px solid #edf1f6;
+}
+
+.subscription-section-header h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 19px !important;
+
+  font-weight: 800;
+}
+
+.subscription-section-header p {
+  margin: 6px 0 0;
+
+  color: #8190a5;
+
+  font-size: 12px !important;
+}
+
+.subscription-section-header > svg {
+  color: #6366f1;
+
+  font-size: 18px;
+}
+
+
+/* =====================================================
+   SUBSCRIPTION LIST
+===================================================== */
+
+.subscription-list {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.subscription-card {
+  position: relative;
+
+  padding: 21px;
+
+  display: flex;
+
+  gap: 17px;
+
+  border-bottom:
+    1px solid #edf1f6;
+
+  transition:
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.subscription-card:last-child {
+  border-bottom: 0;
+}
+
+.subscription-card:hover {
+  background: #fafbfe;
+}
+
+.subscription-card.active {
+  border-left:
+    3px solid #4f46e5;
+}
+
+.subscription-card.paused {
+  border-left:
+    3px solid #f59e0b;
+}
+
+.subscription-card.cancelled {
+  border-left:
+    3px solid #ef4444;
+}
+
+.subscription-card.next-payment-card {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(238, 242, 255, 0.55),
+      #ffffff 25%
+    );
+}
+
+.subscription-card.next-payment-card::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 3px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #2563eb,
+      #7c3aed
+    );
+}
+
+.subscription-card-icon {
+  width: 50px;
+  height: 50px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  color: #4f46e5;
+
+  background: #eef2ff;
+
+  font-size: 17px;
+}
+
+.subscription-card-content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.subscription-card-title {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+.subscription-card-title h3 {
+  margin: 0;
+
+  color: #334155;
+
+  font-size: 17px !important;
+
+  font-weight: 800;
+}
+
+.subscription-card-title > div:first-child > span {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #94a3b8;
+
+  font-size: 11px !important;
+}
+
+.subscription-status {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px 10px;
+
+  border-radius: 20px;
+
+  font-size: 10px !important;
+
+  font-weight: 750;
+
+  white-space: nowrap;
+}
+
+.subscription-status span {
+  width: 7px;
+  height: 7px;
+
+  margin: 0;
+
+  border-radius: 50%;
+}
+
+.subscription-status.active {
+  color: #15803d;
+  background: #f0fdf4;
+}
+
+.subscription-status.active span {
+  background: #22c55e;
+}
+
+.subscription-status.paused {
+  color: #b45309;
+  background: #fffbeb;
+}
+
+.subscription-status.paused span {
+  background: #f59e0b;
+}
+
+.subscription-status.cancelled {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.subscription-status.cancelled span {
+  background: #ef4444;
+}
+
+.subscription-card-details {
+  margin-top: 18px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, 1fr);
+
+  gap: 15px;
+}
+
+.subscription-card-details span {
+  display: block;
+
+  color: #8b98aa;
+
+  font-size: 9px !important;
+
+  font-weight: 800;
+
+  letter-spacing: 0.55px;
+}
+
+.subscription-card-details strong {
+  display: block;
+
+  margin-top: 5px;
+
+  overflow: hidden;
+
+  color: #475569;
+
+  font-size: 13px !important;
+
+  font-weight: 750;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.subscription-card-bottom {
+  margin-top: 16px;
+
+  padding-top: 13px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  border-top:
+    1px solid #f1f4f8;
+}
+
+.subscription-renewal-info {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.subscription-days {
+  min-height: 27px;
+
+  padding: 4px 9px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  border-radius: 7px;
+
+  background: #eef2ff;
+
+  font-size: 10px !important;
+
+  font-weight: 800;
+}
+
+.subscription-days svg {
+  font-size: 8px;
+}
+
+.subscription-days.upcoming {
+  color: #4f46e5;
+  background: #eef2ff;
+}
+
+.subscription-days.soon {
+  color: #b45309;
+  background: #fffbeb;
+}
+
+.subscription-days.tomorrow {
+  color: #b45309;
+  background: #fff7ed;
+}
+
+.subscription-days.today,
+.subscription-days.overdue {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.subscription-days.none {
+  color: #64748b;
+  background: #f8fafc;
+}
+
+.subscription-auto-label {
+  color: #94a3b8;
+
+  font-size: 10px !important;
+}
+
+.subscription-card-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+.subscription-card-actions button {
+  width: 35px;
+  height: 35px;
+
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  background: #f8fafc;
+
+  color: #94a3b8;
+
+  cursor: pointer;
+
+  transition: 0.18s ease;
+}
+
+.subscription-card-actions button:hover {
+  color: #4f46e5;
+
+  background: #eef2ff;
+
+  transform: translateY(-1px);
+}
+
+.subscription-card-actions button.danger:hover {
+  color: #dc2626;
+
+  background: #fef2f2;
+}
+
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.subscription-empty {
+  min-height: 320px;
+
+  padding: 40px 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.subscription-empty > div {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 15px;
+
+  color: #6366f1;
+
+  background: #eef2ff;
+
+  font-size: 21px;
+}
+
+.subscription-empty h3 {
+  margin: 15px 0 6px;
+
+  color: #334155;
+
+  font-size: 18px !important;
+}
+
+.subscription-empty p {
+  margin: 0;
+
+  color: #94a3b8;
+
+  font-size: 12px !important;
+}
+
+.subscription-empty button {
+  margin-top: 17px;
+
+  height: 42px;
+
+  padding: 0 17px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  border: 0;
+
+  border-radius: 9px;
+
+  background: #eef2ff;
+
+  color: #4f46e5;
+
+  font-size: 11px !important;
+
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+
+/* =====================================================
+   UPCOMING PAYMENTS
+===================================================== */
+
+.subscription-upcoming-panel {
+  position: sticky;
+
+  top: 20px;
+}
+
+.upcoming-payment-list {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.upcoming-payment {
+  position: relative;
+
+  min-height: 86px;
+
+  padding: 14px 17px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  border-bottom:
+    1px solid #edf1f6;
+}
+
+.upcoming-payment:last-child {
+  border-bottom: 0;
+}
+
+.upcoming-payment:hover {
+  background: #fafbfe;
+}
+
+.upcoming-payment.next-payment {
+  background:
+    linear-gradient(
+      90deg,
+      #f8f9ff,
+      #ffffff
+    );
+}
+
+.upcoming-payment.next-payment::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 2px;
+
+  background: #4f46e5;
+}
+
+.upcoming-payment-date {
+  width: 50px;
+  height: 51px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #f5f3ff;
+
+  color: #4f46e5;
+}
+
+.upcoming-payment-date strong {
+  font-size: 18px !important;
+
+  line-height: 1;
+}
+
+.upcoming-payment-date span {
+  margin-top: 4px;
+
+  font-size: 10px !important;
+
+  font-weight: 700;
+}
+
+.upcoming-payment-info {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.upcoming-payment-info strong {
+  display: block;
+
+  overflow: hidden;
+
+  color: #475569;
+
+  font-size: 14px !important;
+
+  font-weight: 800;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.upcoming-renewal-status {
+  display: block;
+
+  margin-top: 4px;
+
+  font-size: 10px;
+
+  font-weight: 750;
+}
+
+.upcoming-payment-amount {
+  flex-shrink: 0;
+
+  color: #334155;
+
+  font-size: 13px !important;
+
+  font-weight: 800;
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+.subscription-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 13000;
+
+  padding: 25px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background:
+    rgba(15, 23, 42, 0.42);
+
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+
+  animation:
+    subscriptionOverlayIn
+    0.2s ease both;
+}
+
+.subscription-modal {
+  width:
+    min(650px, 100%);
+
+  max-height:
+    calc(100vh - 50px);
+
+  overflow-y: auto;
+
+  padding: 25px;
+
+  background: #ffffff;
+
+  border:
+    1px solid #e5eaf2;
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 25px 70px
+    rgba(15, 23, 42, 0.22);
+
+  animation:
+    subscriptionModalIn
+    0.25s
+    cubic-bezier(
+      0.22,
+      1,
+      0.36,
+      1
+    )
+    both;
+}
+
+.subscription-modal-header {
+  display: flex;
+
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 20px;
+}
+
+.subscription-modal-header h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 22px !important;
+
+  font-weight: 800;
+}
+
+.subscription-modal-header p {
+  margin: 6px 0 0;
+
+  color: #94a3b8;
+
+  font-size: 12px !important;
+}
+
+.subscription-modal-header button {
+  width: 35px;
+  height: 35px;
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius: 8px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #f8fafc;
+
+  color: #64748b;
+
+  cursor: pointer;
+}
+
+.subscription-form-grid {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 16px;
+}
+
+.subscription-form-grid label {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.subscription-form-grid label > span {
+  color: #475569;
+
+  font-size: 12px !important;
+
+  font-weight: 750;
+}
+
+.subscription-form-grid input,
+.subscription-form-grid select {
+  width: 100%;
+  height: 44px;
+
+  padding: 0 12px;
+
+  box-sizing: border-box;
+
+  border:
+    1px solid #dfe6ef;
+
+  border-radius: 9px;
+
+  outline: 0;
+
+  background: #f8fafc;
+
+  color: #334155;
+
+  font-size: 13px !important;
+
+  font-family: inherit;
+}
+
+.subscription-form-grid input:focus,
+.subscription-form-grid select:focus {
+  border-color: #818cf8;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(99, 102, 241, 0.08);
+}
+
+.subscription-auto-renew {
+  margin-top: 16px;
+
+  padding: 13px 14px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  border-radius: 9px;
+
+  background: #f8fafc;
+}
+
+.subscription-auto-renew input {
+  width: 16px;
+  height: 16px;
+
+  margin: 0;
+
+  accent-color: #4f46e5;
+}
+
+.subscription-auto-renew span {
+  color: #475569;
+
+  font-size: 12px !important;
+
+  font-weight: 650;
+}
+
+.subscription-modal-actions {
+  margin-top: 20px;
+
+  padding-top: 15px;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 9px;
+
+  border-top:
+    1px solid #edf1f6;
+}
+
+.subscription-cancel-btn,
+.subscription-save-btn {
+  height: 43px;
+
+  padding: 0 18px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border-radius: 9px;
+
+  font-size: 12px !important;
+
+  font-weight: 750;
+
+  cursor: pointer;
+}
+
+.subscription-cancel-btn {
+  border:
+    1px solid #dfe6ef;
+
+  background: #ffffff;
+
+  color: #64748b;
+}
+
+.subscription-save-btn {
+  border: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #4f46e5
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 6px 15px
+    rgba(79, 70, 229, 0.16);
+}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes renewalAlertIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subscriptionOverlayIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes subscriptionModalIn {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(12px)
+      scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1100px) {
+
+  .subscription-summary {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .subscription-layout {
+    grid-template-columns:
+      1fr;
+  }
+
+  .subscription-upcoming-panel {
+    position: static;
+  }
+
+  .subscription-category-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .subscription-overview-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .subscription-renewal-intelligence-grid {
+    grid-template-columns:
+      1fr 1fr;
+  }
+}
+
+
+/* =====================================================
+   SMALL LAPTOP
+===================================================== */
+
+@media (max-width: 900px) {
+
+  .subscription-summary {
+    gap: 16px;
+  }
+
+  .subscription-summary-card {
+    min-height: 115px;
+
+    padding: 19px;
+  }
+
+  .subscription-summary-icon {
+    width: 54px;
+    height: 54px;
+  }
+
+  .subscription-summary-content strong {
+    font-size: 24px !important;
+  }
+
+  .subscription-card-details {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .subscription-health-section {
+    grid-template-columns:
+      1fr;
+  }
+
+  .subscription-overview-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .subscription-renewal-timeline-item {
+    grid-template-columns:
+      50px
+      minmax(130px, 1fr)
+      auto;
+  }
+
+  .subscription-renewal-auto-badge {
+    display: none;
+  }
+
+  .subscription-renewal-control-item {
+    grid-template-columns:
+      minmax(140px, 1fr)
+      90px
+      90px
+      auto;
+  }
+}
+
+
+/* =====================================================
+   MOBILE / SMALL TABLET
+===================================================== */
+
+@media (max-width: 768px) {
+
+  .subscription-hero {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    padding: 22px;
+
+    margin-bottom: 22px;
+  }
+
+  .subscription-title-row {
+    width: 100%;
+  }
+
+  .subscription-add-btn {
+    width: 100%;
+
+    min-width: 0 !important;
+  }
+
+  .subscription-toolbar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+  .subscription-search {
+    width: 100%;
+  }
+
+  .subscription-filters {
+    overflow-x: auto;
+
+    padding-bottom: 2px;
+  }
+
+  .subscription-filters button {
+    flex-shrink: 0;
+  }
+
+  .subscription-category-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .subscription-category-highlight {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    align-items: flex-start;
+  }
+
+  .subscription-category-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .subscription-overview-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .subscription-renewal-intelligence-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .subscription-renewal-control-item {
+    grid-template-columns:
+      minmax(130px, 1fr)
+      80px
+      auto;
+  }
+
+  .subscription-renewal-control-date {
+    display: none;
+  }
+
+  .subscription-renewal-control-actions {
+    justify-content: flex-end;
+  }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .subscription-main {
+    padding: 15px;
+  }
+
+  .subscription-hero {
+    min-height: 0;
+
+    padding: 18px;
+
+    border-radius: 18px;
+  }
+
+  .subscription-title-row {
+    gap: 12px;
+  }
+
+  .subscription-title-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 12px;
+
+    font-size: 17px;
+  }
+
+  .subscription-hero h1 {
+    font-size: 23px !important;
+  }
+
+  .subscription-hero p {
+    font-size: 12px !important;
+  }
+
+  .subscription-live {
+    display: none;
+  }
+
+  .subscription-add-btn {
+    height: 46px !important;
+
+    font-size: 12px !important;
+  }
+
+
+  /* SUMMARY */
+
+  .subscription-summary {
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+  }
+
+  .subscription-summary-card {
+    min-height: 100px;
+
+    padding: 15px;
+
+    gap: 10px;
+
+    border-radius: 13px;
+  }
+
+  .subscription-summary-icon {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+  }
+
+  .subscription-summary-content span {
+    font-size: 7px !important;
+  }
+
+  .subscription-summary-content strong {
+    font-size: 18px !important;
+  }
+
+  .subscription-summary-content strong.summary-name {
+    font-size: 15px !important;
+  }
+
+  .subscription-summary-content small {
+    font-size: 7px !important;
+  }
+
+
+  /* HEALTH */
+
+  .subscription-health-header,
+  .subscription-insights-header {
+    padding: 15px;
+
+    min-height: 78px;
+  }
+
+  .subscription-health-title,
+  .subscription-insights-title {
+    gap: 9px;
+  }
+
+  .subscription-health-icon,
+  .subscription-insights-main-icon {
+    width: 39px;
+    height: 39px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+  }
+
+  .subscription-health-title h2,
+  .subscription-insights-title h2 {
+    font-size: 16px;
+  }
+
+  .subscription-health-title p,
+  .subscription-insights-title p {
+    font-size: 8px;
+  }
+
+  .subscription-health-score strong {
+    font-size: 23px;
+  }
+
+  .subscription-health-progress {
+    padding: 15px 15px 0;
+  }
+
+  .subscription-health-metrics {
+    margin: 15px;
+
+    padding-top: 13px;
+  }
+
+  .subscription-health-metrics strong {
+    font-size: 15px;
+  }
+
+
+  /* OVERVIEW */
+
+  .subscription-overview-header {
+    padding: 13px 15px;
+  }
+
+  .subscription-overview-title {
+    gap: 9px;
+  }
+
+  .subscription-overview-main-icon {
+    width: 39px;
+    height: 39px;
+
+    border-radius: 9px;
+  }
+
+  .subscription-overview-title h2 {
+    font-size: 16px;
+  }
+
+  .subscription-overview-title p {
+    font-size: 8px;
+  }
+
+  .subscription-overview-grid {
+    padding: 13px;
+  }
+
+  .subscription-overview-card {
+    min-height: 105px;
+
+    padding: 13px;
+  }
+
+
+  /* RENEWAL INTELLIGENCE */
+
+  .subscription-renewal-intelligence-header {
+    padding: 13px 15px;
+  }
+
+  .subscription-renewal-intelligence-title {
+    gap: 9px;
+  }
+
+  .subscription-renewal-intelligence-icon {
+    width: 39px;
+    height: 39px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+  }
+
+  .subscription-renewal-intelligence-title h2 {
+    font-size: 16px;
+  }
+
+  .subscription-renewal-intelligence-title p {
+    font-size: 8px;
+  }
+
+  .subscription-renewal-intelligence-grid {
+    padding: 13px;
+  }
+
+  .subscription-renewal-next,
+  .subscription-renewal-spend,
+  .subscription-renewal-urgency,
+  .subscription-renewal-auto {
+    padding: 14px;
+  }
+
+  .subscription-renewal-next h3 {
+    font-size: 17px;
+  }
+
+  .subscription-renewal-next-details {
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .subscription-renewal-spend-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .subscription-renewal-timeline {
+    margin: 0 13px 13px;
+  }
+
+  .subscription-renewal-timeline-header {
+    padding: 12px;
+
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .subscription-renewal-timeline-item {
+    padding: 12px;
+
+    grid-template-columns:
+      46px
+      minmax(0, 1fr);
+
+    gap: 10px;
+  }
+
+  .subscription-renewal-timeline-status {
+    grid-column: 2;
+  }
+
+  .subscription-renewal-auto-badge {
+    display: inline-flex;
+
+    grid-column: 2;
+
+    justify-self: start;
+  }
+
+  .subscription-renewal-control-center {
+    margin: 0 13px 13px;
+  }
+
+  .subscription-renewal-control-header {
+    padding: 12px;
+
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .subscription-renewal-window-row {
+    padding: 10px 12px;
+  }
+
+  .subscription-renewal-control-item {
+    padding: 12px;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      auto;
+
+    gap: 10px;
+  }
+
+  .subscription-renewal-control-amount {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .subscription-renewal-control-actions {
+    grid-column: 1 / -1;
+
+    justify-content: flex-start;
+
+    padding-top: 5px;
+  }
+
+
+  /* SECTION */
+
+  .subscription-section-header {
+    min-height: 68px;
+
+    padding: 0 15px;
+  }
+
+  .subscription-section-header h2 {
+    font-size: 16px !important;
+  }
+
+  .subscription-section-header p {
+    font-size: 10px !important;
+  }
+
+
+  /* SUBSCRIPTION CARD */
+
+  .subscription-card {
+    padding: 15px;
+  }
+
+  .subscription-card-icon {
+    width: 39px;
+    height: 39px;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+  }
+
+  .subscription-card-title {
+    flex-direction: column;
+  }
+
+  .subscription-card-title h3 {
+    font-size: 14px !important;
+  }
+
+  .subscription-card-title > div:first-child > span {
+    font-size: 9px !important;
+  }
+
+  .subscription-status {
+    align-self: flex-start;
+  }
+
+  .subscription-card-details {
+    gap: 10px;
+  }
+
+  .subscription-card-details span {
+    font-size: 7px !important;
+  }
+
+  .subscription-card-details strong {
+    font-size: 11px !important;
+  }
+
+  .subscription-card-bottom {
+    align-items: flex-start;
+
+    gap: 9px;
+
+    flex-direction: column;
+  }
+
+  .subscription-card-actions {
+    width: 100%;
+
+    justify-content: flex-end;
+  }
+
+
+  /* CATEGORY */
+
+  .subscription-category-header {
+    padding: 13px;
+  }
+
+  .subscription-category-title h2 {
+    font-size: 16px;
+  }
+
+  .subscription-category-title p {
+    font-size: 10px;
+  }
+
+  .subscription-category-grid {
+    grid-template-columns: 1fr;
+
+    padding: 13px;
+  }
+
+
+  /* MODAL */
+
+  .subscription-modal-overlay {
+    padding: 12px;
+  }
+
+  .subscription-modal {
+    max-height:
+      calc(100vh - 24px);
+
+    padding: 17px;
+
+    border-radius: 13px;
+  }
+
+  .subscription-form-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .subscription-modal-header h2 {
+    font-size: 19px !important;
+  }
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 400px) {
+
+  .subscription-summary {
+    grid-template-columns:
+      1fr;
+  }
+
+  .subscription-card-details {
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .subscription-renewal-info {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .subscription-health-metrics {
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 12px;
+  }
+
+  .subscription-health-metrics div {
+    padding: 0;
+
+    border-right: 0;
+  }
+
+  .subscription-renewal-urgency-list {
+    grid-template-columns:
+      1fr;
+  }
+
+  .subscription-renewal-next-details {
+    grid-template-columns:
+      1fr;
+  }
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .subscription-modal-overlay,
+  .subscription-modal,
+  .subscription-renewal-alert {
+    animation: none;
+  }
+
+  .subscription-summary-card,
+  .subscription-add-btn,
+  .subscription-card,
+  .subscription-filters button,
+  .subscription-card-actions button,
+  .subscription-category-card,
+  .subscription-category-progress-fill,
+  .subscription-overview-card,
+  .subscription-renewal-control-actions button {
+    transition: none;
+  }
+}
+
+/* =====================================================
+   FINAL UI REPLACEMENT — OVERVIEW / HEALTH / INSIGHTS
+   / RENEWAL INTELLIGENCE / CONTROL CENTER
+   ===================================================== */
+
+/* -----------------------------------------------------
+   GLOBAL SECTION TYPOGRAPHY
+----------------------------------------------------- */
+.subscription-overview-title h2,
+.subscription-health-title h2,
+.subscription-insights-title h2,
+.subscription-renewal-intelligence-title h2 {
+  font-size: 21px !important;
+  font-weight: 850;
+  letter-spacing: -0.35px;
+}
+
+.subscription-overview-title p,
+.subscription-health-title p,
+.subscription-insights-title p,
+.subscription-renewal-intelligence-title p {
+  font-size: 12px !important;
+  line-height: 1.5;
+}
+
+/* -----------------------------------------------------
+   SPENDING & RENEWAL OVERVIEW
+----------------------------------------------------- */
+.subscription-overview-section {
+  margin-bottom: 22px;
+  border-radius: 18px;
+}
+
+.subscription-overview-header {
+  min-height: 92px;
+  padding: 18px 24px;
+}
+
+.subscription-overview-title {
+  gap: 15px;
+}
+
+.subscription-overview-main-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 13px;
+  font-size: 18px;
+}
+
+.subscription-overview-grid {
+  padding: 20px 24px 22px;
+  gap: 16px;
+}
+
+.subscription-overview-card {
+  min-height: 142px;
+  padding: 20px;
+  gap: 15px;
+  border-radius: 14px;
+}
+
+.subscription-overview-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 11px;
+  font-size: 17px;
+}
+
+.subscription-overview-card-top {
+  gap: 14px;
+}
+
+.subscription-overview-card-top span {
+  font-size: 14px !important;
+  font-weight: 850;
+}
+
+.subscription-overview-card-top small {
+  margin-top: 5px;
+  font-size: 10.5px;
+}
+
+.subscription-overview-card-top > strong {
+  font-size: 18px;
+  font-weight: 850;
+}
+
+.subscription-overview-content > p {
+  margin-top: 15px;
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+
+/* -----------------------------------------------------
+   SUBSCRIPTION HEALTH
+----------------------------------------------------- */
+.subscription-health-section {
+  gap: 22px;
+  margin-bottom: 22px;
+}
+
+.subscription-health-card,
+.subscription-insights-card {
+  border-radius: 18px;
+}
+
+.subscription-health-header,
+.subscription-insights-header {
+  min-height: 96px;
+  padding: 19px 24px;
+}
+
+.subscription-health-title,
+.subscription-insights-title {
+  gap: 15px;
+}
+
+.subscription-health-icon,
+.subscription-insights-main-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 13px;
+  font-size: 18px;
+}
+
+.subscription-health-score strong {
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.subscription-health-score span {
+  font-size: 12px;
+}
+
+.subscription-health-progress {
+  padding: 22px 24px 0;
+}
+
+.subscription-health-progress-track {
+  height: 10px;
+}
+
+.subscription-health-status-row {
+  margin-top: 11px;
+}
+
+.subscription-health-status-row strong {
+  font-size: 12px;
+}
+
+.subscription-health-status-row span {
+  font-size: 10px;
+}
+
+.subscription-health-metrics {
+  margin: 21px 24px 23px;
+  padding-top: 18px;
+}
+
+.subscription-health-metrics span {
+  font-size: 9px;
+}
+
+.subscription-health-metrics strong {
+  margin-top: 7px;
+  font-size: 20px;
+}
+
+/* -----------------------------------------------------
+   SMART INSIGHTS
+----------------------------------------------------- */
+.subscription-insights-badge {
+  padding: 7px 11px;
+  font-size: 9px;
+}
+
+.subscription-insights-list {
+  padding: 7px 24px 18px;
+}
+
+.subscription-insight {
+  padding: 15px 0;
+  gap: 13px;
+}
+
+.subscription-insight-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.subscription-insight-content strong {
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.subscription-insight-content p {
+  margin-top: 5px;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+/* -----------------------------------------------------
+   RENEWAL INTELLIGENCE
+----------------------------------------------------- */
+.subscription-renewal-intelligence {
+  margin-bottom: 22px;
+  border-radius: 18px;
+}
+
+.subscription-renewal-intelligence-header {
+  min-height: 92px;
+  padding: 18px 24px;
+}
+
+.subscription-renewal-intelligence-title {
+  gap: 15px;
+}
+
+.subscription-renewal-intelligence-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 13px;
+  font-size: 18px;
+}
+
+.subscription-renewal-smart-badge {
+  padding: 7px 11px;
+  font-size: 9px;
+}
+
+.subscription-renewal-intelligence-grid {
+  padding: 20px 24px;
+  gap: 16px;
+}
+
+.subscription-renewal-next,
+.subscription-renewal-spend,
+.subscription-renewal-urgency,
+.subscription-renewal-auto {
+  min-height: 180px;
+  padding: 20px;
+  border-radius: 15px;
+}
+
+.subscription-renewal-next h3 {
+  font-size: 22px;
+}
+
+.subscription-renewal-label {
+  font-size: 9px;
+}
+
+.subscription-renewal-next-details {
+  margin-top: 22px;
+  gap: 14px;
+}
+
+.subscription-renewal-next-details span {
+  font-size: 9px;
+}
+
+.subscription-renewal-next-details strong {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.subscription-renewal-next-status {
+  margin-top: 18px;
+  padding: 7px 10px;
+  font-size: 10px;
+}
+
+.subscription-renewal-card-heading h3 {
+  font-size: 14px;
+}
+
+.subscription-renewal-card-heading p {
+  font-size: 10px;
+}
+
+.subscription-renewal-small-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.subscription-renewal-spend-grid {
+  margin-top: 19px;
+  gap: 11px;
+}
+
+.subscription-renewal-spend-grid div {
+  padding: 12px;
+}
+
+.subscription-renewal-spend-grid span {
+  font-size: 8px;
+}
+
+.subscription-renewal-spend-grid strong {
+  font-size: 15px;
+}
+
+.subscription-renewal-spend-grid small {
+  font-size: 8.5px;
+}
+
+.subscription-renewal-urgency-list {
+  margin-top: 19px;
+  gap: 9px;
+}
+
+.renewal-urgency-item {
+  min-height: 43px;
+  padding: 0 11px;
+}
+
+.renewal-urgency-item span {
+  font-size: 10px;
+}
+
+.renewal-urgency-item strong {
+  font-size: 14px;
+}
+
+.subscription-renewal-auto-value {
+  margin-top: 19px;
+  padding: 14px;
+}
+
+.subscription-renewal-auto-value strong {
+  font-size: 29px;
+}
+
+.subscription-renewal-auto-value span {
+  font-size: 10px;
+}
+
+.subscription-renewal-auto-amount {
+  margin-top: 13px;
+  padding-top: 13px;
+}
+
+.subscription-renewal-auto-amount span {
+  font-size: 8px;
+}
+
+.subscription-renewal-auto-amount strong {
+  font-size: 15px;
+}
+
+/* =====================================================
+   RENEWAL CONTROL CENTER — COMPLETE REBUILD
+===================================================== */
+.subscription-renewal-control-center {
+  margin: 0 24px 24px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 7px 22px rgba(15, 23, 42, 0.035);
+}
+
+.subscription-renewal-control-header {
+  min-height: 78px;
+  padding: 15px 20px;
+  box-sizing: border-box;
+}
+
+.subscription-renewal-control-header h3 {
+  font-size: 16px;
+  font-weight: 850;
+  color: #273449;
+}
+
+.subscription-renewal-control-header p {
+  margin-top: 5px;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.subscription-renewal-review-btn {
+  height: 34px;
+  padding: 0 11px;
+  gap: 6px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.subscription-renewal-window-row {
+  padding: 11px 20px;
+  gap: 8px;
+  background: #fafbfe;
+}
+
+.subscription-renewal-window-row button {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.subscription-renewal-window-row button.active {
+  color: #ffffff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  box-shadow: 0 5px 13px rgba(79, 70, 229, 0.18);
+}
+
+/* CONTROL SUMMARY */
+.subscription-renewal-control-summary {
+  padding: 15px 20px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  border-bottom: 1px solid #edf1f6;
+  background: #ffffff;
+}
+
+.renewal-control-stat {
+  min-width: 0;
+  min-height: 66px;
+  padding: 11px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  border: 1px solid #e9eef5;
+  border-radius: 10px;
+  background: #fafbfe;
+}
+
+.renewal-control-stat-icon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+.renewal-control-stat-icon.blue {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.renewal-control-stat-icon.orange {
+  color: #d97706;
+  background: #fffbeb;
+}
+
+.renewal-control-stat-icon.violet {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.renewal-control-stat-icon.green {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.renewal-control-stat > div:last-child {
+  min-width: 0;
+}
+
+.renewal-control-stat span {
+  display: block;
+  color: #94a3b8;
+  font-size: 7.5px;
+  font-weight: 850;
+  letter-spacing: 0.55px;
+}
+
+.renewal-control-stat strong {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  color: #172033;
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.renewal-control-stat small {
+  display: block;
+  margin-top: 3px;
+  color: #94a3b8;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+/* CONTROL LIST */
+.subscription-renewal-control-list {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.subscription-renewal-control-item {
+  position: relative;
+  min-height: 78px;
+  padding: 12px 20px;
+  display: grid;
+  grid-template-columns: 54px minmax(180px, 1fr) minmax(145px, 180px) 100px 145px;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #edf1f6;
+  background: #ffffff;
+  transition: background 0.18s ease;
+}
+
+.subscription-renewal-control-item:last-child {
+  border-bottom: 0;
+}
+
+.subscription-renewal-control-item:hover {
+  background: #fafbfe;
+}
+
+.subscription-renewal-control-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #6366f1;
+}
+
+.subscription-renewal-control-date {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: #4f46e5;
+  background: #eef2ff;
+  text-align: center;
+}
+
+.subscription-renewal-control-date strong {
+  font-size: 17px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.subscription-renewal-control-date span {
+  margin-top: 4px;
+  color: inherit;
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.subscription-renewal-control-info {
+  min-width: 0;
+}
+
+.subscription-renewal-control-info strong {
+  display: block;
+  overflow: hidden;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.subscription-renewal-control-info span {
+  display: block;
+  margin-top: 5px;
+  overflow: hidden;
+  color: #94a3b8;
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* CONTROL STATUS — this class was missing from the old CSS */
+.subscription-renewal-control-status {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.subscription-renewal-control-status svg {
+  flex-shrink: 0;
+  font-size: 9px;
+}
+
+.subscription-renewal-control-status.upcoming {
+  color: #059669;
+}
+
+.subscription-renewal-control-status.soon,
+.subscription-renewal-control-status.tomorrow {
+  color: #d97706;
+}
+
+.subscription-renewal-control-status.today,
+.subscription-renewal-control-status.overdue {
+  color: #dc2626;
+}
+
+.subscription-renewal-control-status.none {
+  color: #64748b;
+}
+
+/* CONTROL AMOUNT */
+.subscription-renewal-control-amount {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.subscription-renewal-control-amount strong {
+  color: #172033;
+  font-size: 13px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
+.subscription-renewal-control-amount span {
+  color: #94a3b8;
+  font-size: 8px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* CONTROL ACTIONS */
+.subscription-renewal-control-actions {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.subscription-renewal-control-actions button {
+  box-sizing: border-box;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.subscription-renewal-control-actions button:first-child {
+  min-width: 92px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid #e4dcff;
+  background: #f7f3ff;
+  color: #7c3aed;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.subscription-renewal-control-actions button:first-child.auto-enabled {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.subscription-renewal-control-actions button:first-child:not(.auto-enabled) {
+  color: #64748b;
+  border-color: #dfe6ef;
+  background: #f8fafc;
+}
+
+.subscription-renewal-control-actions button:first-child svg {
+  font-size: 11px;
+}
+
+.subscription-renewal-control-actions button:last-child {
+  width: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: #f8fafc;
+  color: #94a3b8;
+}
+
+.subscription-renewal-control-actions button:last-child:hover {
+  color: #4f46e5;
+  background: #eef2ff;
+}
+
+/* EMPTY CONTROL CENTER */
+.subscription-renewal-control-empty {
+  min-height: 150px;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.subscription-renewal-control-empty svg {
+  color: #10b981;
+  font-size: 25px;
+}
+
+.subscription-renewal-control-empty strong {
+  color: #475569;
+  font-size: 11px;
+}
+
+.subscription-renewal-control-empty span {
+  font-size: 9px;
+}
+
+/* -----------------------------------------------------
+   UPCOMING RENEWAL TIMELINE — CLEAN ROWS
+----------------------------------------------------- */
+.subscription-renewal-timeline {
+  margin: 0 24px 24px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e5eaf2;
+}
+
+.subscription-renewal-timeline-header {
+  min-height: 72px;
+  padding: 0 20px;
+}
+
+.subscription-renewal-timeline-header h3 {
+  font-size: 16px;
+  font-weight: 850;
+}
+
+.subscription-renewal-timeline-header p {
+  font-size: 10px;
+}
+
+.subscription-renewal-timeline-header > span {
+  padding: 7px 10px;
+  font-size: 8px;
+}
+
+.subscription-renewal-timeline-item {
+  position: relative;
+  min-height: 76px;
+  padding: 11px 20px;
+  display: grid;
+  grid-template-columns: 50px minmax(160px, 1fr) 170px 100px 72px;
+  align-items: center;
+  gap: 15px;
+  box-sizing: border-box;
+}
+
+.subscription-renewal-timeline-item::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: transparent;
+}
+
+.subscription-renewal-timeline-date {
+  width: 46px;
+  height: 48px;
+  border-radius: 10px;
+}
+
+.subscription-renewal-timeline-date strong {
+  font-size: 17px;
+  font-weight: 850;
+}
+
+.subscription-renewal-timeline-date span {
+  font-size: 8px;
+}
+
+.subscription-renewal-timeline-info strong {
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.subscription-renewal-timeline-info span {
+  margin-top: 5px;
+  font-size: 9px;
+}
+
+.subscription-renewal-timeline-status {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.subscription-renewal-timeline-status > span {
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.subscription-renewal-timeline-status > strong {
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.subscription-renewal-auto-badge {
+  min-height: 28px;
+  padding: 5px 8px;
+  grid-column: 4;
+  justify-self: center;
+  border-radius: 7px;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.subscription-renewal-auto-badge svg {
+  font-size: 8px;
+}
+
+.subscription-renewal-timeline-actions {
+  grid-column: 5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.subscription-renewal-timeline-actions button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.subscription-renewal-timeline-actions button:hover {
+  color: #4f46e5;
+  background: #eef2ff;
+}
+
+.subscription-renewal-timeline-actions button:first-child {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.subscription-renewal-timeline-actions svg {
+  font-size: 11px;
+}
+
+/* =====================================================
+   DESKTOP / LARGE SCREEN
+===================================================== */
+@media (min-width: 1201px) {
+  .subscription-overview-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .subscription-renewal-intelligence-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =====================================================
+   TABLET
+===================================================== */
+@media (max-width: 1100px) {
+  .subscription-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .subscription-renewal-control-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .subscription-renewal-control-item {
+    grid-template-columns: 52px minmax(150px, 1fr) 145px 95px 125px;
+    gap: 11px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .subscription-renewal-timeline-item {
+    grid-template-columns: 50px minmax(130px, 1fr) 145px 95px 68px;
+    gap: 10px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* =====================================================
+   SMALL LAPTOP / TABLET
+===================================================== */
+@media (max-width: 900px) {
+  .subscription-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .subscription-renewal-control-item {
+    grid-template-columns: 50px minmax(0, 1fr) 125px 90px;
+  }
+
+  .subscription-renewal-control-actions {
+    grid-column: 4;
+  }
+
+  .subscription-renewal-timeline-item {
+    grid-template-columns: 48px minmax(0, 1fr) 125px 70px;
+  }
+
+  .subscription-renewal-auto-badge {
+    grid-column: 4;
+  }
+
+  .subscription-renewal-timeline-actions {
+    grid-column: 4;
+  }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+@media (max-width: 768px) {
+  .subscription-overview-header,
+  .subscription-health-header,
+  .subscription-insights-header,
+  .subscription-renewal-intelligence-header {
+    min-height: 78px;
+    padding: 14px 15px;
+  }
+
+  .subscription-overview-title h2,
+  .subscription-health-title h2,
+  .subscription-insights-title h2,
+  .subscription-renewal-intelligence-title h2 {
+    font-size: 17px !important;
+  }
+
+  .subscription-overview-title p,
+  .subscription-health-title p,
+  .subscription-insights-title p,
+  .subscription-renewal-intelligence-title p {
+    font-size: 9px !important;
+  }
+
+  .subscription-overview-grid {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .subscription-overview-card {
+    min-height: 116px;
+    padding: 15px;
+  }
+
+  .subscription-health-header,
+  .subscription-insights-header {
+    padding: 14px 15px;
+  }
+
+  .subscription-health-progress {
+    padding: 16px 15px 0;
+  }
+
+  .subscription-health-metrics {
+    margin: 16px 15px 18px;
+  }
+
+  .subscription-health-metrics strong {
+    font-size: 17px;
+  }
+
+  .subscription-insights-list {
+    padding: 5px 15px 12px;
+  }
+
+  .subscription-insight {
+    padding: 12px 0;
+  }
+
+  .subscription-insight-content strong {
+    font-size: 11px;
+  }
+
+  .subscription-insight-content p {
+    font-size: 8.5px;
+  }
+
+  .subscription-renewal-intelligence-grid {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .subscription-renewal-next,
+  .subscription-renewal-spend,
+  .subscription-renewal-urgency,
+  .subscription-renewal-auto {
+    min-height: 0;
+  }
+
+  .subscription-renewal-control-center {
+    margin: 0 14px 14px;
+  }
+
+  .subscription-renewal-control-header {
+    min-height: 0;
+    padding: 14px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .subscription-renewal-window-row {
+    padding: 10px 14px;
+  }
+
+  .subscription-renewal-control-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 12px 14px;
+  }
+
+  .renewal-control-stat {
+    min-height: 62px;
+    padding: 9px;
+  }
+
+  .renewal-control-stat-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .renewal-control-stat strong {
+    font-size: 13px;
+  }
+
+  .subscription-renewal-control-item {
+    min-height: 0;
+    padding: 12px 14px;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .subscription-renewal-control-status {
+    grid-column: 2 / -1;
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  .subscription-renewal-control-amount {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .subscription-renewal-control-actions {
+    grid-column: 2 / -1;
+    grid-row: 3;
+    justify-content: flex-start;
+    padding-top: 2px;
+  }
+
+  .subscription-renewal-timeline {
+    margin: 0 14px 14px;
+  }
+
+  .subscription-renewal-timeline-header {
+    min-height: 64px;
+    padding: 12px 14px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .subscription-renewal-timeline-item {
+    min-height: 0;
+    padding: 12px 14px;
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .subscription-renewal-timeline-status {
+    grid-column: 2;
+    grid-row: 2;
+    align-items: flex-start;
+  }
+
+  .subscription-renewal-auto-badge {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: start;
+  }
+
+  .subscription-renewal-timeline-actions {
+    grid-column: 2;
+    grid-row: 4;
+    justify-content: flex-start;
+  }
+}
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+@media (max-width: 480px) {
+  .subscription-overview-card {
+    min-height: 108px;
+  }
+
+  .subscription-overview-card-top span {
+    font-size: 12px !important;
+  }
+
+  .subscription-overview-card-top > strong {
+    font-size: 16px;
+  }
+
+  .subscription-renewal-control-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .subscription-renewal-next-details {
+    grid-template-columns: 1fr;
+  }
+
+  .subscription-renewal-urgency-list {
+    grid-template-columns: 1fr;
+  }
+
+  .subscription-renewal-control-item {
+    grid-template-columns: 46px minmax(0, 1fr);
+  }
+
+  .subscription-renewal-control-amount {
+    grid-column: 2;
+    grid-row: 1;
+    align-items: flex-start;
+  }
+
+  .subscription-renewal-control-status {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .subscription-renewal-control-actions {
+    grid-column: 2;
+    grid-row: 3;
+  }
+}
+
+/* -----------------------------------------------------
+   REDUCED MOTION
+----------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .subscription-renewal-control-item,
+  .subscription-renewal-control-actions button,
+  .subscription-renewal-timeline-actions button {
+    transition: none;
+  }
+}
+
+
+/* =========================================================
+   FINAL UI REPLACEMENT OVERRIDES
+   Fixes:
+   - Spending & Renewal Overview typography
+   - Subscription Health typography
+   - Smart Insights typography
+   - Renewal Intelligence typography
+   - Renewal Control Center layout
+   - My Subscriptions cards
+   - Upcoming Payments panel
+   - Auto-renew / action controls
+   - Better desktop spacing + responsive behavior
+========================================================= */
+
+/* ---------------------------------------------------------
+   GLOBAL SUBSCRIPTION SECTION TYPOGRAPHY
+--------------------------------------------------------- */
+.subscription-overview-title h2,
+.subscription-health-title h2,
+.subscription-insights-title h2,
+.subscription-renewal-intelligence-title h2 {
+  font-size: 24px !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.45px;
+}
+
+.subscription-overview-title p,
+.subscription-health-title p,
+.subscription-insights-title p,
+.subscription-renewal-intelligence-title p {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+.subscription-overview-header,
+.subscription-health-header,
+.subscription-insights-header,
+.subscription-renewal-intelligence-header {
+  min-height: 96px !important;
+  padding: 20px 24px !important;
+}
+
+.subscription-overview-main-icon,
+.subscription-health-icon,
+.subscription-insights-main-icon,
+.subscription-renewal-intelligence-icon {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 14px !important;
+  font-size: 18px !important;
+}
+
+/* ---------------------------------------------------------
+   SPENDING & RENEWAL OVERVIEW
+--------------------------------------------------------- */
+.subscription-overview-section {
+  margin-bottom: 24px !important;
+  border-radius: 20px !important;
+}
+
+.subscription-overview-grid {
+  padding: 22px 24px !important;
+  gap: 18px !important;
+}
+
+.subscription-overview-card {
+  min-height: 148px !important;
+  padding: 22px !important;
+  gap: 16px !important;
+  border-radius: 16px !important;
+}
+
+.subscription-overview-card-top span {
+  font-size: 15px !important;
+  line-height: 1.3 !important;
+}
+
+.subscription-overview-card-top small {
+  margin-top: 6px !important;
+  font-size: 11px !important;
+}
+
+.subscription-overview-card-top > strong {
+  font-size: 21px !important;
+  line-height: 1.2 !important;
+}
+
+.subscription-overview-content > p {
+  margin-top: 16px !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+.subscription-overview-icon {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 12px !important;
+  font-size: 17px !important;
+}
+
+/* ---------------------------------------------------------
+   SUBSCRIPTION HEALTH
+--------------------------------------------------------- */
+.subscription-health-section {
+  gap: 24px !important;
+  margin-bottom: 24px !important;
+}
+
+.subscription-health-card,
+.subscription-insights-card {
+  border-radius: 20px !important;
+}
+
+.subscription-health-score strong {
+  font-size: 34px !important;
+}
+
+.subscription-health-score span {
+  font-size: 12px !important;
+}
+
+.subscription-health-progress {
+  padding: 22px 24px 0 !important;
+}
+
+.subscription-health-progress-track {
+  height: 10px !important;
+}
+
+.subscription-health-status-row {
+  margin-top: 11px !important;
+}
+
+.subscription-health-status-row strong {
+  font-size: 13px !important;
+}
+
+.subscription-health-status-row span {
+  font-size: 11px !important;
+}
+
+.subscription-health-metrics {
+  margin: 22px 24px 24px !important;
+  padding-top: 18px !important;
+}
+
+.subscription-health-metrics span {
+  font-size: 10px !important;
+}
+
+.subscription-health-metrics strong {
+  margin-top: 7px !important;
+  font-size: 20px !important;
+}
+
+/* ---------------------------------------------------------
+   SMART INSIGHTS
+--------------------------------------------------------- */
+.subscription-insights-list {
+  padding: 8px 24px 20px !important;
+}
+
+.subscription-insight {
+  padding: 17px 0 !important;
+  gap: 13px !important;
+}
+
+.subscription-insight-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+}
+
+.subscription-insight-content strong {
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+}
+
+.subscription-insight-content p {
+  margin-top: 5px !important;
+  font-size: 11px !important;
+  line-height: 1.55 !important;
+}
+
+.subscription-insights-badge {
+  padding: 7px 11px !important;
+  font-size: 9px !important;
+}
+
+/* ---------------------------------------------------------
+   RENEWAL INTELLIGENCE
+--------------------------------------------------------- */
+.subscription-renewal-intelligence {
+  margin-bottom: 24px !important;
+  border-radius: 20px !important;
+}
+
+.subscription-renewal-intelligence-grid {
+  padding: 22px 24px !important;
+  gap: 18px !important;
+}
+
+.subscription-renewal-next,
+.subscription-renewal-spend,
+.subscription-renewal-urgency,
+.subscription-renewal-auto {
+  padding: 22px !important;
+  border-radius: 16px !important;
+}
+
+.subscription-renewal-label {
+  font-size: 10px !important;
+}
+
+.subscription-renewal-next h3 {
+  margin-top: 7px !important;
+  font-size: 25px !important;
+}
+
+.subscription-renewal-next-icon {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 12px !important;
+  font-size: 16px !important;
+}
+
+.subscription-renewal-next-details {
+  margin-top: 24px !important;
+  gap: 18px !important;
+}
+
+.subscription-renewal-next-details span {
+  font-size: 10px !important;
+}
+
+.subscription-renewal-next-details strong {
+  margin-top: 6px !important;
+  font-size: 13px !important;
+}
+
+.subscription-renewal-next-status {
+  margin-top: 19px !important;
+  min-height: 36px !important;
+  padding: 7px 11px !important;
+  border-radius: 9px !important;
+  font-size: 10px !important;
+}
+
+.subscription-renewal-card-heading h3 {
+  font-size: 15px !important;
+}
+
+.subscription-renewal-card-heading p {
+  font-size: 10px !important;
+}
+
+.subscription-renewal-small-icon {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 11px !important;
+}
+
+.subscription-renewal-spend-grid {
+  margin-top: 20px !important;
+  gap: 12px !important;
+}
+
+.subscription-renewal-spend-grid div {
+  padding: 13px !important;
+  border-radius: 10px !important;
+}
+
+.subscription-renewal-spend-grid span {
+  font-size: 8px !important;
+}
+
+.subscription-renewal-spend-grid strong {
+  font-size: 16px !important;
+}
+
+.subscription-renewal-spend-grid small {
+  font-size: 9px !important;
+}
+
+.subscription-renewal-urgency-list {
+  margin-top: 20px !important;
+  gap: 10px !important;
+}
+
+.renewal-urgency-item {
+  min-height: 46px !important;
+  padding: 0 12px !important;
+}
+
+.renewal-urgency-item span {
+  font-size: 10px !important;
+}
+
+.renewal-urgency-item strong {
+  font-size: 14px !important;
+}
+
+.subscription-renewal-auto-value {
+  margin-top: 20px !important;
+  padding: 15px !important;
+}
+
+.subscription-renewal-auto-value strong {
+  font-size: 29px !important;
+}
+
+.subscription-renewal-auto-value span {
+  font-size: 10px !important;
+}
+
+.subscription-renewal-auto-amount {
+  margin-top: 13px !important;
+  padding-top: 13px !important;
+}
+
+.subscription-renewal-auto-amount span {
+  font-size: 8px !important;
+}
+
+.subscription-renewal-auto-amount strong {
+  font-size: 16px !important;
+}
+
+/* ---------------------------------------------------------
+   RENEWAL CONTROL CENTER — COMPLETE DESKTOP FIX
+--------------------------------------------------------- */
+.subscription-renewal-control-center {
+  margin: 0 24px 24px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+}
+
+.subscription-renewal-control-header {
+  min-height: 84px !important;
+  padding: 18px 22px !important;
+}
+
+.subscription-renewal-control-header h3 {
+  font-size: 17px !important;
+  line-height: 1.3 !important;
+}
+
+.subscription-renewal-control-header p {
+  margin-top: 5px !important;
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+}
+
+.subscription-renewal-control-summary {
+  padding: 16px 22px !important;
+  gap: 12px !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.renewal-control-stat {
+  min-height: 76px !important;
+  padding: 12px 14px !important;
+  gap: 12px !important;
+  border-radius: 12px !important;
+}
+
+.renewal-control-stat-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 10px !important;
+  font-size: 14px !important;
+}
+
+.renewal-control-stat span {
+  font-size: 9px !important;
+}
+
+.renewal-control-stat strong {
+  margin-top: 5px !important;
+  font-size: 17px !important;
+}
+
+.renewal-control-stat small {
+  margin-top: 4px !important;
+  font-size: 9px !important;
+}
+
+.subscription-renewal-window-row {
+  padding: 14px 22px !important;
+  gap: 9px !important;
+}
+
+.subscription-renewal-window-row button {
+  height: 36px !important;
+  padding: 0 14px !important;
+  border-radius: 8px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+}
+
+/* Each control row now has a predictable 5-column structure:
+   date | subscription | status | amount | actions */
+.subscription-renewal-control-item {
+  min-height: 88px !important;
+  padding: 14px 22px !important;
+  grid-template-columns: 58px minmax(240px, 1fr) 155px 110px 150px !important;
+  align-items: center !important;
+  gap: 18px !important;
+  box-sizing: border-box !important;
+}
+
+.subscription-renewal-control-date {
+  width: 52px !important;
+  height: 54px !important;
+  border-radius: 11px !important;
+}
+
+.subscription-renewal-control-date strong {
+  font-size: 18px !important;
+}
+
+.subscription-renewal-control-date span {
+  margin-top: 5px !important;
+  font-size: 9px !important;
+}
+
+.subscription-renewal-control-info {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.subscription-renewal-control-info strong {
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+}
+
+.subscription-renewal-control-info span {
+  margin-top: 5px !important;
+  font-size: 10px !important;
+  line-height: 1.4 !important;
+}
+
+.subscription-renewal-control-status {
+  justify-self: start !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+}
+
+.subscription-renewal-control-status svg {
+  font-size: 10px !important;
+}
+
+.subscription-renewal-control-amount {
+  align-items: flex-end !important;
+  justify-self: end !important;
+  gap: 4px !important;
+}
+
+.subscription-renewal-control-amount strong {
+  font-size: 15px !important;
+}
+
+.subscription-renewal-control-amount span {
+  font-size: 9px !important;
+}
+
+.subscription-renewal-control-actions {
+  justify-content: flex-end !important;
+  gap: 7px !important;
+}
+
+.subscription-renewal-control-actions button {
+  height: 36px !important;
+  border-radius: 9px !important;
+}
+
+.subscription-renewal-control-actions button:first-child {
+  min-width: 112px !important;
+  padding: 0 11px !important;
+  font-size: 9px !important;
+}
+
+.subscription-renewal-control-actions button:first-child svg {
+  font-size: 11px !important;
+}
+
+.subscription-renewal-control-actions button:last-child {
+  width: 36px !important;
+  min-width: 36px !important;
+}
+
+/* ---------------------------------------------------------
+   RENEWAL TIMELINE — CLEAN DESKTOP ALIGNMENT
+--------------------------------------------------------- */
+.subscription-renewal-timeline {
+  margin: 0 24px 24px !important;
+  border-radius: 18px !important;
+}
+
+.subscription-renewal-timeline-header {
+  min-height: 76px !important;
+  padding: 0 20px !important;
+}
+
+.subscription-renewal-timeline-header h3 {
+  font-size: 16px !important;
+}
+
+.subscription-renewal-timeline-header p {
+  font-size: 10px !important;
+}
+
+.subscription-renewal-timeline-header > span {
+  font-size: 9px !important;
+}
+
+.subscription-renewal-timeline-item {
+  min-height: 88px !important;
+  padding: 14px 20px !important;
+  grid-template-columns: 54px minmax(220px, 1fr) 155px 115px 85px !important;
+  gap: 18px !important;
+}
+
+.subscription-renewal-timeline-date {
+  width: 50px !important;
+  height: 54px !important;
+  border-radius: 11px !important;
+}
+
+.subscription-renewal-timeline-date strong {
+  font-size: 18px !important;
+}
+
+.subscription-renewal-timeline-date span {
+  font-size: 9px !important;
+}
+
+.subscription-renewal-timeline-info strong {
+  font-size: 14px !important;
+}
+
+.subscription-renewal-timeline-info span {
+  margin-top: 5px !important;
+  font-size: 10px !important;
+}
+
+.subscription-renewal-timeline-status > span {
+  font-size: 9px !important;
+}
+
+.subscription-renewal-timeline-status > strong {
+  margin-top: 5px !important;
+  font-size: 14px !important;
+}
+
+.subscription-renewal-auto-badge {
+  min-height: 30px !important;
+  padding: 6px 9px !important;
+  font-size: 8px !important;
+}
+
+.subscription-renewal-timeline-actions {
+  grid-column: 5 !important;
+  justify-content: flex-end !important;
+  gap: 6px !important;
+}
+
+.subscription-renewal-timeline-actions button {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 9px !important;
+}
+
+/* ---------------------------------------------------------
+   MY SUBSCRIPTIONS — COMPLETE CARD FIX
+--------------------------------------------------------- */
+.subscription-list {
+  width: 100% !important;
+}
+
+.subscription-card {
+  min-height: 210px !important;
+  padding: 24px !important;
+  gap: 18px !important;
+  box-sizing: border-box !important;
+}
+
+.subscription-card-icon {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 14px !important;
+  font-size: 18px !important;
+}
+
+.subscription-card-title h3 {
+  font-size: 19px !important;
+  line-height: 1.25 !important;
+}
+
+.subscription-card-title > div:first-child > span {
+  margin-top: 6px !important;
+  font-size: 12px !important;
+}
+
+.subscription-status {
+  padding: 7px 11px !important;
+  border-radius: 20px !important;
+  font-size: 11px !important;
+}
+
+.subscription-card-details {
+  margin-top: 21px !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+}
+
+.subscription-card-details span {
+  font-size: 10px !important;
+}
+
+.subscription-card-details strong {
+  margin-top: 6px !important;
+  font-size: 15px !important;
+}
+
+.subscription-card-bottom {
+  margin-top: 19px !important;
+  padding-top: 15px !important;
+  gap: 14px !important;
+}
+
+.subscription-renewal-info {
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+}
+
+.subscription-days {
+  min-height: 30px !important;
+  padding: 5px 10px !important;
+  border-radius: 8px !important;
+  font-size: 11px !important;
+}
+
+.subscription-auto-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 30px !important;
+  padding: 5px 10px !important;
+  border: 1px solid #e4dcff !important;
+  border-radius: 8px !important;
+  color: #7c3aed !important;
+  background: #f7f3ff !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+}
+
+/* If auto-renew text is rendered inside a button, remove browser-default styling. */
+.subscription-card-bottom button {
+  font-family: inherit !important;
+}
+
+.subscription-card-bottom button.subscription-auto-label,
+.subscription-card-bottom .subscription-auto-label button {
+  min-height: 30px !important;
+  padding: 5px 10px !important;
+  border: 1px solid #e4dcff !important;
+  border-radius: 8px !important;
+  color: #7c3aed !important;
+  background: #f7f3ff !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  box-shadow: none !important;
+}
+
+.subscription-card-actions {
+  gap: 7px !important;
+}
+
+.subscription-card-actions button {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 9px !important;
+  font-size: 13px !important;
+}
+
+/* ---------------------------------------------------------
+   UPCOMING PAYMENTS — COMPLETE PANEL FIX
+--------------------------------------------------------- */
+.subscription-upcoming-panel {
+  position: sticky !important;
+  top: 20px !important;
+  overflow: hidden !important;
+}
+
+.upcoming-payment-list {
+  width: 100% !important;
+}
+
+.upcoming-payment {
+  min-height: 94px !important;
+  padding: 16px 18px !important;
+  gap: 15px !important;
+  box-sizing: border-box !important;
+}
+
+.upcoming-payment-date {
+  width: 54px !important;
+  height: 56px !important;
+  border-radius: 11px !important;
+}
+
+.upcoming-payment-date strong {
+  font-size: 20px !important;
+}
+
+.upcoming-payment-date span {
+  margin-top: 5px !important;
+  font-size: 10px !important;
+}
+
+.upcoming-payment-info strong {
+  font-size: 15px !important;
+  line-height: 1.3 !important;
+}
+
+.upcoming-renewal-status {
+  margin-top: 5px !important;
+  font-size: 11px !important;
+  line-height: 1.3 !important;
+}
+
+.upcoming-payment-amount {
+  font-size: 15px !important;
+}
+
+/* ---------------------------------------------------------
+   LARGE DESKTOP
+--------------------------------------------------------- */
+@media (min-width: 1201px) {
+  .subscription-overview-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .subscription-renewal-intelligence-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .subscription-renewal-control-item {
+    grid-template-columns: 58px minmax(300px, 1fr) 165px 115px 150px !important;
+  }
+
+  .subscription-renewal-timeline-item {
+    grid-template-columns: 54px minmax(300px, 1fr) 165px 115px 85px !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   TABLET
+--------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .subscription-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .subscription-renewal-control-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .subscription-renewal-control-item {
+    grid-template-columns: 54px minmax(180px, 1fr) 130px 100px 125px !important;
+    gap: 12px !important;
+  }
+
+  .subscription-renewal-timeline-item {
+    grid-template-columns: 50px minmax(180px, 1fr) 130px 100px 70px !important;
+    gap: 12px !important;
+  }
+
+  .subscription-card-details {
+    gap: 12px !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   SMALL LAPTOP
+--------------------------------------------------------- */
+@media (max-width: 900px) {
+  .subscription-overview-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .subscription-health-section {
+    grid-template-columns: 1fr !important;
+  }
+
+  .subscription-renewal-control-item {
+    grid-template-columns: 50px minmax(0, 1fr) 120px 100px !important;
+    gap: 11px !important;
+  }
+
+  .subscription-renewal-control-actions {
+    grid-column: 4 !important;
+  }
+
+  .subscription-renewal-timeline-item {
+    grid-template-columns: 48px minmax(0, 1fr) 120px 70px !important;
+  }
+
+  .subscription-renewal-auto-badge {
+    grid-column: 4 !important;
+  }
+
+  .subscription-renewal-timeline-actions {
+    grid-column: 4 !important;
+  }
+
+  .subscription-card {
+    padding: 20px !important;
+  }
+
+  .subscription-card-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    row-gap: 16px !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+--------------------------------------------------------- */
+@media (max-width: 768px) {
+  .subscription-overview-header,
+  .subscription-health-header,
+  .subscription-insights-header,
+  .subscription-renewal-intelligence-header {
+    min-height: 82px !important;
+    padding: 16px !important;
+  }
+
+  .subscription-overview-title h2,
+  .subscription-health-title h2,
+  .subscription-insights-title h2,
+  .subscription-renewal-intelligence-title h2 {
+    font-size: 19px !important;
+  }
+
+  .subscription-overview-title p,
+  .subscription-health-title p,
+  .subscription-insights-title p,
+  .subscription-renewal-intelligence-title p {
+    font-size: 10px !important;
+  }
+
+  .subscription-overview-grid {
+    grid-template-columns: 1fr !important;
+    padding: 16px !important;
+  }
+
+  .subscription-overview-card {
+    min-height: 128px !important;
+    padding: 18px !important;
+  }
+
+  .subscription-health-section {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .subscription-health-progress {
+    padding: 18px 16px 0 !important;
+  }
+
+  .subscription-health-metrics {
+    margin: 18px 16px 20px !important;
+  }
+
+  .subscription-insights-list {
+    padding: 6px 16px 16px !important;
+  }
+
+  .subscription-insight {
+    padding: 14px 0 !important;
+  }
+
+  .subscription-insight-content strong {
+    font-size: 13px !important;
+  }
+
+  .subscription-insight-content p {
+    font-size: 10px !important;
+  }
+
+  .subscription-renewal-intelligence-grid {
+    grid-template-columns: 1fr !important;
+    padding: 16px !important;
+  }
+
+  .subscription-renewal-control-center {
+    margin: 0 14px 14px !important;
+  }
+
+  .subscription-renewal-control-header {
+    min-height: 0 !important;
+    padding: 16px !important;
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .subscription-renewal-window-row {
+    padding: 11px 14px !important;
+  }
+
+  .subscription-renewal-control-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    padding: 13px 14px !important;
+  }
+
+  .renewal-control-stat {
+    min-height: 66px !important;
+    padding: 10px !important;
+  }
+
+  .renewal-control-stat-icon {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .renewal-control-stat strong {
+    font-size: 14px !important;
+  }
+
+  .subscription-renewal-control-item {
+    min-height: 0 !important;
+    padding: 14px !important;
+    grid-template-columns: 50px minmax(0, 1fr) auto !important;
+    gap: 10px !important;
+  }
+
+  .subscription-renewal-control-status {
+    grid-column: 2 / -1 !important;
+    grid-row: 2 !important;
+    justify-self: start !important;
+  }
+
+  .subscription-renewal-control-amount {
+    grid-column: 3 !important;
+    grid-row: 1 !important;
+  }
+
+  .subscription-renewal-control-actions {
+    grid-column: 2 / -1 !important;
+    grid-row: 3 !important;
+    justify-content: flex-start !important;
+    padding-top: 3px !important;
+  }
+
+  .subscription-renewal-timeline {
+    margin: 0 14px 14px !important;
+  }
+
+  .subscription-renewal-timeline-item {
+    min-height: 0 !important;
+    padding: 14px !important;
+    grid-template-columns: 48px minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .subscription-renewal-timeline-status {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+    align-items: flex-start !important;
+  }
+
+  .subscription-renewal-auto-badge {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+    justify-self: start !important;
+  }
+
+  .subscription-renewal-timeline-actions {
+    grid-column: 2 !important;
+    grid-row: 4 !important;
+    justify-content: flex-start !important;
+  }
+
+  .subscription-card {
+    min-height: 0 !important;
+    padding: 18px !important;
+    gap: 13px !important;
+  }
+
+  .subscription-card-title {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  .subscription-card-title h3 {
+    font-size: 17px !important;
+  }
+
+  .subscription-card-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    margin-top: 16px !important;
+  }
+
+  .subscription-card-bottom {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .subscription-card-actions {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+
+  .upcoming-payment {
+    min-height: 88px !important;
+    padding: 13px 15px !important;
+  }
+
+  .upcoming-payment-date {
+    width: 50px !important;
+    height: 52px !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   VERY SMALL MOBILE
+--------------------------------------------------------- */
+@media (max-width: 480px) {
+  .subscription-overview-card {
+    min-height: 116px !important;
+  }
+
+  .subscription-overview-card-top span {
+    font-size: 13px !important;
+  }
+
+  .subscription-overview-card-top > strong {
+    font-size: 18px !important;
+  }
+
+  .subscription-renewal-control-summary {
+    grid-template-columns: 1fr !important;
+  }
+
+  .subscription-renewal-next-details {
+    grid-template-columns: 1fr !important;
+  }
+
+  .subscription-renewal-urgency-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .subscription-renewal-control-item {
+    grid-template-columns: 46px minmax(0, 1fr) !important;
+  }
+
+  .subscription-renewal-control-amount {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    align-items: flex-start !important;
+  }
+
+  .subscription-renewal-control-status {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+  }
+
+  .subscription-renewal-control-actions {
+    grid-column: 2 !important;
+    grid-row: 3 !important;
+  }
+
+  .subscription-card-details {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .upcoming-payment {
+    gap: 10px !important;
+  }
+
+  .upcoming-payment-amount {
+    font-size: 14px !important;
+  }
+}

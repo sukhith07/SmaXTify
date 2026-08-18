@@ -1,0 +1,133 @@
+/* ===========================================
+   Budget Distribution Chart
+=========================================== */
+
+.budget-pie-card{
+
+    background:#ffffff;
+
+    border-radius:22px;
+
+    padding:25px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    border:1px solid #e2e8f0;
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.budget-pie-card h2{
+
+    margin:0 0 20px;
+
+    text-align:center;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+/* ===========================================
+   Chart Container
+=========================================== */
+
+.budget-chart-container{
+
+    position:relative;
+
+    width:100%;
+
+    height:320px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+/* Make Chart.js fit the container */
+
+.budget-chart-container canvas{
+
+    max-width:100% !important;
+
+    max-height:320px !important;
+
+}
+
+/* ===========================================
+   Empty State
+=========================================== */
+
+.budget-chart-empty{
+
+    height:320px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+}
+
+.budget-chart-empty h3{
+
+    margin-bottom:10px;
+
+    color:#0f172a;
+
+    font-size:22px;
+
+}
+
+.budget-chart-empty p{
+
+    color:#64748b;
+
+    font-size:15px;
+
+    max-width:280px;
+
+    line-height:1.6;
+
+}
+
+/* ===========================================
+   Responsive
+=========================================== */
+
+@media (max-width:768px){
+
+    .budget-chart-container{
+
+        height:260px;
+
+    }
+
+    .budget-chart-container canvas{
+
+        max-height:260px !important;
+
+    }
+
+    .budget-chart-empty{
+
+        height:260px;
+
+    }
+
+}

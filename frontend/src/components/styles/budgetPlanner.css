@@ -1,0 +1,349 @@
+/* ===========================================
+   Budget Planner Page
+=========================================== */
+
+.budget-page{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:30px;
+
+    animation:fadeIn .5s ease;
+
+}
+
+/* ===========================================
+   Analytics
+=========================================== */
+
+.budget-analytics{
+
+    display:grid;
+
+    grid-template-columns:360px 1fr;
+
+    gap:25px;
+
+    margin:30px 0;
+
+    align-items:start;
+
+}
+
+/* ===========================================
+   Category Cards
+=========================================== */
+
+.budget-cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+
+    gap:25px;
+
+    margin:30px 0;
+
+}
+
+/* ===========================================
+   Empty State
+=========================================== */
+
+.budget-empty{
+
+    background:#ffffff;
+
+    border-radius:22px;
+
+    padding:60px;
+
+    text-align:center;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    border:1px solid #e2e8f0;
+
+}
+
+.budget-empty h2{
+
+    margin-bottom:15px;
+
+    color:#0f172a;
+
+    font-size:28px;
+
+}
+
+.budget-empty p{
+
+    color:#64748b;
+
+    font-size:16px;
+
+    max-width:550px;
+
+    margin:auto;
+
+    line-height:1.7;
+
+}
+
+/* ===========================================
+   Budget Input Card
+=========================================== */
+
+.budget-input-card{
+
+    background:#ffffff;
+
+    border-radius:22px;
+
+    padding:28px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    border:1px solid #e2e8f0;
+
+}
+
+.budget-input-card h3{
+
+    margin:0 0 25px;
+
+    color:#0f172a;
+
+    font-size:22px;
+
+}
+
+/* ===========================================
+   Budget Input Row
+=========================================== */
+
+.budget-input-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:18px;
+
+    padding:16px 18px;
+
+    border-radius:14px;
+
+    background:#f8fafc;
+
+    transition:.3s;
+
+}
+
+.budget-input-row:hover{
+
+    background:#eef4ff;
+
+}
+
+.budget-input-row span{
+
+    font-size:16px;
+
+    font-weight:600;
+
+    color:#334155;
+
+}
+
+.budget-input-row input{
+
+    width:180px;
+
+    height:48px;
+
+    padding:0 15px;
+
+    border:2px solid #e2e8f0;
+
+    border-radius:12px;
+
+    outline:none;
+
+    background:#fff;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.budget-input-row input:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 0 4px rgba(37,99,235,.12);
+
+}
+
+/* ===========================================
+   Save Button
+=========================================== */
+
+.budget-save-btn{
+
+    width:100%;
+
+    height:55px;
+
+    margin-top:25px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:linear-gradient(135deg,#2563eb,#7c3aed);
+
+    color:#fff;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.budget-save-btn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 15px 30px rgba(37,99,235,.25);
+
+}
+
+.budget-save-btn:disabled{
+
+    opacity:.7;
+
+    cursor:not-allowed;
+
+}
+
+/* ===========================================
+   Animation
+=========================================== */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ===========================================
+   Responsive
+=========================================== */
+
+@media(max-width:1100px){
+
+    .budget-analytics{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:992px){
+
+    .budget-input-row{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+    .budget-input-row input{
+
+        width:100%;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .budget-cards{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .budget-input-card{
+
+        padding:20px;
+
+    }
+
+}
+
+@media(max-width:576px){
+
+    .budget-empty{
+
+        padding:35px 20px;
+
+    }
+
+    .budget-empty h2{
+
+        font-size:22px;
+
+    }
+
+    .budget-empty p{
+
+        font-size:14px;
+
+    }
+
+    .budget-save-btn{
+
+        font-size:15px;
+
+    }
+
+}

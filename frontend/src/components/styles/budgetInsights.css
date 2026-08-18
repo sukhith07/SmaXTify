@@ -1,0 +1,175 @@
+/* ===========================================
+   Budget Insights
+=========================================== */
+
+.budget-insights{
+
+    background:#ffffff;
+
+    border-radius:22px;
+
+    padding:28px;
+
+    margin-top:30px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    border:1px solid rgba(226,232,240,.8);
+
+}
+
+.budget-insights-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:25px;
+
+}
+
+.budget-insights-title svg{
+
+    color:#f59e0b;
+
+    font-size:26px;
+
+}
+
+.budget-insights-title h2{
+
+    margin:0;
+
+    color:#0f172a;
+
+    font-size:24px;
+
+    font-weight:700;
+
+}
+
+/* ===========================================
+   Insight Card
+=========================================== */
+
+.insight-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:18px 20px;
+
+    border-radius:16px;
+
+    margin-bottom:16px;
+
+    transition:.3s;
+
+    cursor:pointer;
+
+}
+
+.insight-card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+/* Success */
+
+.insight-card.success{
+
+    background:#ecfdf5;
+
+    border-left:6px solid #22c55e;
+
+}
+
+.insight-card.success svg{
+
+    color:#22c55e;
+
+}
+
+/* Warning */
+
+.insight-card.warning{
+
+    background:#fff7ed;
+
+    border-left:6px solid #f59e0b;
+
+}
+
+.insight-card.warning svg{
+
+    color:#f59e0b;
+
+}
+
+/* Danger */
+
+.insight-card.danger{
+
+    background:#fef2f2;
+
+    border-left:6px solid #ef4444;
+
+}
+
+.insight-card.danger svg{
+
+    color:#ef4444;
+
+}
+
+.insight-card svg{
+
+    font-size:24px;
+
+    flex-shrink:0;
+
+}
+
+.insight-card span{
+
+    font-size:16px;
+
+    font-weight:600;
+
+    color:#334155;
+
+    line-height:1.5;
+
+}
+
+/* ===========================================
+   Responsive
+=========================================== */
+
+@media(max-width:768px){
+
+    .budget-insights{
+
+        padding:20px;
+
+    }
+
+    .budget-insights-title h2{
+
+        font-size:20px;
+
+    }
+
+    .insight-card{
+
+        align-items:flex-start;
+
+    }
+
+}

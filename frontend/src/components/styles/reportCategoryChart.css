@@ -1,0 +1,332 @@
+/* ==========================================================
+   REPORT CATEGORY CHART
+========================================================== */
+
+.report-chart-card {
+    margin-top: 24px;
+
+    padding: 24px;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.06);
+
+    animation: reportChartFade 0.45s ease;
+}
+
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.report-chart-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+
+.report-chart-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+}
+
+
+.report-chart-icon {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #ede9fe
+        );
+
+    color: #4f46e5;
+}
+
+
+.report-chart-icon svg {
+    font-size: 18px;
+}
+
+
+.report-chart-title h2 {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 18px;
+
+    font-weight: 800;
+}
+
+
+.report-chart-title p {
+    margin: 4px 0 0;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+
+    font-weight: 500;
+}
+
+
+/* ==========================================================
+   TOTAL
+========================================================== */
+
+.report-chart-total {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 3px;
+}
+
+
+.report-chart-total span {
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+.report-chart-total strong {
+    color: #0f172a;
+
+    font-size: 18px;
+
+    font-weight: 800;
+}
+
+
+/* ==========================================================
+   DOUGHNUT
+========================================================== */
+
+.report-doughnut-wrapper {
+    position: relative;
+
+    width: 100%;
+
+    max-width: 430px;
+
+    height: 360px;
+
+    margin: 0 auto;
+}
+
+
+.report-doughnut-center {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(
+        -50%,
+        -50%
+    );
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    pointer-events: none;
+}
+
+
+.report-doughnut-center span {
+    color: #94a3b8;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+.report-doughnut-center strong {
+    margin-top: 4px;
+
+    color: #0f172a;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+
+/* ==========================================================
+   EMPTY STATE
+========================================================== */
+
+.report-chart-empty {
+    min-height: 300px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+.report-chart-empty-icon {
+    width: 62px;
+    height: 62px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 16px;
+
+    border-radius: 18px;
+
+    background: #f1f5f9;
+
+    color: #94a3b8;
+
+    font-size: 25px;
+}
+
+
+.report-chart-empty h3 {
+    margin: 0;
+
+    color: #334155;
+
+    font-size: 17px;
+
+    font-weight: 800;
+}
+
+
+.report-chart-empty p {
+    margin: 7px 0 0;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+
+/* ==========================================================
+   ANIMATION
+========================================================== */
+
+@keyframes reportChartFade {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 650px) {
+
+    .report-chart-card {
+        padding: 18px;
+
+        border-radius: 18px;
+    }
+
+
+    .report-chart-header {
+        align-items: flex-start;
+    }
+
+
+    .report-chart-title h2 {
+        font-size: 16px;
+    }
+
+
+    .report-chart-title p {
+        font-size: 11px;
+    }
+
+
+    .report-chart-total strong {
+        font-size: 16px;
+    }
+
+
+    .report-doughnut-wrapper {
+        height: 300px;
+    }
+
+}
+
+
+@media (max-width: 430px) {
+
+    .report-chart-header {
+        flex-direction: column;
+    }
+
+
+    .report-chart-total {
+        align-items: flex-start;
+
+        padding-left: 57px;
+    }
+
+
+    .report-doughnut-wrapper {
+        height: 270px;
+    }
+
+}

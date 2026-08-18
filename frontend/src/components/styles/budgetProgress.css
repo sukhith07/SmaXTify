@@ -1,0 +1,353 @@
+/* ===========================================
+   Budget Progress Card
+=========================================== */
+
+.budget-progress-card{
+
+    background:#ffffff;
+
+    border-radius:22px;
+
+    padding:30px;
+
+    margin-top:30px;
+
+    box-shadow:0 10px 30px rgba(15,23,42,.08);
+
+    border:1px solid #e2e8f0;
+
+    animation:fadeUp .4s ease;
+
+}
+
+/* ===========================================
+   Header
+=========================================== */
+
+.budget-progress-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:30px;
+
+}
+
+.budget-progress-header svg{
+
+    color:#2563eb;
+
+    font-size:24px;
+
+}
+
+.budget-progress-header h2{
+
+    margin:0;
+
+    color:#0f172a;
+
+    font-size:24px;
+
+    font-weight:700;
+
+}
+
+/* ===========================================
+   Loading
+=========================================== */
+
+.budget-loading{
+
+    padding:40px;
+
+    text-align:center;
+
+    color:#64748b;
+
+    font-size:15px;
+
+}
+
+/* ===========================================
+   Progress Item
+=========================================== */
+
+.progress-item{
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    margin-bottom:22px;
+
+    transition:.3s;
+
+}
+
+.progress-item:last-child{
+
+    margin-bottom:0;
+
+}
+
+.progress-item:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 24px rgba(37,99,235,.12);
+
+}
+
+/* ===========================================
+   Title
+=========================================== */
+
+.progress-title{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:15px;
+
+}
+
+.progress-title span:first-child{
+
+    font-size:17px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.progress-title span:last-child{
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#2563eb;
+
+}
+
+/* ===========================================
+   Progress Bar
+=========================================== */
+
+.progress-bar{
+
+    width:100%;
+
+    height:12px;
+
+    background:#e2e8f0;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+    margin-bottom:15px;
+
+}
+
+.progress-fill{
+
+    height:100%;
+
+    border-radius:999px;
+
+    background:linear-gradient(
+        90deg,
+        #2563eb,
+        #7c3aed
+    );
+
+    transition:width .5s ease;
+
+}
+
+/* ===========================================
+   Footer
+=========================================== */
+
+.progress-footer{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:10px;
+
+}
+
+.progress-footer small{
+
+    color:#64748b;
+
+    font-size:13px;
+
+}
+
+.remaining{
+
+    color:#16a34a;
+
+    font-weight:700;
+
+}
+
+.warning{
+
+    color:#f59e0b;
+
+    font-weight:700;
+
+}
+
+.danger{
+
+    color:#dc2626;
+
+    font-weight:700;
+
+}
+
+/* ===========================================
+   Badge
+=========================================== */
+
+.progress-badge{
+
+    background:#eef2ff;
+
+    color:#2563eb;
+
+    padding:6px 14px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+}
+
+.progress-badge.warning{
+
+    background:#fef3c7;
+
+    color:#b45309;
+
+}
+
+.progress-badge.danger{
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+}
+
+.progress-badge.success{
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+}
+
+/* ===========================================
+   Empty State
+=========================================== */
+
+.progress-empty{
+
+    padding:60px 30px;
+
+    text-align:center;
+
+}
+
+.progress-empty h3{
+
+    margin-bottom:10px;
+
+    color:#0f172a;
+
+    font-size:24px;
+
+}
+
+.progress-empty p{
+
+    color:#64748b;
+
+    line-height:1.7;
+
+}
+
+/* ===========================================
+   Animation
+=========================================== */
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* ===========================================
+   Responsive
+=========================================== */
+
+@media(max-width:768px){
+
+    .progress-title{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:8px;
+
+    }
+
+    .progress-footer{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+}

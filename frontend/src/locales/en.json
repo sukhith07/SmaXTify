@@ -1,0 +1,216 @@
+{
+  "appName": "SmaXTify",
+
+  "features": "Features",
+  "howItWorks": "How It Works",
+  "SmaXTify.AI": "SmaXTify.AI",
+  "faq": "FAQ",
+  "contact": "Contact",
+
+  "getStarted": "Get Started",
+  "login": "Login",
+
+  "heroBadge": "🚀 AI Powered Personal Finance Manager",
+
+  "heroTitle1": "Manage Your",
+  "heroTitle2": "Money Smarter.",
+
+  "heroDescription": "Take control of your finances with SmaXTify. Track income, expenses, budgets, receipts and receive AI-powered insights to make better financial decisions every day.",
+  "transactions": "Transactions",
+"accuracy": "Accuracy",
+"aiSupport": "AI Support",
+
+
+  "dashboardPreview": "Dashboard Preview",
+  "dashboardDescription": "Monitor your income, expenses and savings with a beautiful and interactive dashboard.",
+
+  "totalBalance": "Total Balance",
+  "thisMonth": "This Month",
+
+  "income": "Income",
+  "expenses": "Expenses",
+  "savings": "Savings",
+
+  "monthlyAnalytics": "Monthly Analytics",
+  "recentTransactions": "Recent Transactions",
+
+  "foodDelivery": "🍔 Food Delivery",
+  "electricityBill": "⚡ Electricity Bill",
+  "monthlySalary": "💼 Monthly Salary",
+  "internetRecharge": "📱 Internet Recharge",
+  "groceryShopping": "🛒 Grocery Shopping",
+
+  "salaryCredit": "Salary Credit",
+  "rentPayment": "Rent Payment",
+  "fuelExpense": "Fuel Expense",
+  "medicalExpense": "Medical Expense",
+  "entertainment": "Entertainment",
+  "shopping": "Shopping",
+  "transport": "Transport",
+  "education": "Education",
+  "healthcare": "Healthcare",
+  "others": "Others",
+
+  "featuresTitle": "Powerful Features",
+"featuresSubtitle": "Everything you need to manage your finances smarter with AI.",
+
+"feature1Title": "Expense Tracking",
+"feature1Desc": "Track every income and expense effortlessly in one place.",
+
+"feature2Title": "Budget Planning",
+"feature2Desc": "Create budgets and monitor your spending habits.",
+
+"feature3Title": "AI Insights",
+"feature3Desc": "Receive personalized financial advice powered by AI.",
+
+"feature4Title": "Analytics",
+"feature4Desc": "Visualize your financial growth with interactive charts.",
+
+"feature5Title": "Secure Storage",
+"feature5Desc": "Your financial data is protected with secure authentication.",
+
+"feature6Title": "Multi-Device Access",
+"feature6Desc": "Access your account anytime from desktop or mobile.",
+
+
+"whyChoose": "WHY CHOOSE SMAXTIFY",
+
+"featuresHeading1": "Everything You Need For",
+
+"featuresHeading2": "Smart Financial Management",
+
+"featuresDescription": "One powerful platform to manage expenses, monitor budgets, analyze spending patterns, and receive AI-powered financial guidance.",
+"featureCard1Title":"AI Categorization",
+"featureCard1Desc":"Automatically categorizes your expenses using Artificial Intelligence.",
+
+"featureCard2Title":"Receipt Scanner",
+"featureCard2Desc":"Upload receipts and automatically extract expense details.",
+
+"featureCard3Title":"Smart Analytics",
+"featureCard3Desc":"Interactive charts and reports that explain your spending.",
+
+"featureCard4Title":"SmaXTify.AI",
+"featureCard4Desc":"Your intelligent assistant for budgeting and financial planning.",
+
+"featureCard5Title":"Budget Planner",
+"featureCard5Desc":"Plan monthly budgets and receive AI-powered recommendations.",
+
+"featureCard6Title":"Secure",
+"featureCard6Desc":"Protect your financial data with secure cloud storage.",
+
+"howTag": "HOW IT WORKS",
+"howTitle1": "Get Started in",
+"howTitle2": "4 Simple Steps",
+"howDescription": "Managing your finances has never been easier. Follow these simple steps to take full control of your money.",
+
+"step1Title": "Create Account",
+"step1Desc": "Register securely and create your personal finance workspace.",
+
+"step2Title": "Add Expenses",
+"step2Desc": "Record income, expenses, transfers or upload receipts.",
+
+"step3Title": "AI Analysis",
+"step3Desc": "SmaXTify.AI automatically analyzes spending and gives smart suggestions.",
+
+"step4Title": "Reach Goals",
+"step4Desc": "Improve budgeting, increase savings and achieve financial freedom.",
+
+"aiTag": "SMAXTIFY.AI",
+"aiTitle1": "Meet Your",
+"aiTitle2": "Intelligent Finance Assistant",
+
+"aiDescription": "Ask questions about your expenses, understand your spending habits, receive budgeting recommendations, and generate intelligent financial insights instantly.",
+
+"aiFeature1": "Smart Expense Analysis",
+"aiFeature2": "AI Budget Planning",
+"aiFeature3": "Receipt Scanner",
+"aiFeature4": "Monthly Reports",
+"aiFeature5": "Spending Insights",
+"aiFeature6": "24×7 AI Assistant",
+
+"aiStatus": "Online • Ready to Help",
+
+"chatUser1": "Show my highest expense this month.",
+"chatAi1": "Your highest expense is",
+"chatAi1Highlight": "Rent – ₹12,000.",
+
+"chatUser2": "How can I save ₹5,000 every month?",
+"chatAi2": "Reduce food delivery, entertainment and unused subscriptions. You'll reach your savings target faster.",
+
+"faqTag": "FAQs",
+"faqTitle": "Frequently Asked Questions",
+"faq1Question": "Is SmaXTify free to use?",
+"faq1Answer": "Yes. SmaXTify offers a free version that allows you to manage income, expenses, budgets, and financial reports. Additional premium AI features may be introduced in future versions.",
+
+"faq2Question": "How secure is my financial data?",
+"faq2Answer": "Your financial data is protected using secure authentication, encrypted communication, and a secure cloud database. Only you can access your personal financial information.",
+
+"faq3Question": "Can I track both income and expenses?",
+"faq3Answer": "Absolutely. You can add income, expenses, savings, and categorize every transaction to get a complete overview of your financial health.",
+
+"faq4Question": "How does SmaXTify.AI help me?",
+"faq4Answer": "SmaXTify.AI analyzes your spending patterns, answers finance-related questions, and provides smart budgeting suggestions to help improve your savings.",
+
+"faq5Question": "Can I use SmaXTify on mobile devices?",
+"faq5Answer": "Yes. SmaXTify is fully responsive and works smoothly on desktops, tablets, and smartphones without requiring a separate mobile application.",
+
+"faq6Question": "Can I create monthly budgets?",
+"faq6Answer": "Yes. You can create monthly budgets, monitor your spending, and receive alerts when you're approaching your spending limits.",
+
+"faq7Question": "Can I edit or delete transactions?",
+"faq7Answer": "Yes. Every transaction can be edited or deleted anytime from the Transactions section.",
+
+"faq8Question": "Does SmaXTify generate reports?",
+"faq8Answer": "Yes. Interactive charts and financial reports help you understand your income, expenses, and overall spending habits.",
+
+"faq9Question": "Is my data backed up automatically?",
+"faq9Answer": "Yes. Your data is stored securely in the cloud, ensuring it remains available whenever you log in.",
+
+"faq10Question": "Do I need internet access to use SmaXTify?",
+"faq10Answer": "Yes. Since your data is securely stored online, an internet connection is required to sync and access your latest financial information.",
+
+
+"contactTag": "CONTACT US",
+"contactTitle": "Let's Connect",
+"contactDescription1": "Have questions, suggestions, or need assistance?",
+"contactDescription2": "We'd love to hear from you.",
+
+"email": "Email",
+"phone": "Phone",
+"location": "Location",
+
+"needHelp": "Need Personal Assistance?",
+"needHelpDesc": "Our team is always ready to help you with your expense tracking and AI finance questions.",
+
+"contactSupport": "Contact Support",
+
+"ctaTag": "GET STARTED TODAY",
+
+"ctaTitle1": "Ready To Take Control Of",
+
+"ctaTitle2": "Your Finances?",
+
+"ctaDescription": "Join thousands of users managing their income, expenses, budgets and savings with the power of Artificial Intelligence.",
+
+"footerSubtitle": "AI Expense Tracker",
+
+"footerDesc1": "SmaXTify is an intelligent expense tracking platform.",
+"footerDesc2": "Track expenses, manage budgets,",
+"footerDesc3": "and gain AI-powered financial insights effortlessly.",
+
+"quickLinks": "Quick Links",
+
+"register": "Register",
+
+"coreFeatures": "Core Features",
+
+"featureExpense": "Expense Tracking",
+"featureBudget": "Budget Planner",
+"featureAI": "AI Assistant",
+"featureReceipt": "Receipt Scanner",
+"featureAnalytics": "Financial Analytics",
+"featureCloud": "Secure Cloud Storage",
+
+"copyright": "All Rights Reserved."
+
+}

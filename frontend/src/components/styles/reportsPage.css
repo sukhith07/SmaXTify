@@ -1,0 +1,2064 @@
+/* ==========================================================
+   REPORTS PAGE
+========================================================== */
+
+.reports-page {
+
+    width: 100%;
+
+    min-height: 100%;
+
+    box-sizing: border-box;
+
+    color: #0f172a;
+
+    /* Do NOT add large horizontal padding here.
+       The dashboard content area already handles spacing. */
+
+    padding: 0 0 60px;
+
+    background: transparent;
+
+}
+
+
+/* ==========================================================
+   REPORT CONTENT
+========================================================== */
+
+.reports-page > * {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+}
+
+
+/* ==========================================================
+   SUMMARY SECTION
+========================================================== */
+
+.reports-section {
+
+    width: 100%;
+
+    margin-top: 24px;
+
+}
+
+
+/* ==========================================================
+   LOADING
+========================================================== */
+
+.reports-loading {
+
+    width: 100%;
+
+    min-height: 220px;
+
+    margin-top: 24px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 14px;
+
+    box-sizing: border-box;
+
+    border-radius: 22px;
+
+    background: rgba(255, 255, 255, 0.92);
+
+    border: 1px solid #e2e8f0;
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.06);
+
+}
+
+
+.reports-loading p {
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+/* ==========================================================
+   SPINNER
+========================================================== */
+
+.reports-spinner {
+
+    width: 34px;
+
+    height: 34px;
+
+    border: 4px solid #e2e8f0;
+
+    border-top-color: #4f46e5;
+
+    border-radius: 50%;
+
+    animation:
+        reportsSpin 0.8s linear infinite;
+
+}
+
+
+/* ==========================================================
+   PHASE 6.2 — ANIMATIONS & INTERACTION POLISH
+========================================================== */
+
+/* ==========================================================
+   PAGE ENTRANCE
+========================================================== */
+
+.reports-page {
+    animation: reportsPageEnter .45s ease-out;
+}
+
+@keyframes reportsPageEnter {
+
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ==========================================================
+   SECTION ENTRANCE
+========================================================== */
+
+.reports-page > * {
+    animation:
+        reportSectionEnter .45s ease-out both;
+}
+
+
+/* Slightly stagger the main sections */
+
+.reports-page > *:nth-child(1) {
+    animation-delay: .02s;
+}
+
+.reports-page > *:nth-child(2) {
+    animation-delay: .06s;
+}
+
+.reports-page > *:nth-child(3) {
+    animation-delay: .10s;
+}
+
+.reports-page > *:nth-child(4) {
+    animation-delay: .14s;
+}
+
+.reports-page > *:nth-child(5) {
+    animation-delay: .18s;
+}
+
+@keyframes reportSectionEnter {
+
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ==========================================================
+   CARD INTERACTION
+========================================================== */
+
+.reports-page .report-chart-card,
+.reports-page .report-analytics-card,
+.reports-page .report-ai-card,
+.reports-page .report-export {
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+
+.reports-page .report-chart-card:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 32px
+        rgba(15, 23, 42, .09);
+}
+
+
+/* ==========================================================
+   ANALYTICS CARD HOVER
+========================================================== */
+
+.reports-page .report-analytics-card {
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+
+.reports-page .report-analytics-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 14px 30px
+        rgba(15, 23, 42, .10);
+}
+
+
+.reports-page
+.report-analytics-card
+.analytics-card-icon {
+
+    transition:
+        transform .25s ease;
+}
+
+
+.reports-page
+.report-analytics-card:hover
+.analytics-card-icon {
+
+    transform: scale(1.06);
+}
+
+
+/* ==========================================================
+   FILTER BUTTON INTERACTION
+========================================================== */
+
+.reports-page
+.report-period-buttons button {
+
+    transition:
+        color .2s ease,
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.reports-page
+.report-period-buttons button:hover {
+
+    transform: translateY(-1px);
+}
+
+
+.reports-page
+.report-period-buttons button.active {
+
+    transition:
+        background .25s ease,
+        box-shadow .25s ease,
+        transform .2s ease;
+}
+
+
+/* ==========================================================
+   SELECT INTERACTION
+========================================================== */
+
+.reports-page
+.report-category-select,
+.reports-page
+.category-filter select {
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+
+/* ==========================================================
+   RESET BUTTON
+========================================================== */
+
+.reports-page
+.report-reset-btn {
+
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease;
+}
+
+
+.reports-page
+.report-reset-btn:hover {
+
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================================
+   AI INSIGHT CARDS
+========================================================== */
+
+.reports-page
+.report-ai-insight {
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+
+.reports-page
+.report-ai-insight:hover {
+
+    transform: translateX(3px);
+
+    box-shadow:
+        0 8px 22px
+        rgba(15, 23, 42, .07);
+}
+
+
+.reports-page
+.report-ai-insight-icon {
+
+    transition:
+        transform .25s ease;
+}
+
+
+.reports-page
+.report-ai-insight:hover
+.report-ai-insight-icon {
+
+    transform: scale(1.06);
+}
+
+
+/* ==========================================================
+   AI REFRESH BUTTON
+========================================================== */
+
+.reports-page
+.report-ai-refresh {
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+
+.reports-page
+.report-ai-refresh:hover:not(:disabled) {
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 7px 18px
+        rgba(79, 70, 229, .15);
+}
+
+
+/* ==========================================================
+   SPINNER
+========================================================== */
+
+.reports-spinner {
+
+    animation:
+        reportsSpin .8s linear infinite;
+}
+
+
+@keyframes reportsSpin {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* ==========================================================
+   AI SPINNING ICON
+========================================================== */
+
+.ai-spinning {
+
+    animation:
+        aiRotate .8s linear infinite;
+}
+
+
+@keyframes aiRotate {
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* ==========================================================
+   EXPORT BUTTON INTERACTION
+========================================================== */
+
+.reports-page
+.export-btn {
+
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease,
+        background .22s ease;
+}
+
+
+.reports-page
+.export-btn:hover {
+
+    transform: translateY(-2px);
+
+}
+
+
+.reports-page
+.export-btn:active {
+
+    transform: translateY(0);
+
+}
+
+
+/* ==========================================================
+   EXPORT ICON
+========================================================== */
+
+.reports-page
+.export-btn svg {
+
+    transition:
+        transform .22s ease;
+}
+
+
+.reports-page
+.export-btn:hover svg {
+
+    transform: scale(1.08);
+}
+
+
+/* ==========================================================
+   CHART CANVAS
+========================================================== */
+
+.reports-page
+canvas {
+
+    transition:
+        opacity .3s ease;
+}
+
+
+/* ==========================================================
+   LOADING STATE
+========================================================== */
+
+.reports-loading {
+
+    animation:
+        reportLoadingEnter .3s ease-out;
+}
+
+
+@keyframes reportLoadingEnter {
+
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+}
+
+
+/* ==========================================================
+   RESULT INFORMATION
+========================================================== */
+
+.reports-page
+.report-result-info span:last-child {
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease;
+}
+
+
+.reports-page
+.report-result-info span:last-child:hover {
+
+    background: #e2e8f0;
+
+    color: #475569;
+
+    transform: translateY(-1px);
+}
+
+
+/* ==========================================================
+   ACCESSIBILITY
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .reports-page,
+    .reports-page *,
+    .reports-page > * {
+
+        animation: none !important;
+
+        transition: none !important;
+
+        scroll-behavior: auto !important;
+    }
+
+}
+
+
+/* ==========================================================
+   PRINT — DISABLE ANIMATIONS
+========================================================== */
+
+@media print {
+
+    .reports-page,
+    .reports-page *,
+    .reports-page > * {
+
+        animation: none !important;
+
+        transition: none !important;
+
+        transform: none !important;
+    }
+
+}
+/* ==========================================================
+   PHASE 6.3 — MOBILE RESPONSIVENESS
+========================================================== */
+
+
+/* ==========================================================
+   TABLET — 769px to 950px
+========================================================== */
+
+@media (max-width: 950px) {
+
+    .reports-page {
+        padding-bottom: 45px;
+    }
+
+
+    /* Charts stack */
+
+    .reports-chart-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+
+    /* Analytics */
+
+    .report-analytics-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 16px;
+    }
+
+
+    /* Filters */
+
+    .report-filter-controls {
+        grid-template-columns: 1fr;
+    }
+
+
+    .report-custom-date-range {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE — 768px
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .reports-page {
+        padding-bottom: 40px;
+    }
+
+
+    /* ------------------------------------------------------
+       GENERAL SECTIONS
+    ------------------------------------------------------ */
+
+    .reports-section {
+        margin-top: 20px;
+    }
+
+
+    /* ------------------------------------------------------
+       FILTERS
+    ------------------------------------------------------ */
+
+    .reports-page .report-filters {
+        padding: 20px;
+
+        margin-top: 20px;
+
+        border-radius: 18px;
+    }
+
+
+    .report-filter-heading {
+        gap: 14px;
+    }
+
+
+    .report-filter-title {
+        min-width: 0;
+    }
+
+
+    .report-filter-title-content {
+        min-width: 0;
+    }
+
+
+    .report-filter-title h2 {
+        font-size: 16px;
+    }
+
+
+    .report-filter-title p {
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+
+    .report-reset-btn {
+        flex-shrink: 0;
+    }
+
+
+    /* ------------------------------------------------------
+       PERIOD BUTTONS
+    ------------------------------------------------------ */
+
+    .report-period-buttons {
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 6px;
+
+        padding: 5px;
+    }
+
+
+    .report-period-buttons button {
+        min-height: 42px;
+
+        padding: 0 8px;
+
+        font-size: 11px;
+    }
+
+
+    /* ------------------------------------------------------
+       CATEGORY
+    ------------------------------------------------------ */
+
+    .category-filter select,
+    .report-category-select {
+        height: 46px;
+
+        font-size: 12px;
+    }
+
+
+    /* ------------------------------------------------------
+       CUSTOM DATE
+    ------------------------------------------------------ */
+
+    .report-custom-date-range {
+        grid-template-columns: 1fr;
+
+        gap: 14px;
+    }
+
+
+    .report-date-picker {
+        width: 100% !important;
+
+        box-sizing: border-box;
+    }
+
+
+    /* ------------------------------------------------------
+       SUMMARY
+    ------------------------------------------------------ */
+
+    .report-summary {
+        width: 100%;
+    }
+
+
+    .report-summary-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+
+    /* ------------------------------------------------------
+       CHARTS
+    ------------------------------------------------------ */
+
+    .reports-chart-grid {
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+
+        margin-top: 20px;
+    }
+
+
+    .report-chart-card {
+        min-width: 0;
+
+        overflow: hidden;
+    }
+
+
+    /* Prevent canvas overflow */
+
+    .report-chart-card canvas {
+        max-width: 100% !important;
+    }
+
+
+    /* ------------------------------------------------------
+       ANALYTICS
+    ------------------------------------------------------ */
+
+    .report-analytics {
+        margin-top: 22px;
+    }
+
+
+    .report-analytics-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
+    }
+
+
+    .report-analytics-card {
+        min-width: 0;
+
+        padding: 18px;
+    }
+
+
+    .analytics-card-value {
+        font-size: 22px;
+
+        overflow-wrap: anywhere;
+    }
+
+
+    .analytics-card-description {
+        font-size: 11px;
+    }
+
+
+    /* ------------------------------------------------------
+       AI INSIGHTS
+    ------------------------------------------------------ */
+
+    .report-ai-card {
+        margin-top: 22px;
+
+        padding: 20px;
+
+        border-radius: 18px;
+    }
+
+
+    .report-ai-header {
+        gap: 14px;
+    }
+
+
+    .report-ai-title {
+        min-width: 0;
+    }
+
+
+    .report-ai-title h2 {
+        font-size: 17px;
+    }
+
+
+    .report-ai-title p {
+        font-size: 11px;
+
+        line-height: 1.5;
+    }
+
+
+    .report-ai-refresh {
+        flex-shrink: 0;
+
+        min-height: 38px;
+
+        padding: 0 12px;
+    }
+
+
+    .report-ai-insight {
+        padding: 16px;
+    }
+
+
+    .report-ai-insight-heading {
+        gap: 8px;
+    }
+
+
+    .report-ai-insight-heading h3 {
+        font-size: 14px;
+    }
+
+
+    .report-ai-insight-content p {
+        font-size: 12px;
+
+        line-height: 1.6;
+    }
+
+
+    /* ------------------------------------------------------
+       EXPORT
+    ------------------------------------------------------ */
+
+    .report-export {
+        margin-top: 22px;
+    }
+
+
+    .report-export-actions {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* ------------------------------------------------------
+       RESULT INFO
+    ------------------------------------------------------ */
+
+    .report-result-info {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 8px;
+
+        margin-top: 12px;
+    }
+
+}
+
+
+/* ==========================================================
+   SMALL MOBILE — 576px
+========================================================== */
+
+@media (max-width: 576px) {
+
+    .reports-page {
+        padding-bottom: 32px;
+    }
+
+
+    /* ------------------------------------------------------
+       FILTER
+    ------------------------------------------------------ */
+
+    .reports-page .report-filters {
+        padding: 17px;
+
+        border-radius: 16px;
+    }
+
+
+    .report-filter-heading {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .report-filter-title {
+        width: 100%;
+    }
+
+
+    .report-reset-btn {
+        width: 100%;
+
+        justify-content: center;
+    }
+
+
+    /* ------------------------------------------------------
+       PERIODS
+    ------------------------------------------------------ */
+
+    .report-period-buttons {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+
+    .report-period-buttons button {
+        min-height: 40px;
+
+        font-size: 10px;
+    }
+
+
+    /* ------------------------------------------------------
+       SUMMARY
+    ------------------------------------------------------ */
+
+    .report-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    /* ------------------------------------------------------
+       ANALYTICS
+    ------------------------------------------------------ */
+
+    .report-analytics-grid {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+
+    .report-analytics-card {
+        padding: 16px;
+    }
+
+
+    .analytics-card-value {
+        font-size: 24px;
+    }
+
+
+    /* ------------------------------------------------------
+       AI
+    ------------------------------------------------------ */
+
+    .report-ai-header {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .report-ai-refresh {
+        width: 100%;
+
+        justify-content: center;
+    }
+
+
+    .report-ai-insight {
+        flex-direction: column;
+    }
+
+
+    .report-ai-insight-icon {
+        width: 38px;
+
+        height: 38px;
+    }
+
+
+    /* ------------------------------------------------------
+       EXPORT
+    ------------------------------------------------------ */
+
+    .report-export {
+        padding: 18px;
+
+        border-radius: 17px;
+    }
+
+}
+
+
+/* ==========================================================
+   EXTRA SMALL — 430px
+========================================================== */
+
+@media (max-width: 430px) {
+
+    .reports-page {
+        padding-bottom: 28px;
+    }
+
+
+    /* ------------------------------------------------------
+       FILTER
+    ------------------------------------------------------ */
+
+    .reports-page .report-filters {
+        padding: 15px;
+    }
+
+
+    .report-filter-icon {
+        width: 40px;
+
+        height: 40px;
+
+        border-radius: 11px;
+    }
+
+
+    .report-filter-title h2 {
+        font-size: 15px;
+    }
+
+
+    .report-filter-title p {
+        font-size: 10px;
+    }
+
+
+    /* ------------------------------------------------------
+       PERIOD BUTTONS
+    ------------------------------------------------------ */
+
+    .report-period-buttons {
+        gap: 5px;
+
+        padding: 4px;
+    }
+
+
+    .report-period-buttons button {
+        min-height: 38px;
+
+        padding: 0 5px;
+
+        font-size: 10px;
+    }
+
+
+    /* ------------------------------------------------------
+       CHART CARDS
+    ------------------------------------------------------ */
+
+    .report-chart-card {
+        padding: 15px !important;
+
+        border-radius: 16px;
+    }
+
+
+    /* ------------------------------------------------------
+       ANALYTICS
+    ------------------------------------------------------ */
+
+    .report-analytics-card {
+        padding: 15px;
+    }
+
+
+    .analytics-card-top span {
+        font-size: 11px;
+    }
+
+
+    .analytics-card-value {
+        font-size: 21px;
+    }
+
+
+    .analytics-card-description {
+        font-size: 10px;
+    }
+
+
+    /* ------------------------------------------------------
+       AI
+    ------------------------------------------------------ */
+
+    .report-ai-card {
+        padding: 16px;
+
+        border-radius: 16px;
+    }
+
+
+    .report-ai-title h2 {
+        font-size: 16px;
+    }
+
+
+    .report-ai-insight-heading h3 {
+        font-size: 13px;
+    }
+
+
+    .report-ai-insight-content p {
+        font-size: 11px;
+    }
+
+
+    /* ------------------------------------------------------
+       EXPORT
+    ------------------------------------------------------ */
+
+    .export-btn {
+        min-height: 51px;
+
+        font-size: 13px;
+    }
+
+}
+
+
+/* ==========================================================
+   RESULT INFORMATION
+========================================================== */
+
+.report-result-info {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-top: 14px;
+
+    padding: 0 4px;
+
+    box-sizing: border-box;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+.report-result-info strong {
+
+    color: #475569;
+
+}
+
+
+.report-result-info span:last-child {
+
+    padding: 6px 10px;
+
+    border-radius: 8px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+}
+
+
+/* ==========================================================
+   REPORT FILTER / HEADER ALIGNMENT
+========================================================== */
+
+/*
+   Make the Reports components follow the same width
+   as Budget Planner and Savings Goals.
+*/
+
+.reports-page .report-filters,
+.reports-page .reports-section {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+}
+/* ==========================================================
+   REPORT CHART GRID
+========================================================== */
+
+.reports-chart-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 24px;
+
+    margin-top: 24px;
+
+}
+
+
+/* ==========================================================
+   Remove duplicate outer spacing
+========================================================== */
+
+.reports-chart-grid
+.report-chart-card {
+
+    margin-top: 0;
+
+}
+
+
+/* ==========================================================
+   Responsive
+========================================================== */
+
+@media (max-width: 950px) {
+
+    .reports-chart-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+/* ==========================================================
+   REPORTS — PHASE 6 UI POLISH
+========================================================== */
+
+.reports-page {
+    --report-primary: #4f46e5;
+    --report-primary-dark: #4338ca;
+
+    --report-text: #0f172a;
+    --report-text-secondary: #475569;
+    --report-muted: #64748b;
+
+    --report-border: #e2e8f0;
+    --report-surface: #ffffff;
+    --report-surface-soft: #f8fafc;
+
+    --report-radius: 22px;
+
+    --report-shadow:
+        0 10px 30px
+        rgba(15, 23, 42, 0.06);
+}
+
+
+/* ==========================================================
+   CONSISTENT CARD BEHAVIOR
+========================================================== */
+
+.reports-page .report-filters,
+.reports-page .report-chart-card,
+.reports-page .report-analytics,
+.reports-page .report-ai-card,
+.reports-page .report-export {
+
+    box-sizing: border-box;
+
+    transition:
+        box-shadow .25s ease,
+        transform .25s ease,
+        border-color .25s ease;
+}
+
+
+/* ==========================================================
+   CARD HOVER
+========================================================== */
+
+.reports-page .report-chart-card:hover,
+.reports-page .report-analytics-card:hover {
+
+    box-shadow:
+        0 14px 35px
+        rgba(15, 23, 42, 0.09);
+}
+
+
+/* ==========================================================
+   SECTION SPACING
+========================================================== */
+
+.reports-page .report-analytics,
+.reports-page .report-ai-card,
+.reports-page .report-export {
+
+    margin-top: 28px;
+}
+
+
+/* ==========================================================
+   SECTION HEADINGS
+========================================================== */
+
+.reports-page h1,
+.reports-page h2,
+.reports-page h3 {
+
+    letter-spacing: -.25px;
+}
+
+
+/* ==========================================================
+   FOCUS ACCESSIBILITY
+========================================================== */
+
+.reports-page button:focus-visible,
+.reports-page select:focus-visible,
+.reports-page input:focus-visible {
+
+    outline: none;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(79, 70, 229, .12);
+}
+
+
+/* ==========================================================
+   MOBILE SECTION SPACING
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .reports-page .report-analytics,
+    .reports-page .report-ai-card,
+    .reports-page .report-export {
+
+        margin-top: 22px;
+    }
+
+}
+/* ==========================================================
+   PHASE 6.4 — EMPTY / LOADING / ERROR STATES
+========================================================== */
+
+
+/* ==========================================================
+   COMMON STATE
+========================================================== */
+
+.reports-state,
+.reports-empty {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    margin-top: 24px;
+
+    padding: 55px 25px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    border-radius: 22px;
+
+    background:
+        rgba(255, 255, 255, .96);
+
+    border:
+        1px solid #e2e8f0;
+
+    box-shadow:
+        0 10px 30px
+        rgba(15, 23, 42, .06);
+
+    animation:
+        reportStateEnter .35s ease-out;
+}
+
+
+@keyframes reportStateEnter {
+
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+
+}
+
+
+/* ==========================================================
+   STATE ICON
+========================================================== */
+
+.reports-state-icon,
+.reports-empty-icon {
+
+    width: 64px;
+
+    height: 64px;
+
+    margin-bottom: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #ede9fe
+        );
+
+    color: #4f46e5;
+
+    font-size: 28px;
+}
+
+
+/* ==========================================================
+   STATE TITLE
+========================================================== */
+
+.reports-state h3,
+.reports-empty h3 {
+
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 21px;
+
+    font-weight: 800;
+}
+
+
+/* ==========================================================
+   STATE DESCRIPTION
+========================================================== */
+
+.reports-state p,
+.reports-empty p {
+
+    max-width: 520px;
+
+    margin: 9px auto 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* ==========================================================
+   LOADING
+========================================================== */
+
+.reports-loading {
+
+    min-height: 250px;
+}
+
+
+.reports-loading
+.reports-state-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #eef2ff
+        );
+}
+
+
+/* ==========================================================
+   SPINNER
+========================================================== */
+
+.reports-spinner {
+
+    width: 32px;
+
+    height: 32px;
+
+    border:
+        4px solid #e2e8f0;
+
+    border-top-color:
+        #4f46e5;
+
+    border-radius: 50%;
+
+    animation:
+        reportsSpin .8s linear infinite;
+}
+
+
+/* ==========================================================
+   ERROR
+========================================================== */
+
+.reports-error {
+
+    border-color:
+        #fecaca;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #fffafa
+        );
+}
+
+
+.reports-error
+.reports-state-icon {
+
+    background:
+        #fef2f2;
+
+    color:
+        #dc2626;
+
+    font-size: 26px;
+}
+
+
+/* ==========================================================
+   RETRY BUTTON
+========================================================== */
+
+.reports-retry-btn,
+.reports-empty-reset {
+
+    margin-top: 20px;
+
+    min-height: 44px;
+
+    padding: 0 20px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #7c3aed
+        );
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.reports-retry-btn:hover,
+.reports-empty-reset:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 10px 22px
+        rgba(37, 99, 235, .22);
+}
+
+
+.reports-retry-btn:active,
+.reports-empty-reset:active {
+
+    transform:
+        translateY(0);
+}
+
+
+/* ==========================================================
+   EMPTY STATE
+========================================================== */
+
+.reports-empty {
+
+    min-height: 280px;
+
+    margin-top: 24px;
+}
+
+
+.reports-empty-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5f3ff,
+            #eff6ff
+        );
+
+    color: #6366f1;
+
+    font-size: 27px;
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 576px) {
+
+    .reports-state,
+    .reports-empty {
+
+        min-height: 230px;
+
+        padding: 40px 20px;
+
+        border-radius: 18px;
+    }
+
+
+    .reports-state-icon,
+    .reports-empty-icon {
+
+        width: 56px;
+
+        height: 56px;
+
+        border-radius: 15px;
+
+        font-size: 24px;
+    }
+
+
+    .reports-state h3,
+    .reports-empty h3 {
+
+        font-size: 19px;
+    }
+
+
+    .reports-state p,
+    .reports-empty p {
+
+        font-size: 12px;
+
+        line-height: 1.6;
+    }
+
+
+    .reports-retry-btn,
+    .reports-empty-reset {
+
+        width: 100%;
+
+        max-width: 240px;
+    }
+
+}
+
+
+/* ==========================================================
+   REDUCED MOTION
+========================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .reports-state,
+    .reports-empty {
+
+        animation: none;
+    }
+
+}
+/* ==========================================================
+   PROFESSIONAL PRINT REPORT
+   ========================================================== */
+
+@media print {
+
+  /* ----------------------------------------------------------
+     PAGE
+     ---------------------------------------------------------- */
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
+
+
+  /* ----------------------------------------------------------
+     RESET APPLICATION LAYOUT
+     ---------------------------------------------------------- */
+
+  html,
+  body,
+  #root {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+
+  body {
+    overflow: visible !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     HIDE APPLICATION NAVIGATION
+     ---------------------------------------------------------- */
+
+  .dashboard > .sidebar,
+  .dashboard .sidebar,
+  .dashboard-content > nav,
+  .dashboard-content .navbar,
+  .dashboard-content header {
+    display: none !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     REMOVE DASHBOARD DESKTOP OFFSET
+     ---------------------------------------------------------- */
+
+  .dashboard {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+
+  .dashboard-content {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    left: auto !important;
+    right: auto !important;
+  }
+
+
+  .dashboard-main {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     REPORT PAGE
+     ---------------------------------------------------------- */
+
+  .reports-page {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    background: #ffffff !important;
+  }
+
+
+  .reports-page > * {
+    width: 100% !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     REMOVE SCREEN-ONLY SPACING
+     ---------------------------------------------------------- */
+
+  .reports-section {
+    width: 100% !important;
+    margin-top: 14px !important;
+  }
+
+
+  .report-result-info {
+    margin-top: 8px !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     KEEP REPORT CARDS TOGETHER
+     ---------------------------------------------------------- */
+
+  .report-summary-card,
+  .report-card,
+  .report-chart-card,
+  .report-analytics-card,
+  .report-ai-card,
+  .report-export,
+  .report-filters {
+
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+
+  /* ----------------------------------------------------------
+     CHART GRID
+     ---------------------------------------------------------- */
+
+  .reports-chart-grid {
+
+    width: 100% !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr) !important;
+
+    gap: 14px !important;
+
+    margin-top: 14px !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     ANALYTICS GRID
+     ---------------------------------------------------------- */
+
+  .report-analytics-grid {
+
+    width: 100% !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr)) !important;
+
+    gap: 12px !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     EXPORT SECTION
+     ---------------------------------------------------------- */
+
+  .report-export-actions {
+    display: none !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     AI INSIGHTS
+     ---------------------------------------------------------- */
+
+  .report-ai-refresh {
+    display: none !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     BUTTONS / INTERACTIVE ELEMENTS
+     ---------------------------------------------------------- */
+
+  button {
+    box-shadow: none !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     REMOVE UNNECESSARY SCREEN EFFECTS
+     ---------------------------------------------------------- */
+
+  * {
+    box-shadow: none !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     COLORS
+     ---------------------------------------------------------- */
+
+  body,
+  .reports-page {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+
+  /* ----------------------------------------------------------
+     AVOID BAD PAGE BREAKS
+     ---------------------------------------------------------- */
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+
+  img,
+  canvas {
+    max-width: 100% !important;
+  }
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 1100px) {
+
+    .reports-page {
+
+        padding-bottom: 50px;
+
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .reports-page {
+
+        padding-bottom: 45px;
+
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .reports-page {
+
+        padding-bottom: 35px;
+
+    }
+
+    .report-result-info {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 8px;
+
+    }
+
+}

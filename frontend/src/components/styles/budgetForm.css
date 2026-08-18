@@ -1,0 +1,195 @@
+/* ======================================
+   Budget Form
+====================================== */
+
+.budget-form-card{
+
+    background:#ffffff;
+
+    border-radius:22px;
+
+    padding:30px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    margin-bottom:30px;
+
+}
+
+.budget-form-header{
+
+    margin-bottom:25px;
+
+}
+
+.budget-form-header h2{
+
+    margin:0;
+
+    color:#0f172a;
+
+    font-size:24px;
+
+}
+
+.budget-form-header p{
+
+    margin-top:8px;
+
+    color:#64748b;
+
+    font-size:15px;
+
+}
+
+.budget-form-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:16px;
+
+}
+
+.budget-form-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    background:#f8fafc;
+
+    border-radius:14px;
+
+    padding:16px 20px;
+
+    transition:.3s;
+
+}
+
+.budget-form-row:hover{
+
+    background:#eef2ff;
+
+}
+
+.budget-category-name{
+
+    font-size:16px;
+
+    font-weight:600;
+
+    color:#0f172a;
+
+}
+
+.budget-form-row input{
+
+    width:180px;
+
+    height:48px;
+
+    border:2px solid #e2e8f0;
+
+    border-radius:12px;
+
+    padding:0 15px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    outline:none;
+
+    transition:.3s;
+
+}
+
+.budget-form-row input:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:0 0 0 4px rgba(37,99,235,.12);
+
+}
+
+.budget-form-btn{
+
+    width:100%;
+
+    margin-top:30px;
+
+    height:55px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:linear-gradient(
+        135deg,
+        #2563eb,
+        #7c3aed
+    );
+
+    color:#fff;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.budget-form-btn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 15px 30px rgba(37,99,235,.25);
+
+}
+
+.budget-form-btn:disabled{
+
+    opacity:.7;
+
+    cursor:not-allowed;
+
+}
+
+/* ==========================
+   Responsive
+========================== */
+
+@media(max-width:768px){
+
+    .budget-form-row{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+    .budget-form-row input{
+
+        width:100%;
+
+    }
+
+}

@@ -1,0 +1,147 @@
+/* ===========================================
+   Budget Alerts
+=========================================== */
+
+.budget-alerts{
+
+    background:#ffffff;
+
+    border-radius:22px;
+
+    padding:28px;
+
+    margin-top:30px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    border:1px solid rgba(226,232,240,.8);
+
+}
+
+.alerts-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-bottom:25px;
+
+}
+
+.alerts-title svg{
+
+    color:#ef4444;
+
+    font-size:26px;
+
+}
+
+.alerts-title h2{
+
+    margin:0;
+
+    font-size:24px;
+
+    color:#0f172a;
+
+    font-weight:700;
+
+}
+
+/* ===========================================
+   Alert Card
+=========================================== */
+
+.alert-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:18px 20px;
+
+    margin-bottom:16px;
+
+    border-radius:16px;
+
+    background:#fff1f2;
+
+    border-left:6px solid #ef4444;
+
+    transition:.3s;
+
+    cursor:pointer;
+
+}
+
+.alert-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 12px 25px rgba(239,68,68,.18);
+
+}
+
+.alert-card svg{
+
+    color:#ef4444;
+
+    font-size:24px;
+
+    flex-shrink:0;
+
+}
+
+.alert-card span{
+
+    font-size:16px;
+
+    font-weight:600;
+
+    color:#7f1d1d;
+
+    line-height:1.5;
+
+}
+
+/* ===========================================
+   Empty Alerts
+=========================================== */
+
+.budget-alerts p{
+
+    color:#64748b;
+
+    font-size:15px;
+
+}
+
+/* ===========================================
+   Responsive
+=========================================== */
+
+@media(max-width:768px){
+
+    .budget-alerts{
+
+        padding:20px;
+
+    }
+
+    .alerts-title h2{
+
+        font-size:20px;
+
+    }
+
+    .alert-card{
+
+        align-items:flex-start;
+
+    }
+
+}

@@ -1,0 +1,256 @@
+/* ==========================================
+            MODAL OVERLAY
+========================================== */
+
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.65);
+    backdrop-filter:blur(8px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    animation:fadeIn .25s ease;
+}
+
+/* ==========================================
+            DELETE MODAL
+========================================== */
+
+.delete-goal-modal{
+    position:relative;
+    width:430px;
+    max-width:95%;
+    background:#ffffff;
+    border-radius:24px;
+    padding:35px 30px;
+    text-align:center;
+    box-shadow:0 25px 60px rgba(0,0,0,.25);
+    animation:popup .3s ease;
+}
+
+/* ==========================================
+            CLOSE BUTTON
+========================================== */
+
+.close-btn{
+    position:absolute;
+    top:18px;
+    right:18px;
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:50%;
+    background:#f1f5f9;
+    color:#334155;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.close-btn:hover{
+    background:#ef4444;
+    color:#fff;
+    transform:rotate(90deg);
+}
+
+/* ==========================================
+            DELETE ICON
+========================================== */
+
+.delete-icon{
+    width:90px;
+    height:90px;
+    margin:0 auto 20px;
+    border-radius:50%;
+    background:#fee2e2;
+    color:#dc2626;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:38px;
+    animation:pulse 1.8s infinite;
+}
+
+/* ==========================================
+                TEXT
+========================================== */
+
+.delete-goal-modal h2{
+    color:#0f172a;
+    font-size:28px;
+    margin-bottom:12px;
+    font-weight:700;
+}
+
+.delete-goal-modal p{
+    color:#475569;
+    font-size:16px;
+    line-height:1.6;
+    margin-bottom:10px;
+}
+
+.delete-goal-modal p strong{
+    color:#dc2626;
+}
+
+.delete-goal-modal span{
+    color:#94a3b8;
+    font-size:14px;
+}
+
+/* ==========================================
+                BUTTONS
+========================================== */
+
+.delete-buttons{
+    display:flex;
+    gap:15px;
+    margin-top:30px;
+}
+
+.cancel-btn,
+.confirm-delete-btn{
+    flex:1;
+    height:52px;
+    border:none;
+    border-radius:14px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.cancel-btn{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.cancel-btn:hover{
+    background:#cbd5e1;
+}
+
+.confirm-delete-btn{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+    color:#fff;
+}
+
+.confirm-delete-btn:hover:not(:disabled){
+    transform:translateY(-2px);
+    box-shadow:0 15px 30px rgba(220,38,38,.35);
+}
+
+.confirm-delete-btn:disabled{
+    opacity:.7;
+    cursor:not-allowed;
+}
+
+/* ==========================================
+            ANIMATIONS
+========================================== */
+
+@keyframes popup{
+
+from{
+    opacity:0;
+    transform:scale(.9);
+}
+
+to{
+    opacity:1;
+    transform:scale(1);
+}
+
+}
+
+@keyframes fadeIn{
+
+from{
+    opacity:0;
+}
+
+to{
+    opacity:1;
+}
+
+}
+
+@keyframes pulse{
+
+0%{
+    transform:scale(1);
+}
+
+50%{
+    transform:scale(1.08);
+}
+
+100%{
+    transform:scale(1);
+}
+
+}
+
+/* ==========================================
+            MOBILE
+========================================== */
+
+@media(max-width:576px){
+
+.delete-goal-modal{
+    padding:28px 20px;
+}
+
+.delete-goal-modal h2{
+    font-size:24px;
+}
+
+.delete-buttons{
+    flex-direction:column;
+}
+
+.cancel-btn,
+.confirm-delete-btn{
+    width:100%;
+}
+
+.delete-icon{
+    width:75px;
+    height:75px;
+    font-size:32px;
+}
+
+.delete-icon.completed{
+    background:#dcfce7;
+    color:#16a34a;
+}
+
+.completed-message{
+    margin-top:15px;
+    background:#ecfdf5;
+    border:1px solid #bbf7d0;
+    color:#166534;
+    padding:14px;
+    border-radius:12px;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.completed-message svg{
+    margin-top:2px;
+    flex-shrink:0;
+}
+
+.delete-note{
+    display:block;
+    margin-top:15px;
+    color:#64748b;
+    font-size:15px;
+}
+}

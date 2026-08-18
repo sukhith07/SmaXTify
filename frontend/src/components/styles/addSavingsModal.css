@@ -1,0 +1,219 @@
+/* =====================================
+        MODAL OVERLAY
+===================================== */
+
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.65);
+    backdrop-filter:blur(8px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+    animation:fadeIn .25s ease;
+}
+
+/* =====================================
+            MODAL
+===================================== */
+
+.add-savings-modal{
+    position:relative;
+    width:420px;
+    max-width:95%;
+    background:#ffffff;
+    border-radius:24px;
+    padding:30px;
+    box-shadow:0 25px 60px rgba(0,0,0,.25);
+    animation:popup .3s ease;
+}
+
+/* =====================================
+          CLOSE BUTTON
+===================================== */
+
+.close-btn{
+    position:absolute;
+    top:18px;
+    right:18px;
+    width:38px;
+    height:38px;
+    border:none;
+    border-radius:50%;
+    background:#f1f5f9;
+    color:#334155;
+    cursor:pointer;
+    transition:.25s;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.close-btn:hover{
+    background:#ef4444;
+    color:#fff;
+}
+
+/* =====================================
+            TITLE
+===================================== */
+
+.add-savings-modal h2{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:#1e293b;
+    font-size:26px;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.add-savings-modal h2 svg{
+    color:#10b981;
+    font-size:28px;
+}
+
+/* =====================================
+          GOAL NAME
+===================================== */
+
+.goal-name{
+    font-size:20px;
+    font-weight:600;
+    color:#2563eb;
+    margin-bottom:20px;
+}
+
+/* =====================================
+         GOAL SUMMARY
+===================================== */
+
+.goal-summary{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.goal-summary div{
+    background:#f8fafc;
+    border-radius:14px;
+    padding:16px;
+    text-align:center;
+    border:1px solid #e2e8f0;
+}
+
+.goal-summary small{
+    display:block;
+    color:#64748b;
+    margin-bottom:6px;
+    font-size:13px;
+}
+
+.goal-summary strong{
+    color:#0f172a;
+    font-size:20px;
+}
+
+/* =====================================
+            INPUT
+===================================== */
+
+.add-savings-modal input{
+    width:100%;
+    height:52px;
+    padding:0 18px;
+    border:2px solid #dbeafe;
+    border-radius:14px;
+    outline:none;
+    font-size:17px;
+    margin-bottom:24px;
+    transition:.3s;
+}
+
+.add-savings-modal input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.12);
+}
+
+/* =====================================
+           BUTTON
+===================================== */
+
+.save-savings-btn{
+    width:100%;
+    height:54px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#10b981,#059669);
+    color:#fff;
+    font-size:17px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.save-savings-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 30px rgba(16,185,129,.35);
+}
+
+.save-savings-btn:disabled{
+    opacity:.7;
+    cursor:not-allowed;
+}
+
+/* =====================================
+          ANIMATIONS
+===================================== */
+
+@keyframes popup{
+
+from{
+    opacity:0;
+    transform:scale(.9);
+}
+
+to{
+    opacity:1;
+    transform:scale(1);
+}
+
+}
+
+@keyframes fadeIn{
+
+from{
+    opacity:0;
+}
+
+to{
+    opacity:1;
+}
+
+}
+
+/* =====================================
+        RESPONSIVE
+===================================== */
+
+@media(max-width:576px){
+
+.add-savings-modal{
+    padding:22px;
+}
+
+.goal-summary{
+    grid-template-columns:1fr;
+}
+
+.add-savings-modal h2{
+    font-size:22px;
+}
+
+.goal-name{
+    font-size:18px;
+}
+
+}
