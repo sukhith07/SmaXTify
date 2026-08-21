@@ -41,10 +41,6 @@ function AddGoalModal({
 
   const [loading, setLoading] = useState(false);
 
-  /* ==========================================================
-     MOBILE DETECTION
-  ========================================================== */
-
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined"
       ? window.innerWidth <= 600
@@ -71,10 +67,6 @@ function AddGoalModal({
 
   }, []);
 
-  /* ==========================================================
-     FORM STATE
-  ========================================================== */
-
   const [goal, setGoal] = useState({
     title: "",
     targetAmount: "",
@@ -84,10 +76,6 @@ function AddGoalModal({
   });
 
   if (!isOpen) return null;
-
-  /* ==========================================================
-     HANDLE INPUT
-  ========================================================== */
 
   const handleChange = (e) => {
 
@@ -103,10 +91,6 @@ function AddGoalModal({
 
   };
 
-  /* ==========================================================
-     RESET FORM
-  ========================================================== */
-
   const resetForm = () => {
 
     setGoal({
@@ -118,10 +102,6 @@ function AddGoalModal({
     });
 
   };
-
-  /* ==========================================================
-     SUBMIT
-  ========================================================== */
 
   const handleSubmit = async (e) => {
 
@@ -192,10 +172,6 @@ function AddGoalModal({
 
   };
 
-  /* ==========================================================
-     PREMIUM CALENDAR HEADER
-  ========================================================== */
-
   const renderCalendarHeader = ({
     date,
     changeYear,
@@ -245,8 +221,6 @@ function AddGoalModal({
 
         <div className="goal-calendar-controls">
 
-          {/* PREVIOUS */}
-
           <button
             type="button"
             className="goal-calendar-nav"
@@ -258,8 +232,6 @@ function AddGoalModal({
           >
             <FaChevronLeft />
           </button>
-
-          {/* MONTH */}
 
           <select
             value={
@@ -287,8 +259,6 @@ function AddGoalModal({
 
           </select>
 
-          {/* YEAR */}
-
           <select
             value={
               date.getFullYear()
@@ -315,8 +285,6 @@ function AddGoalModal({
 
           </select>
 
-          {/* NEXT */}
-
           <button
             type="button"
             className="goal-calendar-nav"
@@ -337,10 +305,6 @@ function AddGoalModal({
 
   };
 
-  /* ==========================================================
-     CLOSE MODAL
-  ========================================================== */
-
   const handleClose = () => {
 
     if (loading) return;
@@ -356,10 +320,6 @@ function AddGoalModal({
     <div className="goal-modal-overlay">
 
       <div className="goal-modal">
-
-        {/* ==================================================
-            HEADER
-        ================================================== */}
 
         <div className="goal-modal-header">
 
@@ -384,16 +344,10 @@ function AddGoalModal({
 
         </div>
 
-        {/* ==================================================
-            FORM
-        ================================================== */}
-
         <form
           className="goal-form"
           onSubmit={handleSubmit}
         >
-
-          {/* GOAL NAME */}
 
           <div className="goal-form-field">
 
@@ -411,8 +365,6 @@ function AddGoalModal({
             />
 
           </div>
-
-          {/* TARGET AMOUNT */}
 
           <div className="goal-form-field">
 
@@ -432,8 +384,6 @@ function AddGoalModal({
 
           </div>
 
-          {/* INITIAL SAVINGS */}
-
           <div className="goal-form-field">
 
             <label>
@@ -451,88 +401,94 @@ function AddGoalModal({
 
           </div>
 
-          {/* TARGET DATE */}
-
           <div className="goal-form-field">
 
             <label>
               Target Date
             </label>
 
-            <DatePicker
+            <div className="goal-datepicker-wrapper">
 
-              selected={
-                goal.targetDate
-              }
+              <DatePicker
+                selected={
+                  goal.targetDate
+                }
 
-              onChange={(date) =>
-                setGoal((prev) => ({
-                  ...prev,
-                  targetDate: date,
-                }))
-              }
+                onChange={(date) =>
+                  setGoal((prev) => ({
+                    ...prev,
+                    targetDate: date,
+                  }))
+                }
 
-              className="goal-datepicker"
+                className="goal-datepicker"
 
-              placeholderText={
-                "Select Target Date"
-              }
+                placeholderText={
+                  "Select Target Date"
+                }
 
-              dateFormat="dd MMM yyyy"
+                dateFormat="dd MMM yyyy"
 
-              minDate={new Date()}
+                minDate={new Date()}
 
-              todayButton="Today"
+                todayButton="Today"
 
-              showMonthDropdown
+                showMonthDropdown
 
-              showYearDropdown
+                showYearDropdown
 
-              dropdownMode="select"
+                dropdownMode="select"
 
-              scrollableYearDropdown
+                scrollableYearDropdown
 
-              yearDropdownItemNumber={100}
+                yearDropdownItemNumber={100}
 
-              renderCustomHeader={
-                renderCalendarHeader
-              }
+                renderCustomHeader={
+                  renderCalendarHeader
+                }
 
-              /* ==================================================
-                 MOBILE FIX
-              ================================================== */
+                withPortal={isMobile}
 
-              withPortal={isMobile}
+                portalId={
+                  "goal-date-picker-portal"
+                }
 
-              portalId={
-                "goal-date-picker-portal"
-              }
+                popperClassName={
+                  "goal-calendar-popper"
+                }
 
-              popperPlacement={
-                "bottom-start"
-              }
+                popperPlacement={
+                  isMobile
+                    ? "bottom"
+                    : "bottom"
+                }
 
-              popperModifiers={[
-                {
-                  name: "flip",
-                  options: {
-                    fallbackPlacements: [],
+                popperModifiers={[
+                  {
+                    name: "flip",
+                    options: {
+                      fallbackPlacements: [],
+                    },
                   },
-                },
-                {
-                  name: "preventOverflow",
-                  options: {
-                    boundary: "viewport",
-                    padding: 8,
+                  {
+                    name: "preventOverflow",
+                    options: {
+                      boundary: "viewport",
+                      padding: 8,
+                    },
                   },
-                },
-              ]}
+                  {
+                    name: "offset",
+                    options: {
+                      offset: [0, 8],
+                    },
+                  },
+                ]}
+              />
 
-            />
+            </div>
 
           </div>
-
-          {/* GOAL ICON */}
 
           <div className="goal-form-field">
 
@@ -568,10 +524,6 @@ function AddGoalModal({
 
           </div>
 
-          {/* ==================================================
-              BUTTONS
-          ================================================== */}
-
           <div className="goal-buttons">
 
             <button
@@ -592,6 +544,7 @@ function AddGoalModal({
               {loading
                 ? "Creating..."
                 : "Create Goal"}
+                  
 
             </button>
 

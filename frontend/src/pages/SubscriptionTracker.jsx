@@ -1,8 +1,11 @@
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
+
+import { createPortal } from "react-dom";
 
 import {
   FaPlus,
@@ -42,6 +45,458 @@ import Navbar from "../components/layout/Navbar";
 import API from "../services/api";
 
 import "../components/styles/subscriptionTracker.css";
+
+
+function ProfessionalDatePicker({ name, value, onChange, label }) {
+  const [open, setOpen] = useState(false);
+  const [viewDate, setViewDate] = useState(() => {
+    if (value) {
+      const [year, month, day] = value.split("-").map(Number);
+      return new Date(year, month - 1, day || 1);
+    }
+    return new Date();
+  });
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
+  const triggerRef = useRef(null);
+  const popoverRef = useRef(null);
+
+  const calendarWidth = 520;
+  const calendarHeight = 610;
+
+  const updatePosition = () => {
+    if (!triggerRef.current) return;
+
+    const rect = triggerRef.current.getBoundingClientRect();
+    const gap = 10;
+    const margin = 12;
+    const width = Math.min(
+      calendarWidth,
+      window.innerWidth - margin * 2
+    );
+
+    const availableAbove = rect.top - margin;
+    const availableBelow = window.innerHeight - rect.bottom - margin;
+
+    let top;
+
+    if (availableAbove >= calendarHeight + gap) {
+      top = rect.top - calendarHeight - gap;
+    } else if (availableBelow >= calendarHeight + gap) {
+      top = rect.bottom + gap;
+    } else if (availableAbove > availableBelow) {
+      top = Math.max(margin, rect.top - calendarHeight - gap);
+    } else {
+      top = Math.min(
+        rect.bottom + gap,
+        window.innerHeight - calendarHeight - margin
+      );
+    }
+
+    top = Math.max(
+      margin,
+      Math.min(top, window.innerHeight - calendarHeight - margin)
+    );
+
+    let left = rect.left;
+
+    if (left + width > window.innerWidth - margin) {
+      left = window.innerWidth - width - margin;
+    }
+
+    left = Math.max(margin, left);
+
+    setPosition({ top, left });
+  };
+
+  useEffect(() => {
+    if (!open) return;
+
+    updatePosition();
+
+    const handlePointerDown = (event) => {
+      if (
+        triggerRef.current?.contains(event.target) ||
+        popoverRef.current?.contains(event.target)
+      ) {
+        return;
+      }
+      setOpen(false);
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+
+    const handleReposition = () => updatePosition();
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleReposition);
+    window.addEventListener("scroll", handleReposition, true);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleReposition);
+      window.removeEventListener("scroll", handleReposition, true);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open || !value) return;
+
+    const [year, month, day] = value.split("-").map(Number);
+
+    if (year && month) {
+      setViewDate(new Date(year, month - 1, day || 1));
+    }
+  }, [open, value]);
+
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const previousMonthDays = new Date(year, month, 0).getDate();
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const monthLabel = `${monthNames[month]} ${year}`;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const todayValue = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+  const formatDisplayDate = () => {
+    if (!value) return "Select date";
+
+    const [selectedYear, selectedMonth, selectedDay] = value
+      .split("-")
+      .map(Number);
+
+    return new Date(
+      selectedYear,
+      selectedMonth - 1,
+      selectedDay
+    ).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  const selectDate = (date) => {
+    const selectedYear = date.getFullYear();
+    const selectedMonth = String(date.getMonth() + 1).padStart(2, "0");
+    const selectedDay = String(date.getDate()).padStart(2, "0");
+
+    onChange({
+      target: {
+        name,
+        value: `${selectedYear}-${selectedMonth}-${selectedDay}`,
+      },
+    });
+
+    setViewDate(
+      new Date(
+        selectedYear,
+        date.getMonth(),
+        date.getDate()
+      )
+    );
+
+    setOpen(false);
+  };
+
+  const goToPreviousMonth = () => {
+    setViewDate(new Date(year, month - 1, 1));
+  };
+
+  const goToNextMonth = () => {
+    setViewDate(new Date(year, month + 1, 1));
+  };
+
+  const goToToday = () => {
+    const current = new Date();
+    current.setHours(0, 0, 0, 0);
+
+    setViewDate(
+      new Date(
+        current.getFullYear(),
+        current.getMonth(),
+        current.getDate()
+      )
+    );
+
+    onChange({
+      target: {
+        name,
+        value: todayValue,
+      },
+    });
+
+    setOpen(false);
+  };
+
+  const clearDate = () => {
+    onChange({
+      target: {
+        name,
+        value: "",
+      },
+    });
+    setOpen(false);
+  };
+
+  const changeMonth = (event) => {
+    setViewDate(
+      new Date(
+        year,
+        Number(event.target.value),
+        1
+      )
+    );
+  };
+
+  const changeYear = (event) => {
+    setViewDate(
+      new Date(
+        Number(event.target.value),
+        month,
+        1
+      )
+    );
+  };
+
+  const years = Array.from(
+    { length: 21 },
+    (_, index) => year - 10 + index
+  );
+
+  const selectedParts = value
+    ? value.split("-").map(Number)
+    : null;
+
+  const selectedDate = selectedParts
+    ? new Date(
+        selectedParts[0],
+        selectedParts[1] - 1,
+        selectedParts[2]
+      )
+    : null;
+
+  const calendarCells = [];
+
+  for (let i = firstDay - 1; i >= 0; i -= 1) {
+    const day = previousMonthDays - i;
+    const cellDate = new Date(year, month - 1, day);
+
+    calendarCells.push(
+      <button
+        type="button"
+        key={`prev-${day}`}
+        className="professional-calendar-v4-day outside"
+        onClick={() => selectDate(cellDate)}
+      >
+        {day}
+      </button>
+    );
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const cellDate = new Date(year, month, day);
+    cellDate.setHours(0, 0, 0, 0);
+
+    const isSelected =
+      selectedDate &&
+      selectedDate.getFullYear() === year &&
+      selectedDate.getMonth() === month &&
+      selectedDate.getDate() === day;
+
+    const isToday = cellDate.getTime() === today.getTime();
+
+    calendarCells.push(
+      <button
+        type="button"
+        key={`current-${day}`}
+        className={`professional-calendar-v4-day${
+          isSelected ? " selected" : ""
+        }${isToday ? " today" : ""}`}
+        onClick={() => selectDate(cellDate)}
+      >
+        {day}
+      </button>
+    );
+  }
+
+  const trailingDays = 42 - calendarCells.length;
+
+  for (let day = 1; day <= trailingDays; day += 1) {
+    const cellDate = new Date(year, month + 1, day);
+
+    calendarCells.push(
+      <button
+        type="button"
+        key={`next-${day}`}
+        className="professional-calendar-v4-day outside"
+        onClick={() => selectDate(cellDate)}
+      >
+        {day}
+      </button>
+    );
+  }
+
+  const calendar = open
+    ? createPortal(
+        <div
+          ref={popoverRef}
+          className="professional-calendar-v4"
+          style={{
+            top: `${position.top}px`,
+            left: `${position.left}px`,
+          }}
+          role="dialog"
+          aria-label={`${label} calendar`}
+        >
+          <div className="professional-calendar-v4-top">
+            <strong>{monthLabel}</strong>
+
+            <div className="professional-calendar-v4-navigation">
+              <button
+                type="button"
+                onClick={goToPreviousMonth}
+                aria-label="Previous month"
+              >
+                ‹
+              </button>
+
+              <button
+                type="button"
+                onClick={goToNextMonth}
+                aria-label="Next month"
+              >
+                ›
+              </button>
+            </div>
+          </div>
+
+          <div className="professional-calendar-v4-selectors">
+            <select
+              value={month}
+              onChange={changeMonth}
+              aria-label="Month"
+            >
+              {monthNames.map((monthName, index) => (
+                <option key={monthName} value={index}>
+                  {monthName}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={year}
+              onChange={changeYear}
+              aria-label="Year"
+            >
+              {years.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="professional-calendar-v4-weekdays">
+            {["SU", "MO", "TU", "WE", "TH", "FR", "SA"].map(
+              (day) => (
+                <span key={day}>{day}</span>
+              )
+            )}
+          </div>
+
+          <div className="professional-calendar-v4-grid">
+            {calendarCells}
+          </div>
+
+          <button
+            type="button"
+            className="professional-calendar-v4-today"
+            onClick={goToToday}
+          >
+            Today
+          </button>
+        </div>,
+        document.body
+      )
+    : null;
+
+  return (
+    <div
+      className="professional-date-picker"
+      data-picker={name}
+    >
+      <span className="professional-date-label">
+        {label}
+      </span>
+
+      <button
+        ref={triggerRef}
+        type="button"
+        className={`professional-date-trigger${
+          open ? " open" : ""
+        }${value ? " has-value" : ""}`}
+        onClick={() => {
+          if (!open) {
+            if (value) {
+              const [selectedYear, selectedMonth, selectedDay] =
+                value.split("-").map(Number);
+
+              setViewDate(
+                new Date(
+                  selectedYear,
+                  selectedMonth - 1,
+                  selectedDay
+                )
+              );
+            } else {
+              setViewDate(new Date());
+            }
+
+            requestAnimationFrame(updatePosition);
+          }
+
+          setOpen((current) => !current);
+        }}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+      >
+        <FaCalendarAlt />
+        <span>{formatDisplayDate()}</span>
+        <span className="professional-date-chevron">⌄</span>
+      </button>
+
+      {calendar}
+    </div>
+  );
+}
 
 function SubscriptionTracker() {
   const [subscriptions, setSubscriptions] =
@@ -3312,296 +3767,255 @@ function SubscriptionTracker() {
       {showModal && (
         <div
           className="subscription-modal-overlay"
-          onMouseDown={(
-            event
-          ) => {
-            if (
-              event.target ===
-              event.currentTarget
-            ) {
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
               closeModal();
             }
           }}
         >
           <form
-            className="subscription-modal"
-            onSubmit={
-              saveSubscription
-            }
+            className="subscription-modal professional-modal"
+            onSubmit={saveSubscription}
           >
-            <div className="subscription-modal-header">
-              <div>
-                <h2>
-                  {editingId
-                    ? "Edit Subscription"
-                    : "Add Subscription"}
-                </h2>
+            <div className="subscription-modal-header professional-modal-header">
+              <div className="professional-modal-heading">
+                <div className="professional-modal-icon">
+                  <FaCreditCard />
+                </div>
 
-                <p>
-                  Add your recurring payment details.
-                </p>
+                <div>
+                  <div className="professional-modal-title-row">
+                    <h2>
+                      {editingId ? "Edit Subscription" : "Add Subscription"}
+                    </h2>
+                    <span className="professional-modal-status">
+                      {editingId ? "EDITING" : "NEW"}
+                    </span>
+                  </div>
+
+                  <p>
+                    {editingId
+                      ? "Update your recurring payment details."
+                      : "Add a recurring payment to keep your finances organized."}
+                  </p>
+                </div>
               </div>
 
               <button
                 type="button"
-                onClick={
-                  closeModal
-                }
+                className="professional-modal-close"
+                onClick={closeModal}
                 aria-label="Close"
+                title="Close"
               >
                 <FaTimes />
               </button>
             </div>
 
-            <div className="subscription-form-grid">
-              <label>
-                <span>
-                  Subscription Name
-                </span>
+            <div className="professional-modal-body">
+              <div className="professional-form-section">
+                <div className="professional-section-heading">
+                  <span className="professional-section-number">01</span>
+                  <div>
+                    <h3>Subscription Details</h3>
+                    <p>Tell us about the service you're tracking.</p>
+                  </div>
+                </div>
 
-                <input
-                  name="name"
-                  type="text"
-                  placeholder="e.g. Netflix"
-                  value={form.name}
-                  onChange={
-                    handleChange
-                  }
-                  required
-                />
-              </label>
+                <div className="subscription-form-grid professional-form-grid">
+                  <label className="professional-field">
+                    <span>Subscription Name</span>
+                    <div className="professional-input-wrapper">
+                      <FaCreditCard />
+                      <input
+                        name="name"
+                        type="text"
+                        placeholder="e.g. Netflix"
+                        value={form.name}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </label>
 
-              <label>
-                <span>
-                  Category
-                </span>
+                  <label className="professional-field">
+                    <span>Category</span>
+                    <div className="professional-input-wrapper">
+                      <FaChartLine />
+                      <select
+                        name="category"
+                        value={form.category}
+                        onChange={handleChange}
+                      >
+                        <option>Entertainment</option>
+                        <option>Education</option>
+                        <option>Software</option>
+                        <option>Health</option>
+                        <option>Shopping</option>
+                        <option>Gaming</option>
+                        <option>Other</option>
+                      </select>
+                    </div>
+                  </label>
 
-                <select
-                  name="category"
-                  value={
-                    form.category
-                  }
-                  onChange={
-                    handleChange
-                  }
-                >
-                  <option>
-                    Entertainment
-                  </option>
+                  <label className="professional-field">
+                    <span>Amount</span>
+                    <div className="professional-input-wrapper amount-input">
+                      <span className="currency-symbol">₹</span>
+                      <input
+                        name="amount"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="0"
+                        value={form.amount}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                  </label>
 
-                  <option>
-                    Education
-                  </option>
+                  <label className="professional-field">
+                    <span>Billing Cycle</span>
+                    <div className="professional-input-wrapper">
+                      <FaSyncAlt />
+                      <select
+                        name="cycle"
+                        value={form.cycle}
+                        onChange={handleChange}
+                      >
+                        <option>Weekly</option>
+                        <option>Monthly</option>
+                        <option>Yearly</option>
+                      </select>
+                    </div>
+                  </label>
+                </div>
+              </div>
 
-                  <option>
-                    Software
-                  </option>
+              <div className="professional-form-divider" />
 
-                  <option>
-                    Health
-                  </option>
+              <div className="professional-form-section">
+                <div className="professional-section-heading">
+                  <span className="professional-section-number">02</span>
+                  <div>
+                    <h3>Payment Schedule</h3>
+                    <p>Set when your recurring payment starts and renews.</p>
+                  </div>
+                </div>
 
-                  <option>
-                    Shopping
-                  </option>
+                <div className="subscription-form-grid professional-form-grid">
+                  <ProfessionalDatePicker
+                    name="startDate"
+                    label="Start Date"
+                    value={form.startDate}
+                    onChange={handleChange}
+                  />
 
-                  <option>
-                    Gaming
-                  </option>
+                  <ProfessionalDatePicker
+                    name="nextPayment"
+                    label="Next Payment Date"
+                    value={form.nextPayment}
+                    onChange={handleChange}
+                  />
 
-                  <option>
-                    Other
-                  </option>
-                </select>
-              </label>
+                  <label className="professional-field">
+                    <span>Payment Method</span>
+                    <div className="professional-input-wrapper">
+                      <FaWallet />
+                      <select
+                        name="paymentMethod"
+                        value={form.paymentMethod}
+                        onChange={handleChange}
+                      >
+                        <option>UPI</option>
+                        <option>Card</option>
+                        <option>Net Banking</option>
+                        <option>Cash</option>
+                        <option>Other</option>
+                      </select>
+                    </div>
+                  </label>
 
-              <label>
-                <span>
-                  Amount
-                </span>
+                  <label className="professional-field">
+                    <span>Status</span>
+                    <div className="professional-input-wrapper">
+                      <FaCheckCircle />
+                      <select
+                        name="status"
+                        value={form.status}
+                        onChange={handleChange}
+                      >
+                        <option>Active</option>
+                        <option>Paused</option>
+                        <option>Cancelled</option>
+                      </select>
+                    </div>
+                  </label>
+                </div>
+              </div>
 
-                <input
-                  name="amount"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="₹ 0"
-                  value={
-                    form.amount
-                  }
-                  onChange={
-                    handleChange
-                  }
-                  required
-                />
-              </label>
+              <div className="professional-settings-card">
+                <div className="professional-settings-icon">
+                  <FaBell />
+                </div>
 
-              <label>
-                <span>
-                  Billing Cycle
-                </span>
+                <div className="professional-settings-content">
+                  <strong>Automatic Renewal</strong>
+                  <span>
+                    Automatically renew this subscription when the payment date arrives.
+                  </span>
+                </div>
 
-                <select
-                  name="cycle"
-                  value={
-                    form.cycle
-                  }
-                  onChange={
-                    handleChange
-                  }
-                >
-                  <option>
-                    Weekly
-                  </option>
+                <label className="professional-switch">
+                  <input
+                    name="autoRenew"
+                    type="checkbox"
+                    checked={form.autoRenew}
+                    onChange={handleChange}
+                  />
+                  <span className="professional-switch-slider" />
+                </label>
+              </div>
 
-                  <option>
-                    Monthly
-                  </option>
+              <div className="professional-preview">
+                <div className="professional-preview-icon">
+                  <FaChartLine />
+                </div>
 
-                  <option>
-                    Yearly
-                  </option>
-                </select>
-              </label>
+                <div className="professional-preview-content">
+                  <span>SUBSCRIPTION PREVIEW</span>
+                  <strong>
+                    {form.name.trim() || "Your subscription"}
+                  </strong>
+                  <p>
+                    {form.amount
+                      ? `${formatCurrency(Number(form.amount))} · ${form.cycle}`
+                      : "Enter an amount and billing cycle"}
+                  </p>
+                </div>
 
-              <label>
-                <span>
-                  Start Date
-                </span>
-
-                <input
-                  name="startDate"
-                  type="date"
-                  value={
-                    form.startDate
-                  }
-                  onChange={
-                    handleChange
-                  }
-                  required
-                />
-              </label>
-
-              <label>
-                <span>
-                  Next Payment Date
-                </span>
-
-                <input
-                  name="nextPayment"
-                  type="date"
-                  value={
-                    form.nextPayment
-                  }
-                  onChange={
-                    handleChange
-                  }
-                  required
-                />
-              </label>
-
-              <label>
-                <span>
-                  Payment Method
-                </span>
-
-                <select
-                  name="paymentMethod"
-                  value={
-                    form.paymentMethod
-                  }
-                  onChange={
-                    handleChange
-                  }
-                >
-                  <option>
-                    UPI
-                  </option>
-
-                  <option>
-                    Card
-                  </option>
-
-                  <option>
-                    Net Banking
-                  </option>
-
-                  <option>
-                    Cash
-                  </option>
-
-                  <option>
-                    Other
-                  </option>
-                </select>
-              </label>
-
-              <label>
-                <span>
-                  Status
-                </span>
-
-                <select
-                  name="status"
-                  value={
-                    form.status
-                  }
-                  onChange={
-                    handleChange
-                  }
-                >
-                  <option>
-                    Active
-                  </option>
-
-                  <option>
-                    Paused
-                  </option>
-
-                  <option>
-                    Cancelled
-                  </option>
-                </select>
-              </label>
+                {form.autoRenew && (
+                  <span className="professional-preview-badge">
+                    <FaSyncAlt />
+                    Auto-renew
+                  </span>
+                )}
+              </div>
             </div>
 
-            <label className="subscription-auto-renew">
-              <input
-                name="autoRenew"
-                type="checkbox"
-                checked={
-                  form.autoRenew
-                }
-                onChange={
-                  handleChange
-                }
-              />
-
-              <span>
-                Auto-renew this subscription
-              </span>
-            </label>
-
-            <div className="subscription-modal-actions">
+            <div className="subscription-modal-actions professional-modal-actions">
               <button
                 type="button"
-                className="subscription-cancel-btn"
-                onClick={
-                  closeModal
-                }
+                className="professional-cancel-btn"
+                onClick={closeModal}
               >
                 Cancel
               </button>
 
-              <button
-                type="submit"
-                className="subscription-save-btn"
-              >
+              <button type="submit" className="professional-save-btn">
                 <FaSave />
-
-                {editingId
-                  ? "Save Changes"
-                  : "Add Subscription"}
+                {editingId ? "Save Changes" : "Add Subscription"}
               </button>
             </div>
           </form>

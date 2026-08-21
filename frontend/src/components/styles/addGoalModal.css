@@ -1,136 +1,74 @@
-/* ==========================================================
-   GOAL MODAL OVERLAY
-========================================================== */
-
 .goal-modal-overlay {
     position: fixed;
     inset: 0;
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     padding: 20px;
-
     background: rgba(15, 23, 42, 0.55);
-
     backdrop-filter: blur(10px);
-
+    -webkit-backdrop-filter: blur(10px);
     z-index: 9999;
-
     box-sizing: border-box;
-
     overflow-y: auto;
 }
 
-
-/* ==========================================================
-   MODAL
-========================================================== */
-
 .goal-modal {
+    position: relative;
     width: 560px;
     max-width: 100%;
-
     max-height: calc(100vh - 40px);
-
     display: flex;
     flex-direction: column;
-
     background: #ffffff;
-
     border-radius: 26px;
-
     padding: 30px;
-
     border: 1px solid #e2e8f0;
-
-    box-shadow:
-        0 30px 80px rgba(15, 23, 42, 0.18);
-
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
     animation: popup 0.35s ease;
-
     box-sizing: border-box;
-
     overflow: hidden;
 }
 
-
-/* ==========================================================
-   HEADER
-========================================================== */
-
 .goal-modal-header {
     display: flex;
-
     justify-content: space-between;
     align-items: center;
-
     margin-bottom: 24px;
-
     flex-shrink: 0;
 }
 
 .goal-modal-header h2 {
     display: flex;
     align-items: center;
-
     gap: 14px;
-
     margin: 0;
-
     font-size: 26px;
-
     font-weight: 700;
-
     color: #0f172a;
 }
 
 .goal-modal-header h2 svg {
     width: 56px;
     height: 56px;
-
     padding: 15px;
-
     border-radius: 18px;
-
     color: #ffffff;
-
-    background: linear-gradient(
-        135deg,
-        #2563eb,
-        #7c3aed
-    );
-
-    box-shadow:
-        0 10px 24px rgba(37, 99, 235, 0.28);
-
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
     box-sizing: border-box;
 }
-
-
-/* ==========================================================
-   CLOSE BUTTON
-========================================================== */
 
 .goal-close-btn {
     width: 46px;
     height: 46px;
-
     flex-shrink: 0;
-
     border: none;
-
     border-radius: 14px;
-
     background: #f1f5f9;
-
     color: #64748b;
-
     cursor: pointer;
-
     transition: 0.25s;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -138,43 +76,20 @@
 
 .goal-close-btn:hover {
     background: #2563eb;
-
     color: #ffffff;
-
     transform: rotate(90deg);
 }
 
-
-/* ==========================================================
-   FORM
-========================================================== */
-
 .goal-form {
     display: flex;
-
     flex-direction: column;
-
     gap: 18px;
-
-    /*
-       Important:
-       The form itself becomes the scrollable
-       area on smaller screens.
-    */
-
     min-height: 0;
-
     overflow-y: auto;
-
     padding-right: 6px;
-
     scrollbar-width: thin;
-
     scrollbar-color: #c7d2fe transparent;
 }
-
-
-/* Custom form scrollbar */
 
 .goal-form::-webkit-scrollbar {
     width: 6px;
@@ -182,7 +97,6 @@
 
 .goal-form::-webkit-scrollbar-thumb {
     background: #c7d2fe;
-
     border-radius: 20px;
 }
 
@@ -190,99 +104,75 @@
     background: transparent;
 }
 
-
-/* ==========================================================
-   LABEL
-========================================================== */
+.goal-form-field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
 
 .goal-form label {
     display: flex;
-
     align-items: center;
-
     font-size: 14px;
-
     font-weight: 700;
-
     color: #334155;
 }
-
-
-/* ==========================================================
-   INPUTS
-========================================================== */
 
 .goal-form input,
 .goal-datepicker {
     width: 100%;
-
     height: 54px;
-
     border: 2px solid #dbeafe;
-
     border-radius: 14px;
-
     background: #ffffff;
-
     padding: 0 16px;
-
     font-size: 15px;
-
     outline: none;
-
     transition: 0.3s;
-
     box-sizing: border-box;
+    color: #0f172a;
 }
 
-.goal-form input::placeholder {
+.goal-form input::placeholder,
+.goal-datepicker::placeholder {
     color: #94a3b8;
 }
 
 .goal-form input:focus,
 .goal-datepicker:focus {
     border-color: #2563eb;
-
-    box-shadow:
-        0 0 0 4px rgba(37, 99, 235, 0.12);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
+.goal-datepicker-wrapper {
+    position: relative;
+    width: 100%;
+}
 
-/* ==========================================================
-   ICON GRID
-========================================================== */
+.goal-datepicker-wrapper .react-datepicker-wrapper,
+.goal-datepicker-wrapper .react-datepicker__input-container {
+    width: 100%;
+}
 
 .goal-icons {
     display: grid;
-
     grid-template-columns: repeat(6, minmax(0, 1fr));
-
     gap: 12px;
-
     width: 100%;
 }
 
 .goal-icon {
     width: 64px;
     height: 64px;
-
     max-width: 100%;
-
     border: none;
-
     border-radius: 18px;
-
     background: #ffffff;
-
-    box-shadow:
-        0 10px 25px rgba(15, 23, 42, 0.08);
-
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
     cursor: pointer;
-
     font-size: 28px;
-
     transition: 0.28s;
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -290,77 +180,43 @@
 
 .goal-icon:hover {
     transform: translateY(-4px);
-
-    box-shadow:
-        0 18px 35px rgba(37, 99, 235, 0.18);
+    box-shadow: 0 18px 35px rgba(37, 99, 235, 0.18);
 }
 
 .goal-icon.active {
     color: #ffffff;
-
-    background: linear-gradient(
-        135deg,
-        #2563eb,
-        #7c3aed
-    );
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.28);
 }
-
-
-/* ==========================================================
-   BUTTONS
-========================================================== */
 
 .goal-buttons {
     display: flex;
-
     gap: 14px;
-
     margin-top: 12px;
-
     flex-shrink: 0;
-
-    /*
-       Keeps the buttons accessible when the
-       form becomes scrollable.
-    */
-
     position: sticky;
-
     bottom: 0;
-
     padding-top: 14px;
-
     padding-bottom: 2px;
-
     background: #ffffff;
-
     z-index: 5;
 }
 
 .cancel-btn,
 .save-goal-btn {
     flex: 1;
-
     min-width: 0;
-
     height: 54px;
-
     border: none;
-
     border-radius: 14px;
-
     font-size: 15px;
-
     font-weight: 700;
-
     cursor: pointer;
-
     transition: 0.3s;
 }
 
 .cancel-btn {
     background: #e2e8f0;
-
     color: #334155;
 }
 
@@ -368,417 +224,264 @@
     background: #cbd5e1;
 }
 
+.cancel-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
 .save-goal-btn {
     color: #ffffff;
-
-    background: linear-gradient(
-        135deg,
-        #2563eb,
-        #7c3aed
-    );
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
 }
 
 .save-goal-btn:hover {
     transform: translateY(-3px);
-
-    box-shadow:
-        0 16px 30px rgba(37, 99, 235, 0.28);
+    box-shadow: 0 16px 30px rgba(37, 99, 235, 0.28);
 }
 
 .save-goal-btn:disabled {
     opacity: 0.7;
-
     cursor: not-allowed;
-
     transform: none;
 }
-
-
-/* ==========================================================
-   PREMIUM REACT DATEPICKER
-========================================================== */
 
 .react-datepicker-popper {
     z-index: 99999 !important;
 }
 
-.react-datepicker {
-    border: none !important;
+.goal-calendar-popper {
+    z-index: 99999 !important;
+}
 
-    border-radius: 24px !important;
+.goal-calendar-popper[data-placement^="bottom"] {
+    margin-top: 53px;
+}
 
-    overflow: hidden;
+.goal-calendar-popper[data-placement^="top"] {
+    margin-bottom: 8px;
+}
 
-    background: #ffffff;
-
-    box-shadow:
-        0 28px 70px rgba(15, 23, 42, 0.18);
-
-    font-family: inherit;
-
+.goal-calendar-popper .react-datepicker {
+    width: 350px;
     max-width: calc(100vw - 24px);
+    border: none !important;
+    border-radius: 18px !important;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 22px 50px rgba(15, 23, 42, 0.22);
+    font-family: inherit;
 }
 
-
-/* ==========================================================
-   CUSTOM HEADER
-========================================================== */
-
-.goal-calendar-header {
-    background: linear-gradient(
-        135deg,
-        #2563eb 0%,
-        #7c3aed 100%
-    );
-
-    padding: 22px 22px 18px;
+.goal-calendar-popper .goal-calendar-header {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    padding: 14px 16px 13px;
 }
 
-.goal-calendar-header h2 {
-    margin: 0 0 18px;
-
+.goal-calendar-popper .goal-calendar-header h2 {
+    margin: 0 0 12px;
     color: #ffffff;
-
     text-align: center;
-
-    font-size: 28px;
-
+    font-size: 21px;
     font-weight: 800;
-
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
 }
 
-
-/* ==========================================================
-   CALENDAR CONTROLS
-========================================================== */
-
-.goal-calendar-controls {
+.goal-calendar-popper .goal-calendar-controls {
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
-    gap: 12px;
+    gap: 6px;
 }
 
-.goal-calendar-controls select {
+.goal-calendar-popper .goal-calendar-controls select {
     appearance: none;
     -webkit-appearance: none;
-
-    min-width: 135px;
-
-    height: 46px;
-
+    min-width: 94px;
+    height: 36px;
     border: none;
-
-    border-radius: 14px;
-
-    padding: 0 16px;
-
+    border-radius: 10px;
+    padding: 0 10px;
     background: rgba(255, 255, 255, 0.18);
-
     color: #ffffff;
-
-    font-size: 15px;
-
+    font-size: 12px;
     font-weight: 700;
-
     backdrop-filter: blur(12px);
-
+    -webkit-backdrop-filter: blur(12px);
     cursor: pointer;
-
     transition: 0.25s;
+    outline: none;
 }
 
-.goal-calendar-controls select:hover {
+.goal-calendar-popper .goal-calendar-controls select:hover {
     background: rgba(255, 255, 255, 0.28);
 }
 
-.goal-calendar-controls select:focus {
-    outline: none;
-
-    box-shadow:
-        0 0 0 4px rgba(255, 255, 255, 0.18);
+.goal-calendar-popper .goal-calendar-controls select:focus {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
 }
 
-.goal-calendar-controls option {
+.goal-calendar-popper .goal-calendar-controls select option {
     color: #111827;
-
     background: #ffffff;
 }
 
-
-/* ==========================================================
-   CALENDAR NAVIGATION
-========================================================== */
-
-.goal-calendar-nav {
-    width: 44px;
-    height: 44px;
-
+.goal-calendar-popper .goal-calendar-nav {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
     border: none;
-
     border-radius: 50%;
-
     background: rgba(255, 255, 255, 0.18);
-
     color: #ffffff;
-
     display: flex;
-
     justify-content: center;
-
     align-items: center;
-
     cursor: pointer;
-
     transition: 0.25s;
 }
 
-.goal-calendar-nav:hover {
+.goal-calendar-popper .goal-calendar-nav:hover {
     background: rgba(255, 255, 255, 0.30);
-
-    transform: scale(1.08);
+    transform: scale(1.05);
 }
 
-.goal-calendar-nav:disabled {
+.goal-calendar-popper .goal-calendar-nav:disabled {
     opacity: 0.45;
-
     cursor: not-allowed;
-
     transform: none;
 }
 
-
-/* ==========================================================
-   HIDE DEFAULT HEADER
-========================================================== */
-
-.react-datepicker__header {
+.goal-calendar-popper .react-datepicker__header {
     padding: 0 !important;
-
     background: transparent !important;
-
     border: none !important;
 }
 
-.react-datepicker__current-month,
-.react-datepicker__month-dropdown-container,
-.react-datepicker__year-dropdown-container,
-.react-datepicker__navigation {
+.goal-calendar-popper .react-datepicker__current-month,
+.goal-calendar-popper .react-datepicker__month-dropdown-container,
+.goal-calendar-popper .react-datepicker__year-dropdown-container,
+.goal-calendar-popper .react-datepicker__navigation {
     display: none !important;
 }
 
-
-/* ==========================================================
-   DAY NAMES
-========================================================== */
-
-.react-datepicker__day-names {
+.goal-calendar-popper .react-datepicker__day-names {
     display: flex !important;
-
     justify-content: space-between;
-
     align-items: center;
-
-    padding: 10px 18px 6px;
-
+    padding: 7px 10px 3px;
     margin: 0;
 }
 
-.react-datepicker__day-name {
-    width: 2.5rem !important;
-
-    line-height: 2.5rem !important;
-
+.goal-calendar-popper .react-datepicker__day-name {
+    width: 2rem !important;
+    line-height: 2rem !important;
     margin: 0 !important;
-
     text-align: center;
-
     color: #64748b !important;
-
-    font-size: 13px;
-
+    font-size: 10px;
     font-weight: 700;
-
     text-transform: uppercase;
 }
 
-
-/* ==========================================================
-   MONTH
-========================================================== */
-
-.react-datepicker__month {
-    margin: 16px 18px 18px;
+.goal-calendar-popper .react-datepicker__month {
+    margin: 8px 10px 11px;
 }
 
-
-/* ==========================================================
-   WEEK
-========================================================== */
-
-.react-datepicker__week {
+.goal-calendar-popper .react-datepicker__week {
     display: flex;
-
     justify-content: space-around;
 }
 
-
-/* ==========================================================
-   DAY
-========================================================== */
-
-.react-datepicker__day {
-    width: 40px;
-
-    height: 40px;
-
-    line-height: 40px;
-
-    margin: 4px;
-
+.goal-calendar-popper .react-datepicker__day {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    margin: 2px;
     border-radius: 50%;
-
-    font-size: 15px;
-
+    font-size: 12px;
     font-weight: 600;
-
     color: #111827;
-
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
 }
 
-.react-datepicker__day:hover {
+.goal-calendar-popper .react-datepicker__day:hover {
     background: #2563eb !important;
-
     color: #ffffff !important;
-
-    transform: scale(1.08);
+    transform: scale(1.05);
 }
 
-
-/* ==========================================================
-   SELECTED DAY
-========================================================== */
-
-.react-datepicker__day--selected {
+.goal-calendar-popper .react-datepicker__day--selected {
     background: #2563eb !important;
-
     color: #ffffff !important;
-
     font-weight: 700;
-
-    box-shadow:
-        0 10px 20px rgba(37, 99, 235, 0.30);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.28);
 }
 
-.react-datepicker__day--keyboard-selected {
+.goal-calendar-popper .react-datepicker__day--keyboard-selected {
     background: #06b6d4 !important;
-
     color: #ffffff !important;
 }
 
-
-/* ==========================================================
-   TODAY
-========================================================== */
-
-.react-datepicker__day--today {
+.goal-calendar-popper .react-datepicker__day--today {
     font-weight: 700;
-
     border: 2px solid #2563eb;
 }
 
-
-/* ==========================================================
-   OUTSIDE MONTH
-========================================================== */
-
-.react-datepicker__day--outside-month {
+.goal-calendar-popper .react-datepicker__day--outside-month {
     color: #cbd5e1;
 }
 
-
-/* ==========================================================
-   DISABLED DAY
-========================================================== */
-
-.react-datepicker__day--disabled {
+.goal-calendar-popper .react-datepicker__day--disabled {
     color: #cbd5e1;
 }
 
-.react-datepicker__day--disabled:hover {
+.goal-calendar-popper .react-datepicker__day--disabled:hover {
     background: none !important;
-
     color: #cbd5e1 !important;
-
     transform: none;
 }
 
-
-/* ==========================================================
-   TODAY BUTTON
-========================================================== */
-
-.react-datepicker__today-button {
+.goal-calendar-popper .react-datepicker__today-button {
     background: #ffffff;
-
     border-top: 1px solid #e2e8f0;
-
     color: #2563eb;
-
-    font-size: 16px;
-
+    font-size: 13px;
     font-weight: 700;
-
-    padding: 14px;
+    padding: 10px;
 }
 
-
-/* ==========================================================
-   TRIANGLE
-========================================================== */
-
-.react-datepicker__triangle {
+.goal-calendar-popper .react-datepicker__triangle {
     display: none;
 }
-
-
-/* ==========================================================
-   ANIMATION
-========================================================== */
 
 @keyframes popup {
     from {
         opacity: 0;
-
         transform: scale(0.92);
     }
 
     to {
         opacity: 1;
-
         transform: scale(1);
     }
 }
 
+@media (min-width: 601px) {
+    .goal-calendar-popper {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
 
-/* ==========================================================
-   TABLET
-========================================================== */
+    .goal-calendar-popper .react-datepicker {
+        margin: 0;
+    }
+}
 
 @media (max-width: 768px) {
-
     .goal-modal {
         width: 92%;
-
         max-height: calc(100vh - 30px);
-
         padding: 24px;
-
         border-radius: 22px;
     }
 
@@ -788,14 +491,12 @@
 
     .goal-modal-header h2 {
         font-size: 22px;
-
         gap: 10px;
     }
 
     .goal-modal-header h2 svg {
         width: 48px;
         height: 48px;
-
         padding: 12px;
     }
 
@@ -805,223 +506,187 @@
     }
 
     .goal-icons {
-        grid-template-columns:
-            repeat(4, minmax(0, 1fr));
-
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 12px;
     }
 
     .goal-icon {
         width: 56px;
         height: 56px;
-
         font-size: 25px;
     }
 }
 
-
-/* ==========================================================
-   MOBILE
-========================================================== */
-
 @media (max-width: 600px) {
-
     .goal-modal-overlay {
-        align-items: center;
-
-        padding: 12px;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 14px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 
     .goal-modal {
         width: 100%;
-
-        max-width: 420px;
-
-        max-height: calc(100vh - 24px);
-
-        padding: 18px;
-
-        border-radius: 20px;
+        max-width: 430px;
+        max-height: calc(100vh - 28px);
+        padding: 22px;
+        border-radius: 22px;
+        overflow-y: auto;
+        margin: 0 auto;
     }
 
-
-    /* ------------------------------------------
-       Header
-    ------------------------------------------ */
-
     .goal-modal-header {
-        margin-bottom: 14px;
+        margin-bottom: 20px;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: #ffffff;
+        padding-bottom: 12px;
     }
 
     .goal-modal-header h2 {
         font-size: 20px;
-
-        gap: 9px;
+        gap: 10px;
     }
 
     .goal-modal-header h2 svg {
         width: 44px;
         height: 44px;
-
         padding: 11px;
-
         border-radius: 14px;
     }
 
     .goal-close-btn {
-        width: 40px;
-        height: 40px;
-
-        border-radius: 12px;
+        width: 42px;
+        height: 42px;
     }
 
-
-    /* ------------------------------------------
-       Form
-    ------------------------------------------ */
-
     .goal-form {
-        gap: 14px;
-
+        gap: 15px;
         padding-right: 3px;
     }
 
     .goal-form input,
     .goal-datepicker {
-        height: 50px;
-
-        font-size: 14px;
-
-        border-radius: 12px;
+        height: 52px;
+        font-size: 15px;
     }
 
-
-    /* ------------------------------------------
-       Goal icons
-    ------------------------------------------ */
-
     .goal-icons {
-        grid-template-columns:
-            repeat(4, minmax(0, 1fr));
-
+        grid-template-columns: repeat(4, 1fr);
         gap: 10px;
     }
 
     .goal-icon {
-        width: 52px;
-        height: 52px;
-
-        border-radius: 14px;
-
-        font-size: 23px;
+        width: 100%;
+        height: 56px;
+        font-size: 25px;
+        border-radius: 15px;
     }
 
-
-    /* ------------------------------------------
-       Action buttons
-    ------------------------------------------ */
-
     .goal-buttons {
-        flex-direction: row;
-
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 10px;
-
         margin-top: 8px;
-
+        position: sticky;
+        bottom: 0;
         padding-top: 12px;
+        background: #ffffff;
+        z-index: 5;
     }
 
     .cancel-btn,
     .save-goal-btn {
+        width: 100%;
         height: 50px;
-
         font-size: 14px;
-
-        border-radius: 12px;
     }
 
-
-    /* ------------------------------------------
-       Calendar
-    ------------------------------------------ */
-
-    .goal-calendar-header {
-        padding: 18px 16px 15px;
+    .goal-calendar-popper .react-datepicker {
+        width: 340px;
+        max-width: calc(100vw - 24px) !important;
+        border-radius: 18px !important;
     }
 
-    .goal-calendar-header h2 {
-        font-size: 22px;
-
-        margin-bottom: 14px;
+    .goal-calendar-popper .goal-calendar-header {
+        padding: 14px 12px 12px;
     }
 
-    .goal-calendar-controls {
-        flex-wrap: wrap;
-
-        gap: 8px;
+    .goal-calendar-popper .goal-calendar-header h2 {
+        font-size: 20px;
+        margin-bottom: 11px;
     }
 
-    .goal-calendar-controls select {
-        min-width: 105px;
-
-        height: 42px;
-
-        font-size: 13px;
-
-        padding: 0 10px;
+    .goal-calendar-popper .goal-calendar-controls {
+        gap: 5px;
     }
 
-    .goal-calendar-nav {
-        width: 40px;
-        height: 40px;
+    .goal-calendar-popper .goal-calendar-controls select {
+        min-width: 0;
+        flex: 1;
+        height: 35px;
+        padding: 0 6px;
+        font-size: 12px;
     }
 
-    .react-datepicker__day-names {
-        padding-left: 8px;
-        padding-right: 8px;
+    .goal-calendar-popper .goal-calendar-nav {
+        width: 35px;
+        height: 35px;
     }
 
-    .react-datepicker__day-name {
-        width: 2rem !important;
-
-        line-height: 2rem !important;
-
-        font-size: 11px;
+    .goal-calendar-popper .react-datepicker__day-names {
+        padding: 6px 8px 3px;
     }
 
-    .react-datepicker__month {
-        margin: 10px 8px 14px;
+    .goal-calendar-popper .react-datepicker__day-name {
+        width: 1.9rem !important;
+        line-height: 1.9rem !important;
+        font-size: 10px;
     }
 
-    .react-datepicker__day {
-        width: 34px;
+    .goal-calendar-popper .react-datepicker__month {
+        margin: 7px 7px 10px;
+    }
 
-        height: 34px;
-
-        line-height: 34px;
-
+    .goal-calendar-popper .react-datepicker__day {
+        width: 29px;
+        height: 29px;
+        line-height: 29px;
         margin: 2px;
+        font-size: 12px;
+    }
 
+    .goal-calendar-popper .react-datepicker__today-button {
+        padding: 9px;
         font-size: 13px;
+    }
+
+    .react-datepicker__portal {
+        background: rgba(15, 23, 42, 0.62) !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 100000 !important;
+        padding: 16px !important;
+    }
+
+    .react-datepicker__portal .goal-calendar-popper .react-datepicker,
+    .react-datepicker__portal .react-datepicker {
+        width: min(90vw, 340px) !important;
+        max-width: 90vw !important;
+        border-radius: 18px !important;
     }
 }
 
-
-/* ==========================================================
-   VERY SMALL PHONES
-========================================================== */
-
 @media (max-width: 360px) {
-
     .goal-modal-overlay {
         padding: 8px;
     }
 
     .goal-modal {
         max-height: calc(100vh - 16px);
-
         padding: 15px;
-
         border-radius: 18px;
     }
 
@@ -1032,7 +697,6 @@
     .goal-modal-header h2 svg {
         width: 40px;
         height: 40px;
-
         padding: 10px;
     }
 
@@ -1048,7 +712,6 @@
     .goal-icon {
         width: 48px;
         height: 48px;
-
         font-size: 21px;
     }
 
@@ -1059,349 +722,18 @@
     .cancel-btn,
     .save-goal-btn {
         height: 48px;
-
         font-size: 13px;
     }
-    /* ==========================================================
-   MOBILE DATEPICKER POSITION
-========================================================== */
 
-@media (max-width: 600px) {
-
-    .react-datepicker-popper {
-        z-index: 99999 !important;
+    .goal-calendar-popper .react-datepicker {
+        width: 325px;
     }
 
-    .react-datepicker {
-        max-width: calc(100vw - 24px) !important;
-    }
-
-    .react-datepicker-popper[data-placement^="bottom"] {
-        transform: none;
-    }
-
-}
-/* ==========================================================
-   MOBILE MODAL FIX
-========================================================== */
-
-@media (max-width: 600px) {
-
-    .goal-modal-overlay {
-        align-items: flex-start;
-        justify-content: center;
-
-        padding: 14px;
-
-        overflow-y: auto;
-
-        -webkit-overflow-scrolling: touch;
-    }
-
-
-    .goal-modal {
-
-        width: 100%;
-
-        max-width: 430px;
-
-        max-height: calc(100vh - 28px);
-
-        padding: 22px;
-
-        border-radius: 22px;
-
-        overflow-y: auto;
-
-        box-sizing: border-box;
-
-        margin: 0 auto;
-    }
-
-
-    .goal-modal-header {
-
-        margin-bottom: 20px;
-
-        position: sticky;
-
-        top: 0;
-
-        z-index: 5;
-
-        background: #ffffff;
-
-        padding-bottom: 12px;
-    }
-
-
-    .goal-modal-header h2 {
-
-        font-size: 20px;
-
-        gap: 10px;
-
-    }
-
-
-    .goal-modal-header h2 svg {
-
-        width: 44px;
-
-        height: 44px;
-
-        padding: 11px;
-
-        border-radius: 14px;
-
-    }
-
-
-    .goal-close-btn {
-
-        width: 42px;
-
-        height: 42px;
-
-        flex-shrink: 0;
-
-    }
-
-
-    .goal-form {
-
-        gap: 15px;
-
-    }
-
-
-    .goal-form input,
-    .goal-datepicker {
-
-        height: 52px;
-
-        font-size: 15px;
-
-    }
-
-
-    .goal-icons {
-
-        grid-template-columns:
-            repeat(4, 1fr);
-
-        gap: 10px;
-
-    }
-
-
-    .goal-icon {
-
-        width: 100%;
-
-        height: 56px;
-
-        font-size: 25px;
-
-        border-radius: 15px;
-
-    }
-
-
-    .goal-buttons {
-
-        display: grid;
-
-        grid-template-columns:
-            1fr 1fr;
-
-        gap: 10px;
-
-        margin-top: 8px;
-
-        position: sticky;
-
-        bottom: 0;
-
-        padding-top: 12px;
-
-        background: #ffffff;
-
-        z-index: 5;
-
-    }
-
-
-    .cancel-btn,
-    .save-goal-btn {
-
-        width: 100%;
-
-        height: 50px;
-
-        font-size: 14px;
-
-    }
-
-}
-
-
-/* ==========================================================
-   MOBILE DATEPICKER PORTAL
-========================================================== */
-
-.react-datepicker__portal {
-
-    background:
-        rgba(15, 23, 42, 0.62) !important;
-
-    backdrop-filter:
-        blur(8px);
-
-    -webkit-backdrop-filter:
-        blur(8px);
-
-    z-index: 100000 !important;
-
-    padding: 16px !important;
-
-}
-
-
-/* ==========================================================
-   MOBILE CALENDAR SIZE
-========================================================== */
-
-@media (max-width: 600px) {
-
-    .react-datepicker__portal
-    .react-datepicker {
-
-        width: min(
-            94vw,
-            380px
-        ) !important;
-
-        max-width: 94vw !important;
-
-        border-radius: 22px !important;
-
-        overflow: hidden !important;
-
-    }
-
-
-    .react-datepicker__portal
-    .goal-calendar-header {
-
-        padding:
-            18px 14px 16px;
-
-    }
-
-
-    .react-datepicker__portal
-    .goal-calendar-header h2 {
-
-        font-size: 22px;
-
-        margin-bottom: 14px;
-
-    }
-
-
-    .react-datepicker__portal
-    .goal-calendar-controls {
-
-        gap: 7px;
-
-        flex-wrap: nowrap;
-
-    }
-
-
-    .react-datepicker__portal
-    .goal-calendar-controls select {
-
-        min-width: 0;
-
-        flex: 1;
-
-        height: 42px;
-
-        padding: 0 8px;
-
-        font-size: 13px;
-
-    }
-
-
-    .react-datepicker__portal
-    .goal-calendar-nav {
-
-        width: 40px;
-
-        height: 40px;
-
-        flex-shrink: 0;
-
-    }
-
-
-    .react-datepicker__portal
-    .react-datepicker__day-names {
-
-        padding:
-            8px 10px 4px;
-
-    }
-
-
-    .react-datepicker__portal
-    .react-datepicker__day-name {
-
-        width: 2rem !important;
-
-        line-height: 2rem !important;
-
+    .goal-calendar-popper .react-datepicker__day {
+        width: 27px;
+        height: 27px;
+        line-height: 27px;
+        margin: 2px;
         font-size: 11px;
-
     }
-
-
-    .react-datepicker__portal
-    .react-datepicker__month {
-
-        margin:
-            10px 10px 14px;
-
-    }
-
-
-    .react-datepicker__portal
-    .react-datepicker__day {
-
-        width: 34px;
-
-        height: 34px;
-
-        line-height: 34px;
-
-        margin: 3px;
-
-        font-size: 13px;
-
-    }
-
-
-    .react-datepicker__portal
-    .react-datepicker__today-button {
-
-        padding: 12px;
-
-        font-size: 14px;
-
-    }
-
-}
 }

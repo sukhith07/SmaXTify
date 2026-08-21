@@ -1,450 +1,697 @@
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  animation: fadeIn 0.25s ease;
-  overflow-y: auto;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: fadeIn 0.25s ease;
+    overflow-y: auto;
 }
 
 .edit-goal-modal {
-  position: relative;
-  width: 520px;
-  max-width: 100%;
-  max-height: calc(100vh - 40px);
-  padding: 30px;
-  box-sizing: border-box;
-  background: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
-  animation: popup 0.3s ease;
-  overflow-y: auto;
-  overflow-x: hidden;
+    position: relative;
+    width: 520px;
+    max-width: 100%;
+    max-height: calc(100vh - 40px);
+    padding: 30px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+    animation: popup 0.3s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .edit-goal-modal::-webkit-scrollbar {
-  width: 5px;
+    width: 5px;
 }
 
 .edit-goal-modal::-webkit-scrollbar-track {
-  background: transparent;
+    background: transparent;
 }
 
 .edit-goal-modal::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 20px;
+    background: #cbd5e1;
+    border-radius: 20px;
 }
 
 .close-btn {
-  position: absolute;
-  top: 18px;
-  right: 18px;
-  width: 42px;
-  height: 42px;
-  padding: 0;
-  border: none;
-  border-radius: 50%;
-  background: #f1f5f9;
-  color: #334155;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: 0.3s ease;
-  z-index: 2;
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s ease;
+    z-index: 2;
 }
 
 .close-btn:hover {
-  background: #ef4444;
-  color: #ffffff;
-  transform: rotate(90deg);
+    background: #ef4444;
+    color: #ffffff;
+    transform: rotate(90deg);
 }
 
 .edit-goal-modal h2 {
-  margin: 0 55px 28px 0;
-  color: #0f172a;
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1.2;
-  text-align: center;
+    margin: 0 55px 28px 0;
+    color: #0f172a;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
 }
 
 .edit-goal-modal form {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .field label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #334155;
-  font-size: 15px;
-  font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #334155;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 .field label svg {
-  flex-shrink: 0;
-  color: #2563eb;
+    flex-shrink: 0;
+    color: #2563eb;
 }
 
 .field input {
-  width: 100%;
-  height: 52px;
-  box-sizing: border-box;
-  padding: 0 16px;
-  border: 2px solid #dbeafe;
-  border-radius: 14px;
-  outline: none;
-  background: #ffffff;
-  color: #172033;
-  font-size: 16px;
-  transition: 0.3s ease;
+    width: 100%;
+    height: 52px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    border: 2px solid #dbeafe;
+    border-radius: 14px;
+    outline: none;
+    background: #ffffff;
+    color: #172033;
+    font-size: 16px;
+    transition: 0.3s ease;
 }
 
 .field input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .icon-picker {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
-  width: 100%;
-  margin-top: 4px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    width: 100%;
+    margin-top: 4px;
 }
 
 .goal-icon {
-  width: 100%;
-  height: 58px;
-  padding: 0;
-  border: 2px solid #e2e8f0;
-  border-radius: 16px;
-  background: #f8fafc;
-  color: #334155;
-  font-size: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: 0.25s ease;
+    width: 100%;
+    height: 58px;
+    padding: 0;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.25s ease;
 }
 
 .goal-icon:hover {
-  transform: translateY(-3px);
-  border-color: #2563eb;
-  background: #eff6ff;
-  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.15);
+    transform: translateY(-3px);
+    border-color: #2563eb;
+    background: #eff6ff;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.15);
 }
 
 .goal-icon.active {
-  transform: scale(1.04);
-  border-color: transparent;
-  background: linear-gradient(135deg, #2563eb, #06b6d4);
-  color: #ffffff;
-  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.3);
+    transform: scale(1.04);
+    border-color: transparent;
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    color: #ffffff;
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.3);
 }
 
 .datepicker {
-  width: 100% !important;
-  height: 52px;
-  box-sizing: border-box;
-  padding: 0 16px;
-  border: 2px solid #dbeafe !important;
-  border-radius: 14px;
-  outline: none;
-  background: #ffffff;
-  color: #172033;
-  font-size: 16px;
-  transition: 0.3s ease;
+    width: 100% !important;
+    height: 52px;
+    box-sizing: border-box;
+    padding: 0 16px;
+    border: 2px solid #dbeafe !important;
+    border-radius: 14px;
+    outline: none;
+    background: #ffffff;
+    color: #172033;
+    font-size: 16px;
+    transition: 0.3s ease;
 }
 
 .datepicker:focus {
-  border-color: #2563eb !important;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
-}
-
-.react-datepicker {
-  border: none !important;
-  border-radius: 18px !important;
-  overflow: hidden;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
-  font-family: inherit;
-  z-index: 99999 !important;
-}
-
-.react-datepicker__header {
-  padding: 14px;
-  border: none;
-  background: linear-gradient(135deg, #2563eb, #06b6d4);
-}
-
-.react-datepicker__current-month {
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.react-datepicker__day-name {
-  color: #ffffff;
-  font-weight: 600;
-}
-
-.react-datepicker__day {
-  width: 2.2rem;
-  line-height: 2.2rem;
-  margin: 3px;
-  border-radius: 50%;
-  transition: 0.2s ease;
-}
-
-.react-datepicker__day:hover {
-  background: #2563eb !important;
-  color: #ffffff !important;
-}
-
-.react-datepicker__day--selected {
-  background: #2563eb !important;
-  color: #ffffff !important;
-}
-
-.react-datepicker__day--keyboard-selected {
-  background: #06b6d4 !important;
-  color: #ffffff !important;
-}
-
-.react-datepicker__navigation-icon::before {
-  border-color: #ffffff !important;
-}
-
-.react-datepicker__month-dropdown-container,
-.react-datepicker__year-dropdown-container {
-  margin: 0 6px;
-}
-
-.react-datepicker__month-select,
-.react-datepicker__year-select {
-  height: 38px;
-  padding: 0 10px;
-  border: none;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.13);
-  color: #ffffff;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.react-datepicker__month-select option,
-.react-datepicker__year-select option {
-  color: #222222;
-}
-
-.react-datepicker__year-dropdown {
-  max-height: 220px !important;
-  overflow-y: auto !important;
-}
-
-.react-datepicker__year-dropdown::-webkit-scrollbar {
-  width: 6px;
-}
-
-.react-datepicker__year-dropdown::-webkit-scrollbar-thumb {
-  background: #2563eb;
-  border-radius: 20px;
-}
-
-.react-datepicker__today-button {
-  padding: 10px;
-  border-top: 1px solid #e5e7eb;
-  background: #f8fafc;
-  color: #2563eb;
-  font-weight: 700;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .react-datepicker-popper {
-  z-index: 99999 !important;
+    z-index: 99999 !important;
+}
+
+.edit-goal-calendar-popper {
+    z-index: 99999 !important;
+}
+
+.edit-goal-calendar-popper[data-placement^="bottom"] {
+    margin-top: 8px;
+}
+
+.edit-goal-calendar-popper[data-placement^="top"] {
+    margin-bottom: 8px;
+}
+
+.react-datepicker {
+    width: 380px;
+    border: none !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 24px 55px rgba(15, 23, 42, 0.22);
+    font-family: inherit;
+    max-width: calc(100vw - 24px);
+}
+
+.goal-calendar-header {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    padding: 17px 18px 15px;
+}
+
+.goal-calendar-header h2 {
+    margin: 0 0 14px;
+    color: #ffffff;
+    text-align: center;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+}
+
+.goal-calendar-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.goal-calendar-controls select {
+    appearance: none;
+    -webkit-appearance: none;
+    min-width: 105px;
+    height: 38px;
+    border: none;
+    border-radius: 11px;
+    padding: 0 12px;
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    transition: 0.25s;
+    outline: none;
+}
+
+.goal-calendar-controls select:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+.goal-calendar-controls select:focus {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+}
+
+.goal-calendar-controls select option {
+    color: #111827;
+    background: #ffffff;
+}
+
+.goal-calendar-nav {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.goal-calendar-nav:hover {
+    background: rgba(255, 255, 255, 0.30);
+    transform: scale(1.06);
+}
+
+.goal-calendar-nav:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.react-datepicker__header {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__month-dropdown-container,
+.react-datepicker__year-dropdown-container,
+.react-datepicker__navigation {
+    display: none !important;
+}
+
+.react-datepicker__day-names {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 13px 4px;
+    margin: 0;
+}
+
+.react-datepicker__day-name {
+    width: 2.25rem !important;
+    line-height: 2.25rem !important;
+    margin: 0 !important;
+    text-align: center;
+    color: #64748b !important;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.react-datepicker__month {
+    margin: 12px 13px 14px;
+}
+
+.react-datepicker__week {
+    display: flex;
+    justify-content: space-around;
+}
+
+.react-datepicker__day {
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    margin: 3px;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    transition: all 0.2s ease;
+}
+
+.react-datepicker__day:hover {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    transform: scale(1.06);
+}
+
+.react-datepicker__day--selected {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    box-shadow: 0 7px 15px rgba(37, 99, 235, 0.28);
+}
+
+.react-datepicker__day--keyboard-selected {
+    background: #06b6d4 !important;
+    color: #ffffff !important;
+}
+
+.react-datepicker__day--today {
+    font-weight: 700;
+    border: 2px solid #2563eb;
+}
+
+.react-datepicker__day--outside-month {
+    color: #cbd5e1;
+}
+
+.react-datepicker__day--disabled {
+    color: #cbd5e1;
+}
+
+.react-datepicker__day--disabled:hover {
+    background: none !important;
+    color: #cbd5e1 !important;
+    transform: none;
+}
+
+.react-datepicker__today-button {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 11px;
+}
+
+.react-datepicker__triangle {
+    display: none;
+}
+
+@media (min-width: 577px) {
+
+    .edit-goal-calendar-popper {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+
+    .edit-goal-calendar-popper .react-datepicker {
+        margin: 0;
+    }
 }
 
 .update-btn {
-  width: 100%;
-  min-height: 56px;
-  margin-top: 4px;
-  padding: 0 20px;
-  box-sizing: border-box;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #2563eb, #06b6d4);
-  color: #ffffff;
-  font-size: 17px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: 0.3s ease;
+    width: 100%;
+    min-height: 56px;
+    margin-top: 4px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.3s ease;
 }
 
 .update-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3);
 }
 
 .update-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+    opacity: 0.7;
+    cursor: not-allowed;
 }
 
 .edit-goal-modal button[type="button"]:not(.close-btn):not(.goal-icon) {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .edit-goal-modal form > div:last-child {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-top: 4px;
 }
 
 .edit-goal-modal form > div:last-child .update-btn {
-  flex: 1;
-  min-width: 0;
+    flex: 1;
+    min-width: 0;
 }
 
 .edit-goal-modal form > div:last-child button {
-  flex-shrink: 0;
+    flex-shrink: 0;
 }
 
 @keyframes popup {
-  from {
-    opacity: 0;
-    transform: scale(0.92) translateY(10px);
-  }
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(10px);
+    }
 
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
+    from {
+        opacity: 0;
+    }
 
-  to {
-    opacity: 1;
-  }
+    to {
+        opacity: 1;
+    }
 }
 
 @media (max-width: 576px) {
-  .modal-overlay {
-    align-items: flex-start;
-    padding: 15px;
-  }
 
-  .edit-goal-modal {
-    width: 100%;
-    max-height: calc(100vh - 30px);
-    padding: 22px;
-    border-radius: 20px;
-  }
+    .modal-overlay {
+        align-items: flex-start;
+        padding: 15px;
+    }
 
-  .edit-goal-modal h2 {
-    margin-right: 48px;
-    margin-bottom: 24px;
-    font-size: 24px;
-  }
+    .edit-goal-modal {
+        width: 100%;
+        max-height: calc(100vh - 30px);
+        padding: 22px;
+        border-radius: 20px;
+    }
 
-  .close-btn {
-    top: 14px;
-    right: 14px;
-    width: 38px;
-    height: 38px;
-  }
+    .edit-goal-modal h2 {
+        margin-right: 48px;
+        margin-bottom: 24px;
+        font-size: 24px;
+    }
 
-  .edit-goal-modal form {
-    gap: 18px;
-  }
+    .close-btn {
+        top: 14px;
+        right: 14px;
+        width: 38px;
+        height: 38px;
+    }
 
-  .field input,
-  .datepicker {
-    height: 48px;
-    font-size: 15px;
-  }
+    .edit-goal-modal form {
+        gap: 18px;
+    }
 
-  .icon-picker {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 9px;
-  }
+    .field input,
+    .datepicker {
+        height: 48px;
+        font-size: 15px;
+    }
 
-  .goal-icon {
-    height: 52px;
-    font-size: 24px;
-  }
+    .icon-picker {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 9px;
+    }
 
-  .edit-goal-modal form > div:last-child {
-    gap: 9px;
-  }
+    .goal-icon {
+        height: 52px;
+        font-size: 24px;
+    }
 
-  .update-btn {
-    min-height: 50px;
-    font-size: 15px;
-    padding: 0 14px;
-  }
+    .edit-goal-modal form > div:last-child {
+        gap: 9px;
+    }
+
+    .update-btn {
+        min-height: 50px;
+        font-size: 15px;
+        padding: 0 14px;
+    }
+
+    .react-datepicker {
+        width: 360px;
+        max-width: calc(100vw - 24px) !important;
+    }
+
+    .goal-calendar-header {
+        padding: 16px 13px 14px;
+    }
+
+    .goal-calendar-header h2 {
+        font-size: 21px;
+        margin-bottom: 12px;
+    }
+
+    .goal-calendar-controls {
+        gap: 6px;
+    }
+
+    .goal-calendar-controls select {
+        min-width: 0;
+        flex: 1;
+        height: 38px;
+        padding: 0 7px;
+        font-size: 12px;
+    }
+
+    .goal-calendar-nav {
+        width: 36px;
+        height: 36px;
+    }
+
+    .react-datepicker__day-names {
+        padding: 7px 9px 3px;
+    }
+
+    .react-datepicker__day-name {
+        width: 2rem !important;
+        line-height: 2rem !important;
+        font-size: 10px;
+    }
+
+    .react-datepicker__month {
+        margin: 9px 8px 12px;
+    }
+
+    .react-datepicker__day {
+        width: 31px;
+        height: 31px;
+        line-height: 31px;
+        margin: 2px;
+        font-size: 12px;
+    }
+
+    .react-datepicker__today-button {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .react-datepicker__portal {
+        background: rgba(15, 23, 42, 0.62) !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 100000 !important;
+        padding: 16px !important;
+    }
+
+    .react-datepicker__portal .react-datepicker {
+        width: min(92vw, 360px) !important;
+        max-width: 92vw !important;
+        border-radius: 20px !important;
+    }
+
+    .react-datepicker__portal .goal-calendar-header {
+        padding: 16px 13px 14px;
+    }
+
+    .react-datepicker__portal .goal-calendar-header h2 {
+        font-size: 21px;
+        margin-bottom: 12px;
+    }
+
+    .react-datepicker__portal .goal-calendar-controls {
+        gap: 6px;
+    }
+
+    .react-datepicker__portal .goal-calendar-controls select {
+        min-width: 0;
+        flex: 1;
+        height: 38px;
+        padding: 0 7px;
+        font-size: 12px;
+    }
+
+    .react-datepicker__portal .goal-calendar-nav {
+        width: 36px;
+        height: 36px;
+    }
+
+    .react-datepicker__portal .react-datepicker__day-names {
+        padding: 7px 9px 3px;
+    }
+
+    .react-datepicker__portal .react-datepicker__day-name {
+        width: 2rem !important;
+        line-height: 2rem !important;
+        font-size: 10px;
+    }
+
+    .react-datepicker__portal .react-datepicker__month {
+        margin: 9px 8px 12px;
+    }
+
+    .react-datepicker__portal .react-datepicker__day {
+        width: 31px;
+        height: 31px;
+        line-height: 31px;
+        margin: 2px;
+        font-size: 12px;
+    }
+
+    .react-datepicker__portal .react-datepicker__today-button {
+        padding: 10px;
+        font-size: 13px;
+    }
 }
 
 @media (max-width: 400px) {
-  .modal-overlay {
-    padding: 10px;
-  }
 
-  .edit-goal-modal {
-    max-height: calc(100vh - 20px);
-    padding: 18px;
-    border-radius: 18px;
-  }
+    .modal-overlay {
+        padding: 10px;
+    }
 
-  .edit-goal-modal h2 {
-    font-size: 21px;
-  }
+    .edit-goal-modal {
+        max-height: calc(100vh - 20px);
+        padding: 18px;
+        border-radius: 18px;
+    }
 
-  .field label {
-    font-size: 14px;
-  }
+    .edit-goal-modal h2 {
+        font-size: 21px;
+    }
 
-  .icon-picker {
-    gap: 7px;
-  }
+    .field label {
+        font-size: 14px;
+    }
 
-  .goal-icon {
-    height: 48px;
-    font-size: 21px;
-    border-radius: 12px;
-  }
+    .icon-picker {
+        gap: 7px;
+    }
 
-  .edit-goal-modal form > div:last-child {
-    flex-direction: column-reverse;
-    align-items: stretch;
-  }
+    .goal-icon {
+        height: 48px;
+        font-size: 21px;
+        border-radius: 12px;
+    }
 
-  .edit-goal-modal form > div:last-child .update-btn,
-  .edit-goal-modal form > div:last-child button {
-    width: 100%;
-  }
+    .edit-goal-modal form > div:last-child {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .edit-goal-modal form > div:last-child .update-btn,
+    .edit-goal-modal form > div:last-child button {
+        width: 100%;
+    }
 }
