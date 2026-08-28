@@ -17,22 +17,66 @@ import "../components/styles/dashboard.css";
 
 function Dashboard() {
   const [expenses, setExpenses] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   const [showAI, setShowAI] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadExpenses();
+    loadDashboardData();
   }, []);
 
-  const loadExpenses = async () => {
+  const loadDashboardData = async () => {
     try {
-      const res = await API.get("/expenses");
+      setLoading(true);
 
-      setExpenses(
-        res.data.expenses || res.data
+      const [expensesResponse, accountsResponse] =
+        await Promise.all([
+          API.get("/expenses"),
+          API.get("/accounts"),
+        ]);
+
+      const expenseList =
+        Array.isArray(expensesResponse.data)
+          ? expensesResponse.data
+          : Array.isArray(
+              expensesResponse.data?.expenses
+            )
+          ? expensesResponse.data.expenses
+          : [];
+
+      const accountList =
+        Array.isArray(accountsResponse.data)
+          ? accountsResponse.data
+          : Array.isArray(
+              accountsResponse.data?.accounts
+            )
+          ? accountsResponse.data.accounts
+          : [];
+
+      setExpenses(expenseList);
+      setAccounts(accountList);
+    } catch (error) {
+      console.error(
+        "Failed to load dashboard data:",
+        error
       );
-    } catch (err) {
-      console.log(err);
+
+      setExpenses([]);
+      setAccounts([]);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const totalAccountBalance = accounts.reduce(
+    (total, account) =>
+      total + Number(account.balance || 0),
+    0
+  );
+
+  const handleExpensesChange = (updatedExpenses) => {
+    setExpenses(updatedExpenses);
+    loadDashboardData();
   };
 
   return (
@@ -44,14 +88,22 @@ function Dashboard() {
           openAI={() => setShowAI(true)}
         />
 
-        <div className="dashboard-main">
-          <Summary expenses={expenses} />
+        <main className="dashboard-main">
+          <Summary
+            expenses={expenses}
+            accounts={accounts}
+            totalAccountBalance={
+              totalAccountBalance
+            }
+          />
 
-          <div className="dashboard-row">
+          <section className="dashboard-row">
             <div className="left-panel">
               <AddExpense
                 expenses={expenses}
-                setExpenses={setExpenses}
+                setExpenses={
+                  handleExpensesChange
+                }
               />
             </div>
 
@@ -60,19 +112,23 @@ function Dashboard() {
                 expenses={expenses}
               />
             </div>
-          </div>
+          </section>
 
-          <MonthlyChart
-            expenses={expenses}
-          />
+          <section className="monthly-section">
+            <MonthlyChart
+              expenses={expenses}
+            />
+          </section>
 
-          <div className="budget-section"></div>
-
-          <ExpenseList
-            expenses={expenses}
-            setExpenses={setExpenses}
-          />
-        </div>
+          <section className="transactions-section">
+            <ExpenseList
+              expenses={expenses}
+              setExpenses={
+                handleExpensesChange
+              }
+            />
+          </section>
+        </main>
       </div>
 
       <AIAdvisorModal

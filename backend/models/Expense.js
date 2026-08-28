@@ -18,24 +18,7 @@ const expenseSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      enum: [
-        "Salary",
-        "Business",
-        "Freelance",
-        "Investment",
-        "Gift",
-        "Food",
-        "Shopping",
-        "Travel",
-        "Transport",
-        "Bills",
-        "Healthcare",
-        "Education",
-        "Entertainment",
-        "Rent",
-        "Groceries",
-        "Other",
-      ],
+      default: "Other",
     },
 
     type: {
@@ -56,6 +39,12 @@ const expenseSchema = new mongoose.Schema(
       maxlength: 300,
     },
 
+    account: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+      default: null,
+    },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -67,4 +56,7 @@ const expenseSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Expense", expenseSchema);
+module.exports = mongoose.model(
+  "Expense",
+  expenseSchema
+);

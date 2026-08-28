@@ -2,101 +2,61 @@ import {
   FaTrashAlt,
   FaTimes,
   FaExclamationTriangle,
-  FaCheckCircle,
-  FaTrophy,
 } from "react-icons/fa";
 
 import "./styles/deleteConfirmModal.css";
 
-function DeleteGoalModal({
+function DeleteConfirmModal({
   isOpen,
-  goal,
+  title,
   onClose,
   onConfirm,
   loading = false,
 }) {
-  if (!isOpen || !goal) return null;
-
-  // Calculate completion automatically
-  const isCompleted =
-    Number(goal.savedAmount) >= Number(goal.targetAmount);
+  if (!isOpen) return null;
 
   return (
     <div className="delete-overlay">
       <div className="delete-modal">
-
         <button
+          type="button"
           className="delete-close-btn"
           onClick={onClose}
+          disabled={loading}
+          aria-label="Close"
         >
           <FaTimes />
         </button>
 
-        {/* Icon */}
-
-        <div
-          className={
-            isCompleted
-              ? "delete-icon completed"
-              : "delete-icon"
-          }
-        >
-          {isCompleted ? (
-            <FaTrophy />
-          ) : (
-            <FaTrashAlt />
-          )}
+        <div className="delete-icon">
+          <FaTrashAlt />
         </div>
 
-        {/* Heading */}
-
-        <h2>
-          {isCompleted
-            ? "Remove Completed Goal?"
-            : "Delete Goal?"}
-        </h2>
-
-        {/* Goal Name */}
+        <h2>Delete Transaction?</h2>
 
         <p className="delete-message">
-          Are you sure you want to delete{" "}
-          <strong>
-            {goal.icon} {goal.title}
-          </strong>
-          ?
+          Are you sure you want to delete this
+          transaction?
         </p>
 
-        {/* Message */}
-
-        {isCompleted ? (
-          <div className="warning-box success">
-
-            <FaCheckCircle />
-
-            <span>
-              🏆 Congratulations! This goal has already been achieved.
-              Deleting it will permanently remove it from your
-              achievements and history.
-            </span>
-
-          </div>
-        ) : (
-          <div className="warning-box">
-
-            <FaExclamationTriangle />
-
-            <span>
-              This action cannot be undone.
-            </span>
-
+        {title && (
+          <div className="delete-item-name">
+            {title}
           </div>
         )}
 
-        {/* Buttons */}
+        <div className="warning-box">
+          <FaExclamationTriangle />
+
+          <span>
+            This transaction will be permanently
+            removed from your transaction history.
+          </span>
+        </div>
 
         <div className="delete-buttons">
-
           <button
+            type="button"
             className="cancel-delete"
             onClick={onClose}
             disabled={loading}
@@ -106,6 +66,7 @@ function DeleteGoalModal({
           </button>
 
           <button
+            type="button"
             className="confirm-delete"
             onClick={onConfirm}
             disabled={loading}
@@ -114,16 +75,12 @@ function DeleteGoalModal({
 
             {loading
               ? "Deleting..."
-              : isCompleted
-              ? "Remove Goal"
-              : "Delete Goal"}
+              : "Delete Transaction"}
           </button>
-
         </div>
-
       </div>
     </div>
   );
 }
 
-export default DeleteGoalModal;
+export default DeleteConfirmModal;

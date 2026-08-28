@@ -35,6 +35,7 @@ import CurrencyConverter from "./pages/CurrencyConverter";
 import SubscriptionTracker from "./pages/SubscriptionTracker";
 import BillReminders from "./pages/BillReminders";
 import Settings from "./pages/Settings";
+import Accounts from "./pages/Accounts";
 
 function App() {
   const location = useLocation();
@@ -100,23 +101,17 @@ function App() {
 
             <Route
               path="/forgot-password"
-              element={
-                <ForgotPassword />
-              }
+              element={<ForgotPassword />}
             />
 
             <Route
               path="/verify-otp"
-              element={
-                <VerifyOTP />
-              }
+              element={<VerifyOTP />}
             />
 
             <Route
               path="/reset-password"
-              element={
-                <ResetPassword />
-              }
+              element={<ResetPassword />}
             />
 
             <Route
@@ -124,6 +119,20 @@ function App() {
               element={
                 token ? (
                   <Dashboard />
+                ) : (
+                  <Navigate
+                    to="/login"
+                    replace
+                  />
+                )
+              }
+            />
+
+            <Route
+              path="/accounts"
+              element={
+                token ? (
+                  <Accounts />
                 ) : (
                   <Navigate
                     to="/login"

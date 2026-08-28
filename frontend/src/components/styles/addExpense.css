@@ -1,407 +1,563 @@
-/* ======================================
-   ADD TRANSACTION CARD
-====================================== */
-
-.expense-form{
-
-    background:#ffffff;
-
-    border-radius:22px;
-
-    padding:28px;
-
-    box-shadow:0 15px 35px rgba(0,0,0,.08);
-
-    display:flex;
-
-    flex-direction:column;
-
+.expense-form {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
-.expense-form h2{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-    color:#312e81;
-
-    font-size:26px;
-
-    font-weight:700;
-
-    margin-bottom:25px;
-
+.expense-form h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #312e81;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 24px;
 }
 
-.expense-form h2 svg{
-
-    color:#7c3aed;
-
-    font-size:28px;
-
+.expense-form h2 svg {
+    color: #7c3aed;
+    font-size: 28px;
 }
 
-/* ======================================
-   FORM
-====================================== */
-
-.expense-form form{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:18px;
-
+.expense-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
-/* ======================================
-   FIELD
-====================================== */
-
-.field{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:8px;
-
+.transaction-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    transition: 0.25s ease;
 }
 
-.field label{
-
-    font-size:14px;
-
-    font-weight:600;
-
-    color:#475569;
-
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    width: 100%;
+    min-width: 0;
 }
 
-/* ======================================
-   INPUT
-====================================== */
-
-.input-box{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    height:56px;
-
-    border:2px solid #e2e8f0;
-
-    border-radius:15px;
-
-    background:#fff;
-
-    padding:0 18px;
-
-    transition:.3s;
-
+.field label,
+.custom-select label {
+    display: block;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 3px;
 }
 
-.input-box:focus-within{
-
-    border-color:#7c3aed;
-
-    box-shadow:0 0 0 4px rgba(124,58,237,.12);
-
+.input-box {
+    width: 100%;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 0 17px;
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 15px;
+    box-sizing: border-box;
+    transition: 0.25s ease;
 }
 
-.input-box svg{
-
-    color:#7c3aed;
-
-    font-size:18px;
-
+.input-box:focus-within {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
 }
 
-.input-box input{
-
-    flex:1;
-
-    border:none;
-
-    outline:none;
-
-    background:transparent;
-
-    font-size:15px;
-
+.input-box > svg {
+    flex-shrink: 0;
+    color: #7c3aed;
+    font-size: 18px;
 }
 
-.input-box input::placeholder{
-
-    color:#94a3b8;
-
+.input-box input {
+    width: 100%;
+    min-width: 0;
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #334155;
+    font-size: 15px;
+    font-family: inherit;
 }
 
-/* ======================================
-   CUSTOM SELECT
-====================================== */
-
-.custom-select{
-
-    position:relative;
-
+.input-box input::placeholder {
+    color: #94a3b8;
 }
 
-.custom-select label{
-
-    display:block;
-
-    margin-bottom:8px;
-
-    font-size:14px;
-
-    font-weight:600;
-
-    color:#475569;
-
+.input-box input:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 
-.select-btn{
-
-    width:100%;
-
-    height:56px;
-
-    border:2px solid #e2e8f0;
-
-    border-radius:15px;
-
-    background:#fff;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:0 18px;
-
-    cursor:pointer;
-
-    transition:.3s;
-
+.transaction-selection-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
 }
 
-.select-btn:hover{
-
-    border-color:#7c3aed;
-
+.custom-select {
+    position: relative;
+    width: 100%;
+    min-width: 0;
 }
 
-.selected-item{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-    font-weight:600;
-
-    color:#334155;
-
+.select-btn {
+    width: 100%;
+    height: 56px;
+    padding: 0 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 15px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    cursor: pointer;
+    transition: 0.25s ease;
+    box-sizing: border-box;
 }
 
-.selected-item svg{
-
-    color:#7c3aed;
-
+.select-btn:hover:not(:disabled) {
+    border-color: #7c3aed;
 }
 
-.rotate{
-
-    transform:rotate(180deg);
-
-    transition:.3s;
-
+.select-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 
-.select-menu{
-
-    position:absolute;
-
-    top:70px;
-
-    width:100%;
-
-    background:#fff;
-
-    border-radius:15px;
-
-    box-shadow:0 18px 40px rgba(0,0,0,.15);
-
-    overflow:hidden;
-
-    z-index:1000;
-
-    animation:dropdown .25s ease;
-
+.selected-item {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.select-option{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-    padding:16px 20px;
-
-    cursor:pointer;
-
-    background:#ffffff;
-
-    color:#1e293b;
-
-    transition:.25s;
-
+.selected-item svg {
+    flex-shrink: 0;
+    color: #7c3aed;
 }
 
-.select-option svg{
-
-    color:#7c3aed;
-
+.select-btn > svg {
+    flex-shrink: 0;
+    color: #64748b;
+    transition: 0.25s ease;
 }
 
-/* Selected item only */
-
-.select-option.active{
-
-    background:linear-gradient(135deg,#7c3aed,#4338ca);
-
-    color:#fff;
-
+.rotate {
+    transform: rotate(180deg);
 }
 
-.select-option.active svg{
-
-    color:#fff;
-
+.select-menu {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 7px);
+    width: 100%;
+    max-height: 230px;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+    z-index: 9999;
+    animation: dropdownOpen 0.18s ease;
 }
 
-/* Hover only for NON-selected items */
-
-.select-option:not(.active):hover{
-
-    background:#f3f4f6;
-
-    color:#312e81;
-
+.select-menu::-webkit-scrollbar {
+    width: 6px;
 }
 
-.select-option:not(.active):hover svg{
-
-    color:#7c3aed;
-
+.select-menu::-webkit-scrollbar-thumb {
+    background: #c4b5fd;
+    border-radius: 10px;
 }
 
-/* ======================================
-   BUTTON
-====================================== */
-
-.add-btn{
-
-    margin-top:10px;
-
-    width:100%;
-
-    height:58px;
-
-    border:none;
-
-    border-radius:16px;
-
-    background:linear-gradient(135deg,#7c3aed,#4338ca);
-
-    color:#fff;
-
-    font-size:17px;
-
-    font-weight:700;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    gap:10px;
-
-    cursor:pointer;
-
-    transition:.3s;
-
+.select-option {
+    min-height: 52px;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: 0.2s ease;
 }
 
-.add-btn:hover{
-
-    transform:translateY(-2px);
-
-    box-shadow:0 18px 35px rgba(124,58,237,.35);
-
+.select-option svg {
+    flex-shrink: 0;
+    color: #7c3aed;
 }
 
-.add-btn:disabled{
-
-    opacity:.7;
-
-    cursor:not-allowed;
-
+.select-option:hover {
+    background: #f5f3ff;
 }
 
-/* ======================================
-   ANIMATION
-====================================== */
+.select-option.active {
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #4338ca
+    );
+    color: #ffffff;
+}
 
-@keyframes dropdown{
+.select-option.active svg {
+    color: #ffffff;
+}
 
-    from{
+.account-menu {
+    max-height: 250px;
+}
 
-        opacity:0;
+.account-option {
+    gap: 11px;
+}
 
-        transform:translateY(-10px);
+.account-option-content {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
 
+.account-option-content strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account-option-content span {
+    flex-shrink: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    white-space: nowrap;
+}
+
+.account-option.active .account-option-content span {
+    color: #ffffff;
+    opacity: 0.95;
+}
+
+.date-input-box {
+    position: relative;
+}
+
+.expense-datepicker {
+    width: 100%;
+    height: 100%;
+    padding: 0 !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    color: #334155 !important;
+    font-size: 15px;
+    font-family: inherit;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+
+.expense-datepicker:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.react-datepicker-popper {
+    z-index: 99999 !important;
+}
+
+.react-datepicker {
+    border: none !important;
+    border-radius: 17px !important;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+    font-family: inherit;
+}
+
+.react-datepicker__header {
+    border: none !important;
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #4338ca
+    ) !important;
+}
+
+.react-datepicker__current-month,
+.react-datepicker__day-name {
+    color: #ffffff !important;
+}
+
+.react-datepicker__day {
+    border-radius: 50%;
+}
+
+.react-datepicker__day:hover {
+    background: #7c3aed !important;
+    color: #ffffff !important;
+}
+
+.react-datepicker__day--selected {
+    background: #7c3aed !important;
+    color: #ffffff !important;
+}
+
+.react-datepicker__day--today {
+    font-weight: 700;
+    border: 1px solid #7c3aed;
+}
+
+.add-btn {
+    width: 100%;
+    height: 58px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #4338ca
+    );
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.add-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px rgba(124, 58, 237, 0.3);
+}
+
+.add-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.account-message {
+    width: 100%;
+    min-height: 105px;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    column-gap: 13px;
+    align-items: start;
+    padding: 16px;
+    margin-bottom: 3px;
+    border-radius: 15px;
+    box-sizing: border-box;
+}
+
+.account-message-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.account-message-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.account-message strong {
+    display: block;
+    margin: 0 0 5px;
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 700;
+}
+
+.account-message p {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1.55;
+    font-weight: 500;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+.account-required {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+}
+
+.account-required .account-message-icon {
+    background: #ffedd5;
+    color: #f59e0b;
+}
+
+.account-required strong {
+    color: #9a3412;
+}
+
+.account-required p {
+    color: #9a3412;
+}
+
+.loading-message {
+    background: #f5f3ff;
+    border: 1px solid #ddd6fe;
+}
+
+.loading-message .account-message-icon {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.loading-message strong {
+    color: #4c1d95;
+}
+
+.loading-message p {
+    color: #5b21b6;
+}
+
+.account-action-btn {
+    min-width: 132px;
+    height: 38px;
+    margin-top: 10px;
+    padding: 0 13px;
+    border: none;
+    border-radius: 9px;
+    background: #7c3aed;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.account-action-btn:hover {
+    background: #6d28d9;
+    transform: translateY(-1px);
+}
+
+.disabled-fields {
+    opacity: 0.72;
+}
+
+.disabled-fields .input-box,
+.disabled-fields .select-btn {
+    background: #f8fafc;
+}
+
+.category-status {
+    display: block;
+    margin-top: 2px;
+    color: #7c3aed;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.category-error {
+    display: block;
+    margin-top: 2px;
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+@keyframes dropdownOpen {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
     }
 
-    to{
-
-        opacity:1;
-
-        transform:translateY(0);
-
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-
 }
 
-/* ======================================
-   MOBILE
-====================================== */
-
-@media(max-width:768px){
-
-    .expense-form{
-
-        padding:22px;
-
+@media (max-width: 768px) {
+    .expense-form {
+        padding: 22px;
     }
 
-    .expense-form h2{
+    .transaction-selection-row {
+        grid-template-columns: 1fr;
+    }
+}
 
-        font-size:22px;
-
+@media (max-width: 500px) {
+    .expense-form {
+        padding: 18px;
+        border-radius: 18px;
     }
 
+    .expense-form h2 {
+        font-size: 22px;
+    }
+
+    .input-box,
+    .select-btn {
+        height: 53px;
+    }
+
+    .account-message {
+        grid-template-columns: 36px minmax(0, 1fr);
+        column-gap: 10px;
+        padding: 13px;
+    }
+
+    .account-message-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 16px;
+    }
+
+    .account-option-content {
+        gap: 8px;
+    }
+
+    .account-option-content span {
+        font-size: 12px;
+    }
 }

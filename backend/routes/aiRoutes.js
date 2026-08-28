@@ -5,27 +5,28 @@ const router = express.Router();
 const {
   chatWithGemini,
   generateReportInsights,
+  categorizeTransaction,
 } = require("../controllers/aiController");
 
-
-// ======================================
-// Normal SmaXTify AI Chat
-// ======================================
+const protect =
+  require("../middleware/authMiddleware");
 
 router.post(
   "/chat",
+  protect,
   chatWithGemini
 );
 
-
-// ======================================
-// Financial Report AI Insights
-// ======================================
-
 router.post(
   "/report-insights",
+  protect,
   generateReportInsights
 );
 
+router.post(
+  "/categorize",
+  protect,
+  categorizeTransaction
+);
 
 module.exports = router;

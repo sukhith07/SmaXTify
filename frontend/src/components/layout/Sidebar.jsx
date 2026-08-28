@@ -13,6 +13,7 @@ import {
   FaChevronRight,
   FaBars,
   FaTimes,
+  FaUniversity,
 } from "react-icons/fa";
 
 import { useState, useEffect } from "react";
@@ -46,6 +47,11 @@ function Sidebar() {
       path: "/dashboard",
     },
     {
+      title: "Accounts",
+      icon: <FaUniversity />,
+      path: "/accounts",
+    },
+    {
       title: "Budget Planner",
       icon: <FaWallet />,
       path: "/budget",
@@ -69,11 +75,6 @@ function Sidebar() {
       title: "Subscription Tracker",
       icon: <FaCreditCard />,
       path: "/subscriptions",
-    },
-    {
-      title: "Bill Reminders",
-      icon: <FaBell />,
-      path: "/reminders",
     },
     {
       title: "Settings",
@@ -101,6 +102,7 @@ function Sidebar() {
 
   const handleNavigation = (path) => {
     navigate(path);
+    setMobileOpen(false);
   };
 
   useEffect(() => {

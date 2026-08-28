@@ -283,6 +283,82 @@
     cursor:not-allowed;
 
 }
+.edit-selection-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 100%;
+}
+
+.edit-selection-row .custom-select {
+  min-width: 0;
+}
+
+.edit-selection-row .select-btn {
+  width: 100%;
+}
+
+.edit-selection-row .selected-item {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.edit-selection-row .account-menu {
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.account-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.account-option-content strong {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-option-content span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.select-option.active .account-option-content span {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.no-accounts {
+  padding: 16px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.date-input-box {
+  position: relative;
+}
+
+.expense-datepicker {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: #334155;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .edit-selection-row {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
 
 /* ====================================
    ANIMATION

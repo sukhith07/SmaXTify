@@ -6,6 +6,7 @@ import {
   FaTrash,
   FaArrowUp,
   FaArrowDown,
+  FaUniversity,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 
@@ -14,8 +15,7 @@ import EditExpenseModal from "./EditExpenseModal";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import "./styles/expenseList.css";
 
-function ExpenseList({ expenses, setExpenses }) {
-
+function ExpenseList({ expenses = [], setExpenses }) {
   const [filteredExpenses, setFilteredExpenses] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -25,13 +25,12 @@ function ExpenseList({ expenses, setExpenses }) {
 
   const [showDelete, setShowDelete] = useState(false);
   const [deleteItem, setDeleteItem] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
-
-    const keyword = search.toLowerCase();
+    const keyword = search.toLowerCase().trim();
 
     const filtered = expenses.filter((item) => {
-
       const title = item.title?.toLowerCase() || "";
       const category = item.category?.toLowerCase() || "";
 
@@ -39,82 +38,104 @@ function ExpenseList({ expenses, setExpenses }) {
         title.includes(keyword) ||
         category.includes(keyword)
       );
-
     });
 
     setFilteredExpenses(filtered);
     setLoading(false);
-
   }, [expenses, search]);
 
   const openEdit = (expense) => {
-
     setSelectedExpense(expense);
     setShowModal(true);
-
   };
 
   const updateExpense = (updatedExpense) => {
-
-    const updated = expenses.map((item) =>
-      item._id === updatedExpense._id
-        ? updatedExpense
-        : item
+    setExpenses((prev) =>
+      prev.map((item) =>
+        item._id === updatedExpense._id
+          ? updatedExpense
+          : item
+      )
     );
+  };
 
-    setExpenses(updated);
+  const openDelete = (expense) => {
+    setDeleteItem(expense);
+    setShowDelete(true);
+  };
 
+  const closeDelete = () => {
+    if (deleteLoading) return;
+
+    setShowDelete(false);
+    setDeleteItem(null);
   };
 
   const deleteExpense = async () => {
-
-    if (!deleteItem) return;
+    if (!deleteItem?._id) {
+      toast.error("Transaction not found.");
+      return;
+    }
 
     try {
+      setDeleteLoading(true);
 
-      await API.delete(`/expenses/${deleteItem._id}`);
-
-      const updated = expenses.filter(
-        (item) => item._id !== deleteItem._id
+      await API.delete(
+        `/expenses/${deleteItem._id}`
       );
 
-      setExpenses(updated);
+      setExpenses((prev) =>
+        prev.filter(
+          (item) =>
+            item._id !== deleteItem._id
+        )
+      );
 
-      toast.success("Transaction Deleted Successfully!");
+      toast.success(
+        "Transaction Deleted Successfully!"
+      );
 
       setShowDelete(false);
       setDeleteItem(null);
-
-    } catch (err) {
-
-      console.log(err);
-
-      toast.error(
-        err.response?.data?.message ||
-        "Delete Failed"
+    } catch (error) {
+      console.error(
+        "Delete transaction error:",
+        error
       );
 
+      toast.error(
+        error.response?.data?.message ||
+        "Failed to delete transaction."
+      );
+    } finally {
+      setDeleteLoading(false);
     }
-
   };
 
   return (
-
     <motion.div
       className="transaction-card"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      initial={{
+        opacity: 0,
+        y: 30,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+      }}
+      transition={{
+        duration: 0.5,
+      }}
     >
-            <div className="transaction-header">
-
+      <div className="transaction-header">
         <div>
           <h2>Recent Transactions</h2>
-          <p>{filteredExpenses.length} Transaction(s)</p>
+          <p>
+            {filteredExpenses.length} Transaction(s)
+          </p>
         </div>
 
         <div className="search-wrapper">
-
           <FaSearch className="search-icon" />
 
           <input
@@ -122,159 +143,165 @@ function ExpenseList({ expenses, setExpenses }) {
             type="text"
             placeholder="Search by title or category..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
           />
-
         </div>
-
       </div>
 
       <div className="table-wrapper">
-
         <table className="expense-table">
-
           <thead>
-
             <tr>
               <th>Title</th>
               <th>Category</th>
               <th>Date</th>
+              <th>Account</th>
               <th>Type</th>
               <th>Amount</th>
               <th>Action</th>
             </tr>
-
           </thead>
 
           <tbody>
-
             {loading ? (
-
               <tr>
-
                 <td
-                  colSpan="6"
+                  colSpan="7"
                   className="no-data"
                 >
                   Loading...
                 </td>
-
               </tr>
-
             ) : filteredExpenses.length === 0 ? (
-
               <tr>
-
                 <td
-                  colSpan="6"
+                  colSpan="7"
                   className="no-data"
                 >
                   No Transactions Found
                 </td>
-
               </tr>
-
             ) : (
+              filteredExpenses.map(
+                (item, index) => (
+                  <motion.tr
+                    key={item._id}
+                    initial={{
+                      opacity: 0,
+                      x: -20,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                    }}
+                    transition={{
+                      delay: index * 0.05,
+                    }}
+                  >
+                    <td>
+                      <strong>
+                        {item.title || "-"}
+                      </strong>
+                    </td>
 
-              filteredExpenses.map((item, index) => (
+                    <td>
+                      {item.category || "-"}
+                    </td>
 
-                <motion.tr
-                  key={item._id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{
-                    delay: index * 0.05,
-                  }}
-                >
+                    <td>
+                      {item.date
+                        ? new Date(
+                            item.date
+                          ).toLocaleDateString(
+                            "en-IN",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )
+                        : "-"}
+                    </td>
 
-                  <td>
-                    <strong>{item.title}</strong>
-                  </td>
+                    <td>
+                      <span className="account-cell">
+                        <FaUniversity />
 
-                  <td>{item.category}</td>
+                        {item.account?.name ||
+                          "No Account"}
+                      </span>
+                    </td>
 
-                  <td>
-                    {item.date
-                      ? new Date(item.date).toLocaleDateString("en-IN")
-                      : "-"}
-                  </td>
+                    <td>
+                      <span
+                        className={
+                          item.type === "Income"
+                            ? "income-badge"
+                            : "expense-badge"
+                        }
+                      >
+                        {item.type === "Income" ? (
+                          <FaArrowUp />
+                        ) : (
+                          <FaArrowDown />
+                        )}
 
-                  <td>
-
-                    <span
-                      className={
-                        item.type === "Income"
-                          ? "income-badge"
-                          : "expense-badge"
-                      }
-                    >
-
-                      {item.type === "Income" ? (
-                        <FaArrowUp />
-                      ) : (
-                        <FaArrowDown />
-                      )}
-
-                      <span style={{ marginLeft: "6px" }}>
                         {item.type}
                       </span>
+                    </td>
 
-                    </span>
+                    <td
+                      className={
+                        item.type === "Income"
+                          ? "income-text"
+                          : "expense-text"
+                      }
+                    >
+                      {item.type === "Income"
+                        ? "+"
+                        : "-"}
+                      ₹
+                      {Number(
+                        item.amount || 0
+                      ).toLocaleString("en-IN")}
+                    </td>
 
-                  </td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          type="button"
+                          className="edit-btn"
+                          title="Edit"
+                          onClick={() =>
+                            openEdit(item)
+                          }
+                        >
+                          <FaEdit />
+                        </button>
 
-                  <td
-                    className={
-                      item.type === "Income"
-                        ? "income-text"
-                        : "expense-text"
-                    }
-                  >
-                    {item.type === "Income" ? "+" : "-"}
-                    ₹{Number(item.amount).toLocaleString()}
-                  </td>
-
-                  <td>
-
-                    <div className="action-buttons">
-
-                      <button
-                        className="edit-btn"
-                        title="Edit"
-                        onClick={() => openEdit(item)}
-                      >
-                        <FaEdit />
-                      </button>
-
-                      <button
-                        className="delete-btn"
-                        title="Delete"
-                        onClick={() => {
-                          setDeleteItem(item);
-                          setShowDelete(true);
-                        }}
-                      >
-                        <FaTrash />
-                      </button>
-
-                    </div>
-
-                  </td>
-
-                </motion.tr>
-
-              ))
-
+                        <button
+                          type="button"
+                          className="delete-btn"
+                          title="Delete"
+                          onClick={() =>
+                            openDelete(item)
+                          }
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                )
+              )
             )}
-
           </tbody>
-
         </table>
-
       </div>
 
       {showModal && selectedExpense && (
-
         <EditExpenseModal
           isOpen={showModal}
           expense={selectedExpense}
@@ -284,23 +311,17 @@ function ExpenseList({ expenses, setExpenses }) {
           }}
           onUpdate={updateExpense}
         />
-
       )}
 
       <DeleteConfirmModal
         isOpen={showDelete}
         title={deleteItem?.title}
-        onClose={() => {
-          setShowDelete(false);
-          setDeleteItem(null);
-        }}
+        onClose={closeDelete}
         onConfirm={deleteExpense}
+        loading={deleteLoading}
       />
-
     </motion.div>
-
   );
-
 }
 
 export default ExpenseList;

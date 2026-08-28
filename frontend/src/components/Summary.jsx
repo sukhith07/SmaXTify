@@ -7,70 +7,133 @@ import {
 
 import "./styles/summary.css";
 
-function Summary({ expenses }) {
-
-  const totalIncome = expenses
+function Summary({
+  expenses = [],
+  accounts = [],
+  totalAccountBalance,
+}) {
+  const income = expenses
     .filter((item) => item.type === "Income")
-    .reduce((acc, item) => acc + Number(item.amount), 0);
+    .reduce(
+      (total, item) =>
+        total + Number(item.amount || 0),
+      0
+    );
 
-  const totalExpense = expenses
+  const expense = expenses
     .filter((item) => item.type === "Expense")
-    .reduce((acc, item) => acc + Number(item.amount), 0);
+    .reduce(
+      (total, item) =>
+        total + Number(item.amount || 0),
+      0
+    );
 
-  const balance = totalIncome - totalExpense;
+  const balance =
+    income - expense;
 
   const savings =
-    totalIncome > 0
-      ? ((balance / totalIncome) * 100).toFixed(1)
+    income > 0
+      ? Number(
+          ((balance / income) * 100).toFixed(1)
+        )
       : 0;
 
-  const cards = [
-    {
-      title: "Total Balance",
-      value: `₹${balance.toLocaleString()}`,
-      icon: <FaWallet />,
-      className: "balance-card",
-    },
-    {
-      title: "Income",
-      value: `₹${totalIncome.toLocaleString()}`,
-      icon: <FaArrowUp />,
-      className: "income-card",
-    },
-    {
-      title: "Expenses",
-      value: `₹${totalExpense.toLocaleString()}`,
-      icon: <FaArrowDown />,
-      className: "expense-card",
-    },
-    {
-      title: "Savings",
-      value: `${savings}%`,
-      icon: <FaPiggyBank />,
-      className: "saving-card",
-    },
-  ];
+  const calculatedAccountBalance =
+    Array.isArray(accounts)
+      ? accounts.reduce(
+          (total, account) =>
+            total +
+            Number(account.balance || 0),
+          0
+        )
+      : 0;
+
+  const finalTotalBalance =
+    totalAccountBalance !== undefined &&
+    totalAccountBalance !== null
+      ? Number(totalAccountBalance)
+      : calculatedAccountBalance;
 
   return (
-    <section
-      className="summary-section"
-      id="dashboard"
-    >
-      {cards.map((card, index) => (
-        <div
-          key={index}
-          className={`summary-card ${card.className}`}
-        >
-          <div className="summary-icon">
-            {card.icon}
-          </div>
+    <section className="summary-cards">
 
-          <div className="summary-content">
-            <h4>{card.title}</h4>
-            <h2>{card.value}</h2>
-          </div>
+      <div className="summary-card balance-card">
+        <div className="summary-icon">
+          <FaWallet />
         </div>
-      ))}
+
+        <div className="summary-content">
+          <span>Total Balance</span>
+
+          <strong>
+            ₹
+            {finalTotalBalance.toLocaleString(
+              "en-IN",
+              {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              }
+            )}
+          </strong>
+        </div>
+      </div>
+
+      <div className="summary-card income-card">
+        <div className="summary-icon">
+          <FaArrowUp />
+        </div>
+
+        <div className="summary-content">
+          <span>Income</span>
+
+          <strong>
+            ₹
+            {income.toLocaleString(
+              "en-IN",
+              {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              }
+            )}
+          </strong>
+        </div>
+      </div>
+
+      <div className="summary-card expense-card">
+        <div className="summary-icon">
+          <FaArrowDown />
+        </div>
+
+        <div className="summary-content">
+          <span>Expenses</span>
+
+          <strong>
+            ₹
+            {expense.toLocaleString(
+              "en-IN",
+              {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              }
+            )}
+          </strong>
+        </div>
+      </div>
+
+      <div className="summary-card savings-card">
+        <div className="summary-icon">
+          <FaPiggyBank />
+        </div>
+
+        <div className="summary-content">
+          <span>Savings</span>
+
+          <strong>
+            {savings}%
+          </strong>
+        </div>
+      </div>
+
     </section>
   );
 }

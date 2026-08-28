@@ -49,8 +49,11 @@ const currencyRoutes =
 const subscriptionRoutes =
   require("./routes/subscriptionRoutes");
 
-  const notificationRoutes =
+const notificationRoutes =
   require("./routes/notificationRoutes");
+
+const accountRoutes =
+  require("./routes/accountRoutes");
 
 app.use(
   "/api/auth",
@@ -100,6 +103,11 @@ app.use(
 app.use(
   "/api/notifications",
   notificationRoutes
+);
+
+app.use(
+  "/api/accounts",
+  accountRoutes
 );
 
 app.get("/", (req, res) => {

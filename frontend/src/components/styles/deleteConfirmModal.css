@@ -1,317 +1,237 @@
-/* =========================================
-   DELETE MODAL OVERLAY
-========================================= */
-
-.delete-overlay{
-
-    position:fixed;
-
-    inset:0;
-
-    background:rgba(15,23,42,.45);
-
-    backdrop-filter:blur(6px);
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    z-index:9999;
-
-    animation:fadeIn .25s ease;
-
+.delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 99999;
+  animation: deleteFadeIn 0.25s ease;
 }
 
-/* =========================================
-   MODAL
-========================================= */
-
-.delete-modal{
-
-    width:430px;
-
-    max-width:92%;
-
-    background:#fff;
-
-    border-radius:24px;
-
-    padding:35px 30px;
-
-    text-align:center;
-
-    box-shadow:0 25px 60px rgba(0,0,0,.25);
-
-    animation:popup .3s ease;
-
+.delete-modal {
+  width: 440px;
+  max-width: 100%;
+  background: #ffffff;
+  border-radius: 26px;
+  padding: 34px;
+  text-align: center;
+  box-shadow:
+    0 30px 80px rgba(15, 23, 42, 0.28),
+    0 10px 30px rgba(0, 0, 0, 0.1);
+  animation: deletePopup 0.3s ease;
+  border: 1px solid #f1f5f9;
 }
 
-/* =========================================
-   DELETE ICON
-========================================= */
-
-.delete-icon{
-
-    width:90px;
-
-    height:90px;
-
-    margin:auto;
-
-    border-radius:50%;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    background:#fee2e2;
-
-    color:#dc2626;
-
-    font-size:42px;
-
-    margin-bottom:22px;
-
+.delete-icon {
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    #fee2e2,
+    #fecaca
+  );
+  color: #dc2626;
+  font-size: 34px;
+  box-shadow:
+    0 10px 25px rgba(220, 38, 38, 0.14);
 }
 
-/* =========================================
-   TITLE
-========================================= */
-
-.delete-modal h2{
-
-    color:#1e293b;
-
-    font-size:30px;
-
-    font-weight:700;
-
-    margin-bottom:10px;
-
+.delete-modal h2 {
+  color: #172554;
+  font-size: 27px;
+  font-weight: 700;
+  margin: 0 0 10px;
 }
 
-.delete-message{
-
-    color:#64748b;
-
-    font-size:16px;
-
-    margin-bottom:12px;
-
+.delete-message {
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 8px;
 }
 
-.delete-modal h3{
-
-    color:#dc2626;
-
-    font-size:24px;
-
-    font-weight:700;
-
-    margin-bottom:25px;
-
-    word-break:break-word;
-
+.delete-modal h3 {
+  color: #dc2626;
+  font-size: 21px;
+  font-weight: 700;
+  margin: 0 0 22px;
+  word-break: break-word;
+}
+.delete-item-name {
+    color: #dc2626;
+    font-size: 23px;
+    font-weight: 700;
+    margin: 8px 0 24px;
+    word-break: break-word;
 }
 
-/* =========================================
-   WARNING
-========================================= */
-
-.warning-box{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:10px;
-
-    padding:15px;
-
-    margin-bottom:30px;
-
-    border-radius:14px;
-
-    background:#fff7ed;
-
-    color:#ea580c;
-
-    font-size:15px;
-
-    font-weight:500;
-
+.warning-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 16px;
+  margin-bottom: 26px;
+  border-radius: 14px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.warning-box svg{
-
-    font-size:18px;
-
+.warning-box svg {
+  font-size: 17px;
+  flex-shrink: 0;
 }
 
-/* =========================================
-   BUTTONS
-========================================= */
-
-.delete-buttons{
-
-    display:flex;
-
-    justify-content:center;
-
-    gap:18px;
-
+.delete-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
 }
 
 .cancel-delete,
-
-.confirm-delete{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:10px;
-
-    border:none;
-
-    border-radius:14px;
-
-    padding:14px 26px;
-
-    font-size:15px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:.3s;
-
+.confirm-delete {
+  min-width: 145px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: none;
+  border-radius: 13px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
 }
 
-/* Cancel */
-
-.cancel-delete{
-
-    background:#e2e8f0;
-
-    color:#475569;
-
+.cancel-delete {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
 }
 
-.cancel-delete:hover{
-
-    background:#cbd5e1;
-
+.cancel-delete:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
 }
 
-/* Delete */
-
-.confirm-delete{
-
-    background:linear-gradient(
-        135deg,
-        #ef4444,
-        #dc2626
-    );
-
-    color:white;
-
-    box-shadow:0 12px 25px rgba(239,68,68,.30);
-
+.confirm-delete {
+  background: linear-gradient(
+    135deg,
+    #ef4444,
+    #dc2626
+  );
+  color: #ffffff;
+  box-shadow:
+    0 10px 22px rgba(239, 68, 68, 0.25);
 }
 
-.confirm-delete:hover{
-
-    transform:translateY(-2px);
-
-    box-shadow:0 18px 35px rgba(239,68,68,.40);
-
+.confirm-delete:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 15px 30px rgba(239, 68, 68, 0.35);
 }
 
-/* =========================================
-   ANIMATION
-========================================= */
-
-@keyframes popup{
-
-    from{
-
-        opacity:0;
-
-        transform:scale(.85);
-
-    }
-
-    to{
-
-        opacity:1;
-
-        transform:scale(1);
-
-    }
-
+.cancel-delete:active,
+.confirm-delete:active {
+  transform: scale(0.97);
+}
+.delete-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.25s;
 }
 
-@keyframes fadeIn{
-
-    from{
-
-        opacity:0;
-
-    }
-
-    to{
-
-        opacity:1;
-
-    }
-
+.delete-close-btn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  transform: rotate(5deg);
 }
 
-/* =========================================
-   MOBILE
-========================================= */
+.delete-modal {
+  position: relative;
+}
 
-@media(max-width:600px){
+@keyframes deletePopup {
+  from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.92);
+  }
 
-    .delete-modal{
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
-        padding:25px;
+@keyframes deleteFadeIn {
+  from {
+    opacity: 0;
+  }
 
-    }
+  to {
+    opacity: 1;
+  }
+}
 
-    .delete-modal h2{
+@media (max-width: 600px) {
+  .delete-overlay {
+    padding: 16px;
+  }
 
-        font-size:24px;
+  .delete-modal {
+    padding: 28px 22px;
+    border-radius: 22px;
+  }
 
-    }
+  .delete-icon {
+    width: 72px;
+    height: 72px;
+    font-size: 30px;
+  }
 
-    .delete-modal h3{
+  .delete-modal h2 {
+    font-size: 23px;
+  }
 
-        font-size:20px;
+  .delete-modal h3 {
+    font-size: 19px;
+  }
 
-    }
+  .delete-buttons {
+    flex-direction: column-reverse;
+  }
 
-    .delete-buttons{
-
-        flex-direction:column;
-
-    }
-
-    .cancel-delete,
-
-    .confirm-delete{
-
-        width:100%;
-
-    }
-
+  .cancel-delete,
+  .confirm-delete {
+    width: 100%;
+  }
 }
