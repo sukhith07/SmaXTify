@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -15,6 +16,9 @@ import {
   FaCoins,
   FaCalendarAlt,
   FaUniversity,
+  FaExchangeAlt,
+  FaStickyNote,
+  FaUser,
 } from "react-icons/fa";
 
 import API from "../services/api";
@@ -32,39 +36,60 @@ function EditExpenseModal({
     amount: "",
     type: "Expense",
     account: "",
+    transferTo: "",
+    transferAccount: "",
+    transferMode: "person",
+    notes: "",
     date: new Date(),
   });
 
   const [accounts, setAccounts] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const [typeDropdownOpen, setTypeDropdownOpen] =
-    useState(false);
-
+  const [accountsLoading, setAccountsLoading] = useState(false);
   const [accountDropdownOpen, setAccountDropdownOpen] =
     useState(false);
+  const [destinationDropdownOpen, setDestinationDropdownOpen] =
+    useState(false);
 
-  const typeDropdownRef = useRef(null);
   const accountDropdownRef = useRef(null);
+  const destinationDropdownRef = useRef(null);
 
   useEffect(() => {
-    if (expense) {
-      const accountId =
-        typeof expense.account === "object"
-          ? expense.account?._id
-          : expense.account || "";
+    if (!expense) return;
 
-      setFormData({
-        title: expense.title || "",
-        category: expense.category || "",
-        amount: expense.amount || "",
-        type: expense.type || "Expense",
-        account: accountId,
-        date: expense.date
-          ? new Date(expense.date)
-          : new Date(),
-      });
-    }
+    const accountId =
+      typeof expense.account === "object"
+        ? expense.account?._id || ""
+        : expense.account || "";
+
+    setFormData({
+      title: expense.title || "",
+      category:
+        expense.type === "Transfer"
+          ? ""
+          : expense.category || "",
+      amount: expense.amount || "",
+      type: expense.type || "Expense",
+      account: accountId,
+      transferTo:
+        expense.transferTo ||
+        expense.toAccount ||
+        expense.recipient ||
+        "",
+      transferAccount:
+        expense.transferAccount ||
+        "",
+      transferMode:
+        expense.transferMode ||
+        (expense.transferAccount ? "account" : "person"),
+      notes:
+        expense.notes ||
+        expense.note ||
+        "",
+      date: expense.date
+        ? new Date(expense.date)
+        : new Date(),
+    });
   }, [expense]);
 
   useEffect(() => {
@@ -76,17 +101,17 @@ function EditExpenseModal({
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        typeDropdownRef.current &&
-        !typeDropdownRef.current.contains(event.target)
-      ) {
-        setTypeDropdownOpen(false);
-      }
-
-      if (
         accountDropdownRef.current &&
         !accountDropdownRef.current.contains(event.target)
       ) {
         setAccountDropdownOpen(false);
+      }
+
+      if (
+        destinationDropdownRef.current &&
+        !destinationDropdownRef.current.contains(event.target)
+      ) {
+        setDestinationDropdownOpen(false);
       }
     };
 
@@ -103,31 +128,103 @@ function EditExpenseModal({
     };
   }, []);
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape" && !loading) {
+        onClose();
+      }
+    };
+
+    document.addEventListener(
+      "keydown",
+      handleEscape
+    );
+
+    return () => {
+      document.removeEventListener(
+        "keydown",
+        handleEscape
+      );
+    };
+  }, [isOpen, loading, onClose]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow =
+      document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow =
+        originalOverflow;
+    };
+  }, [isOpen]);
+
   const loadAccounts = async () => {
     try {
+      setAccountsLoading(true);
+
       const res = await API.get("/accounts");
 
       const accountList = Array.isArray(res.data)
         ? res.data
-        : res.data.accounts || [];
+        : Array.isArray(res.data?.accounts)
+        ? res.data.accounts
+        : [];
 
       setAccounts(accountList);
     } catch (error) {
-      console.log(
+      console.error(
         "Failed to load accounts:",
         error
       );
+
+      setAccounts([]);
+    } finally {
+      setAccountsLoading(false);
     }
   };
 
-  if (!isOpen) return null;
-
   const detectCategory = (title, type) => {
-    if (type === "Income") {
-      return "Other";
+    if (type === "Transfer") {
+      return "";
     }
 
-    const text = title.toLowerCase();
+    const text = title.toLowerCase().trim();
+
+    if (type === "Income") {
+      if (
+        text.includes("salary") ||
+        text.includes("wage") ||
+        text.includes("payroll")
+      ) {
+        return "Salary";
+      }
+
+      if (
+        text.includes("freelance") ||
+        text.includes("freelancing")
+      ) {
+        return "Freelance";
+      }
+
+      if (
+        text.includes("bonus") ||
+        text.includes("incentive")
+      ) {
+        return "Bonus";
+      }
+
+      if (text.includes("interest")) {
+        return "Interest";
+      }
+
+      return "Other";
+    }
 
     const categories = {
       Food: [
@@ -193,6 +290,23 @@ function EditExpenseModal({
         "pharmacy",
         "insurance",
       ],
+      Groceries: [
+        "grocery",
+        "groceries",
+        "vegetables",
+        "vegetable",
+        "milk",
+      ],
+      Rent: [
+        "rent",
+        "house rent",
+      ],
+      Travel: [
+        "travel",
+        "trip",
+        "flight",
+        "hotel",
+      ],
     };
 
     for (const key in categories) {
@@ -211,54 +325,112 @@ function EditExpenseModal({
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    let updated = {
-      ...formData,
-      [name]: value,
-    };
+    setFormData((prev) => {
+      const updated = {
+        ...prev,
+        [name]: value,
+      };
 
-    if (name === "title") {
-      updated.category = detectCategory(
-        value,
-        formData.type
-      );
-    }
+      if (
+        name === "title" &&
+        prev.type !== "Transfer"
+      ) {
+        updated.category = detectCategory(
+          value,
+          prev.type
+        );
+      }
 
-    setFormData(updated);
+      return updated;
+    });
   };
 
   const selectType = (type) => {
     setFormData((prev) => ({
       ...prev,
       type,
-      category: detectCategory(
-        prev.title,
-        type
-      ),
+      category:
+        type === "Transfer"
+          ? ""
+          : detectCategory(
+              prev.title,
+              type
+            ),
+      title:
+        type === "Transfer"
+          ? ""
+          : prev.title,
+      transferTo:
+        type === "Transfer"
+          ? prev.transferTo
+          : "",
+      transferAccount:
+        type === "Transfer"
+          ? prev.transferAccount
+          : "",
+      transferMode:
+        type === "Transfer"
+          ? prev.transferMode
+          : "person",
     }));
 
-    setTypeDropdownOpen(false);
+    setAccountDropdownOpen(false);
   };
 
   const selectAccount = (account) => {
     setFormData((prev) => ({
       ...prev,
       account: account._id,
+      transferAccount:
+        prev.transferAccount === account._id
+          ? ""
+          : prev.transferAccount,
     }));
 
     setAccountDropdownOpen(false);
   };
 
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-
-    if (!formData.account) {
-      toast.error("Please select an account.");
+  const selectDestinationAccount = (account) => {
+    if (account._id === formData.account) {
+      toast.error("From Account and To Account cannot be the same.");
       return;
     }
 
-    if (!formData.date) {
+    setFormData((prev) => ({
+      ...prev,
+      transferAccount: account._id,
+      transferTo: account.name,
+    }));
+
+    setDestinationDropdownOpen(false);
+  };
+
+  const handleTransferModeChange = (mode) => {
+    setFormData((prev) => ({
+      ...prev,
+      transferMode: mode,
+      transferAccount:
+        mode === "account" ? prev.transferAccount : "",
+      transferTo:
+        mode === "person" ? prev.transferTo : "",
+    }));
+
+    setDestinationDropdownOpen(false);
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
+    if (!expense?._id) {
+      toast.error("Transaction not found.");
+      return;
+    }
+
+    if (!formData.account) {
       toast.error(
-        "Please select a transaction date."
+        formData.type === "Transfer"
+          ? "Please select the From Account."
+          : "Please select an account."
       );
       return;
     }
@@ -271,18 +443,83 @@ function EditExpenseModal({
       return;
     }
 
+    if (!formData.date) {
+      toast.error(
+        "Please select a transaction date."
+      );
+      return;
+    }
+
+    if (formData.type === "Transfer") {
+      if (formData.transferMode === "account") {
+        if (!formData.transferAccount) {
+          toast.error("Please select the destination account.");
+          return;
+        }
+
+        if (formData.transferAccount === formData.account) {
+          toast.error("From Account and To Account cannot be the same.");
+          return;
+        }
+      }
+
+      if (formData.transferMode === "person") {
+        if (!formData.transferTo.trim()) {
+          toast.error("Please enter the person's name.");
+          return;
+        }
+
+        if (formData.transferTo.trim().length > 100) {
+          toast.error("Person name is too long.");
+          return;
+        }
+      }
+    } else {
+      if (!formData.title.trim()) {
+        toast.error(
+          "Please enter a transaction title."
+        );
+        return;
+      }
+
+      if (!formData.category.trim()) {
+        toast.error(
+          "Please enter a category."
+        );
+        return;
+      }
+    }
+
     try {
       setLoading(true);
 
       const payload = {
-        title: formData.title,
+        title:
+          formData.type === "Transfer"
+            ? "Transfer"
+            : formData.title.trim(),
         category:
-          formData.type === "Income"
-            ? "Other"
-            : formData.category,
+          formData.type === "Transfer"
+            ? "Transfer"
+            : formData.category.trim(),
         amount: Number(formData.amount),
         type: formData.type,
         account: formData.account,
+        transferTo:
+          formData.type === "Transfer" &&
+          formData.transferMode === "person"
+            ? formData.transferTo.trim()
+            : "",
+        transferAccount:
+          formData.type === "Transfer" &&
+          formData.transferMode === "account"
+            ? formData.transferAccount
+            : null,
+        transferMode:
+          formData.type === "Transfer"
+            ? formData.transferMode
+            : null,
+        notes: formData.notes.trim(),
         date: formData.date,
       };
 
@@ -291,275 +528,680 @@ function EditExpenseModal({
         payload
       );
 
-      onUpdate(res.data.expense);
+      if (res.data?.expense) {
+        onUpdate(res.data.expense);
+      }
 
       toast.success(
-        "Transaction Updated Successfully!"
+        formData.type === "Transfer"
+          ? "Transfer Updated Successfully!"
+          : "Transaction Updated Successfully!"
       );
 
+      setAccountDropdownOpen(false);
+      setDestinationDropdownOpen(false);
       onClose();
-    } catch (err) {
+    } catch (error) {
+      console.error(
+        "Update transaction error:",
+        error
+      );
+
       toast.error(
-        err.response?.data?.message ||
-          "Update Failed"
+        error.response?.data?.message ||
+          "Failed to update transaction."
       );
     } finally {
       setLoading(false);
     }
   };
 
-  const currentType =
-    formData.type === "Income"
-      ? {
-          icon: <FaCoins />,
-          text: "Income",
-        }
-      : {
-          icon: <FaMoneyBillWave />,
-          text: "Expense",
-        };
-
   const selectedAccount = accounts.find(
     (account) =>
       account._id === formData.account
   );
 
-  return (
-    <div className="modal-overlay">
-      <div className="edit-modal">
-        <div className="modal-header">
-          <FaEdit />
-          <h2>Edit Transaction</h2>
-        </div>
+  const selectedDestinationAccount = accounts.find(
+    (account) =>
+      account._id === formData.transferAccount
+  );
 
-        <form onSubmit={handleUpdate}>
-          <div className="modal-input">
-            <FaWallet />
+  const renderCalendarHeader = ({
+    date,
+    decreaseMonth,
+    increaseMonth,
+    prevMonthButtonDisabled,
+    nextMonthButtonDisabled,
+  }) => {
+    return (
+      <div className="edit-calendar-header">
+        <button
+          type="button"
+          className="edit-calendar-nav"
+          onClick={decreaseMonth}
+          disabled={prevMonthButtonDisabled}
+          aria-label="Previous month"
+        >
+          ‹
+        </button>
 
-            <input
-              type="text"
-              name="title"
-              placeholder="Transaction Title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
-          </div>
+        <strong>
+          {date.toLocaleString("en-US", {
+            month: "long",
+            year: "numeric",
+          })}
+        </strong>
 
-          <div className="modal-input">
-            <FaTag />
+        <button
+          type="button"
+          className="edit-calendar-nav"
+          onClick={increaseMonth}
+          disabled={nextMonthButtonDisabled}
+          aria-label="Next month"
+        >
+          ›
+        </button>
+      </div>
+    );
+  };
 
-            <input
-              type="text"
-              name="category"
-              placeholder="Category"
-              value={formData.category}
-              onChange={handleChange}
-              required
-            />
-          </div>
+  const renderDatePicker = (label) => (
+    <div className="edit-field-card">
+      <label>{label}</label>
 
-          <div className="modal-input">
-            <FaRupeeSign />
+      <div className="edit-input-box edit-date-box">
+        <FaCalendarAlt />
 
-            <input
-              type="number"
-              name="amount"
-              placeholder="Amount"
-              value={formData.amount}
-              onChange={handleChange}
-              min="1"
-              required
-            />
-          </div>
-
-          <div className="edit-selection-row">
-            <div
-              className="custom-select"
-              ref={typeDropdownRef}
-            >
-              <label>Transaction Type</label>
-
-              <button
-                type="button"
-                className="select-btn"
-                onClick={() =>
-                  setTypeDropdownOpen(
-                    !typeDropdownOpen
-                  )
-                }
-              >
-                <span className="selected-item">
-                  {currentType.icon}
-                  {currentType.text}
-                </span>
-
-                <FaChevronDown
-                  className={
-                    typeDropdownOpen
-                      ? "rotate"
-                      : ""
-                  }
-                />
-              </button>
-
-              {typeDropdownOpen && (
-                <div className="select-menu">
-                  <div
-                    className={
-                      formData.type === "Expense"
-                        ? "select-option active"
-                        : "select-option"
-                    }
-                    onClick={() =>
-                      selectType("Expense")
-                    }
-                  >
-                    <FaMoneyBillWave />
-                    Expense
-                  </div>
-
-                  <div
-                    className={
-                      formData.type === "Income"
-                        ? "select-option active"
-                        : "select-option"
-                    }
-                    onClick={() =>
-                      selectType("Income")
-                    }
-                  >
-                    <FaCoins />
-                    Income
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div
-              className="custom-select"
-              ref={accountDropdownRef}
-            >
-              <label>Account</label>
-
-              <button
-                type="button"
-                className="select-btn"
-                onClick={() =>
-                  setAccountDropdownOpen(
-                    !accountDropdownOpen
-                  )
-                }
-              >
-                <span className="selected-item">
-                  <FaUniversity />
-
-                  {selectedAccount
-                    ? selectedAccount.name
-                    : "Select Account"}
-                </span>
-
-                <FaChevronDown
-                  className={
-                    accountDropdownOpen
-                      ? "rotate"
-                      : ""
-                  }
-                />
-              </button>
-
-              {accountDropdownOpen && (
-                <div className="select-menu account-menu">
-                  {accounts.length === 0 ? (
-                    <div className="no-accounts">
-                      No accounts available.
-                    </div>
-                  ) : (
-                    accounts.map((account) => (
-                      <div
-                        key={account._id}
-                        className={
-                          formData.account ===
-                          account._id
-                            ? "select-option active"
-                            : "select-option"
-                        }
-                        onClick={() =>
-                          selectAccount(account)
-                        }
-                      >
-                        <FaUniversity />
-
-                        <div className="account-option-content">
-                          <strong>
-                            {account.name}
-                          </strong>
-
-                          <span>
-                            ₹
-                            {Number(
-                              account.balance || 0
-                            ).toLocaleString(
-                              "en-IN"
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="field">
-            <label>Transaction Date</label>
-
-            <div className="modal-input date-input-box">
-              <FaCalendarAlt />
-
-              <DatePicker
-                selected={formData.date}
-                onChange={(date) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    date,
-                  }))
-                }
-                dateFormat="dd MMM yyyy"
-                maxDate={new Date()}
-                placeholderText="Select Date"
-                className="expense-datepicker"
-              />
-            </div>
-          </div>
-
-          <div className="modal-buttons">
-            <button
-              type="button"
-              className="cancel-btn"
-              onClick={onClose}
-              disabled={loading}
-            >
-              <FaTimes />
-              Cancel
-            </button>
-
-            <button
-              type="submit"
-              className="save-btn"
-              disabled={loading}
-            >
-              <FaSave />
-
-              {loading
-                ? "Saving..."
-                : "Save Changes"}
-            </button>
-          </div>
-        </form>
+        <DatePicker
+          selected={formData.date}
+          onChange={(date) =>
+            setFormData((prev) => ({
+              ...prev,
+              date,
+            }))
+          }
+          dateFormat="MMM dd, yyyy"
+          maxDate={new Date()}
+          placeholderText="Select Date"
+          className="edit-datepicker"
+          popperClassName="edit-datepicker-popper"
+          calendarClassName="edit-calendar"
+          showMonthDropdown
+          showYearDropdown
+          dropdownMode="select"
+          renderCustomHeader={
+            renderCalendarHeader
+          }
+          disabled={loading}
+          popperPlacement="bottom-start"
+        />
       </div>
     </div>
+  );
+
+  if (!isOpen || !expense) {
+    return null;
+  }
+
+  const modalContent = (
+    <div
+      className="edit-modal-overlay"
+      onMouseDown={(event) => {
+        if (
+          event.target === event.currentTarget &&
+          !loading
+        ) {
+          onClose();
+        }
+      }}
+    >
+      <div
+        className="edit-modal-container"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-transaction-title"
+      >
+        <div className="edit-modal-header">
+          <div className="edit-modal-title">
+            <span className="edit-title-icon">
+              <FaEdit />
+            </span>
+
+            <h2 id="edit-transaction-title">
+              Edit Transaction
+            </h2>
+          </div>
+
+          <button
+            type="button"
+            className="edit-close-btn"
+            onClick={onClose}
+            disabled={loading}
+            aria-label="Close"
+          >
+            <FaTimes />
+          </button>
+        </div>
+
+        <div className="edit-modal-body">
+          <div className="edit-type-tabs">
+            <button
+              type="button"
+              className={
+                formData.type === "Expense"
+                  ? "edit-type-tab expense active"
+                  : "edit-type-tab"
+              }
+              onClick={() =>
+                selectType("Expense")
+              }
+              disabled={loading}
+            >
+              <FaMoneyBillWave />
+              <span>Expense</span>
+            </button>
+
+            <button
+              type="button"
+              className={
+                formData.type === "Income"
+                  ? "edit-type-tab income active"
+                  : "edit-type-tab"
+              }
+              onClick={() =>
+                selectType("Income")
+              }
+              disabled={loading}
+            >
+              <FaCoins />
+              <span>Income</span>
+            </button>
+
+            <button
+              type="button"
+              className={
+                formData.type === "Transfer"
+                  ? "edit-type-tab transfer active"
+                  : "edit-type-tab"
+              }
+              onClick={() =>
+                selectType("Transfer")
+              }
+              disabled={loading}
+            >
+              <FaExchangeAlt />
+              <span>Transfer</span>
+            </button>
+          </div>
+
+          {formData.type !== "Transfer" ? (
+            <form
+              className="edit-form"
+              onSubmit={handleUpdate}
+            >
+              <div className="edit-field-card">
+                <label>Transaction Title</label>
+
+                <div className="edit-input-box">
+                  <FaWallet />
+
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    placeholder="Transaction Title"
+                    autoComplete="off"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="edit-field-card">
+                <label>Category</label>
+
+                <div className="edit-input-box">
+                  <FaTag />
+
+                  <input
+                    type="text"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    placeholder="Category"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="edit-field-card">
+                <label>Amount</label>
+
+                <div className="edit-input-box">
+                  <FaRupeeSign />
+
+                  <input
+                    type="number"
+                    name="amount"
+                    value={formData.amount}
+                    onChange={handleChange}
+                    placeholder="₹0"
+                    min="1"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="edit-two-column">
+                <div
+                  className="edit-field-card"
+                  ref={accountDropdownRef}
+                >
+                  <label>Account</label>
+
+                  <button
+                    type="button"
+                    className="edit-select-btn"
+                    onClick={() =>
+                      setAccountDropdownOpen(
+                        (prev) => !prev
+                      )
+                    }
+                    disabled={
+                      accountsLoading ||
+                      loading
+                    }
+                  >
+                    <span>
+                      <FaUniversity />
+
+                      {selectedAccount
+                        ? selectedAccount.name
+                        : accountsLoading
+                        ? "Loading Accounts..."
+                        : "Select Account"}
+                    </span>
+
+                    <FaChevronDown
+                      className={
+                        accountDropdownOpen
+                          ? "edit-chevron rotate"
+                          : "edit-chevron"
+                      }
+                    />
+                  </button>
+
+                  {accountDropdownOpen && (
+                    <div className="edit-account-menu">
+                      {accounts.length === 0 ? (
+                        <div className="edit-no-accounts">
+                          No accounts available.
+                        </div>
+                      ) : (
+                        accounts.map(
+                          (account) => (
+                            <button
+                              type="button"
+                              key={
+                                account._id
+                              }
+                              className={
+                                formData.account ===
+                                account._id
+                                  ? "edit-account-option active"
+                                  : "edit-account-option"
+                              }
+                              onClick={() =>
+                                selectAccount(
+                                  account
+                                )
+                              }
+                            >
+                              <FaUniversity />
+
+                              <span className="edit-account-info">
+                                <strong>
+                                  {
+                                    account.name
+                                  }
+                                </strong>
+
+                                <small>
+                                  ₹
+                                  {Number(
+                                    account.balance ||
+                                      0
+                                  ).toLocaleString(
+                                    "en-IN"
+                                  )}
+                                </small>
+                              </span>
+                            </button>
+                          )
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {renderDatePicker(
+                  "Transaction Date"
+                )}
+              </div>
+
+              <div className="edit-form-actions">
+                <button
+                  type="button"
+                  className="edit-cancel-btn"
+                  onClick={onClose}
+                  disabled={loading}
+                >
+                  <FaTimes />
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="edit-save-btn"
+                  disabled={loading}
+                >
+                  <FaSave />
+
+                  {loading
+                    ? "Saving..."
+                    : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form
+              className="edit-form transfer-form"
+              onSubmit={handleUpdate}
+            >
+              <div className="edit-transfer-mode">
+                <button
+                  type="button"
+                  className={
+                    formData.transferMode === "person"
+                      ? "edit-transfer-mode-btn active"
+                      : "edit-transfer-mode-btn"
+                  }
+                  onClick={() => handleTransferModeChange("person")}
+                  disabled={loading}
+                >
+                  <FaUser />
+                  <span>To Person</span>
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    formData.transferMode === "account"
+                      ? "edit-transfer-mode-btn active"
+                      : "edit-transfer-mode-btn"
+                  }
+                  onClick={() => handleTransferModeChange("account")}
+                  disabled={loading}
+                >
+                  <FaUniversity />
+                  <span>My Account</span>
+                </button>
+              </div>
+
+              <div
+                className="edit-field-card"
+                ref={accountDropdownRef}
+              >
+                <label>From Account</label>
+
+                <button
+                  type="button"
+                  className="edit-select-btn"
+                  onClick={() =>
+                    setAccountDropdownOpen(
+                      (prev) => !prev
+                    )
+                  }
+                  disabled={
+                    accountsLoading ||
+                    loading
+                  }
+                >
+                  <span>
+                    <FaUniversity />
+
+                    {selectedAccount
+                      ? selectedAccount.name
+                      : accountsLoading
+                      ? "Loading Accounts..."
+                      : "Select Account"}
+                  </span>
+
+                  <FaChevronDown
+                    className={
+                      accountDropdownOpen
+                        ? "edit-chevron rotate"
+                        : "edit-chevron"
+                    }
+                  />
+                </button>
+
+                {accountDropdownOpen && (
+                  <div className="edit-account-menu">
+                    {accounts.length === 0 ? (
+                      <div className="edit-no-accounts">
+                        No accounts available.
+                      </div>
+                    ) : (
+                      accounts.map(
+                        (account) => (
+                          <button
+                            type="button"
+                            key={
+                              account._id
+                            }
+                            className={
+                              formData.account ===
+                              account._id
+                                ? "edit-account-option active"
+                                : "edit-account-option"
+                            }
+                            onClick={() =>
+                              selectAccount(
+                                account
+                              )
+                            }
+                          >
+                            <FaUniversity />
+
+                            <span className="edit-account-info">
+                              <strong>
+                                {
+                                  account.name
+                                }
+                              </strong>
+
+                              <small>
+                                ₹
+                                {Number(
+                                  account.balance ||
+                                    0
+                                ).toLocaleString(
+                                  "en-IN"
+                                )}
+                              </small>
+                            </span>
+                          </button>
+                        )
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div className="edit-field-card">
+                <label>Amount</label>
+
+                <div className="edit-input-box">
+                  <FaRupeeSign />
+
+                  <input
+                    type="number"
+                    name="amount"
+                    value={formData.amount}
+                    onChange={handleChange}
+                    placeholder="₹0"
+                    min="1"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
+
+              {formData.transferMode === "account" ? (
+                <div
+                  className="edit-field-card"
+                  ref={destinationDropdownRef}
+                >
+                  <label>To Account</label>
+
+                  <button
+                    type="button"
+                    className="edit-select-btn"
+                    onClick={() =>
+                      setDestinationDropdownOpen((prev) => !prev)
+                    }
+                    disabled={accountsLoading || loading}
+                  >
+                    <span>
+                      <FaUniversity />
+                      {selectedDestinationAccount
+                        ? selectedDestinationAccount.name
+                        : accountsLoading
+                        ? "Loading Accounts..."
+                        : "Select destination account"}
+                    </span>
+
+                    <FaChevronDown
+                      className={
+                        destinationDropdownOpen
+                          ? "edit-chevron rotate"
+                          : "edit-chevron"
+                      }
+                    />
+                  </button>
+
+                  {destinationDropdownOpen && (
+                    <div className="edit-account-menu">
+                      {accounts.filter((account) => account._id !== formData.account).length === 0 ? (
+                        <div className="edit-no-accounts">
+                          No other accounts available.
+                        </div>
+                      ) : (
+                        accounts
+                          .filter((account) => account._id !== formData.account)
+                          .map((account) => (
+                            <button
+                              type="button"
+                              key={account._id}
+                              className={
+                                formData.transferAccount === account._id
+                                  ? "edit-account-option active"
+                                  : "edit-account-option"
+                              }
+                              onClick={() => selectDestinationAccount(account)}
+                            >
+                              <FaUniversity />
+                              <span className="edit-account-info">
+                                <strong>{account.name}</strong>
+                                <small>
+                                  ₹{Number(account.balance || 0).toLocaleString("en-IN")}
+                                </small>
+                              </span>
+                            </button>
+                          ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="edit-field-card">
+                  <label>To Person</label>
+
+                  <div className="edit-input-box">
+                    <FaUser />
+                    <input
+                      type="text"
+                      name="transferTo"
+                      value={formData.transferTo}
+                      onChange={handleChange}
+                      placeholder="Enter person's name..."
+                      maxLength="100"
+                      autoComplete="off"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="edit-transfer-bottom">
+                <div className="edit-field-card">
+                  <label>Note</label>
+
+                  <div className="edit-input-box">
+                    <FaStickyNote />
+
+                    <input
+                      type="text"
+                      name="notes"
+                      value={formData.notes}
+                      onChange={handleChange}
+                      placeholder="Optional reference..."
+                      maxLength="300"
+                      autoComplete="off"
+                    />
+                  </div>
+                </div>
+
+                {renderDatePicker(
+                  "Transfer Date"
+                )}
+              </div>
+
+              <div className="edit-form-actions">
+                <button
+                  type="button"
+                  className="edit-cancel-btn"
+                  onClick={onClose}
+                  disabled={loading}
+                >
+                  <FaTimes />
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  className="edit-save-btn transfer-save-btn"
+                  disabled={loading}
+                >
+                  <FaSave />
+
+                  {loading
+                    ? "Saving..."
+                    : "Save Transfer"}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  return createPortal(
+    modalContent,
+    document.body
   );
 }
 

@@ -1,8 +1,3 @@
-/* =========================================================
-   SMAXTIFY CALENDAR — COMPACT FLOATING CALENDAR
-   COMPLETE REPLACEMENT
-========================================================= */
-
 .calendar-floating-layer {
   position: fixed !important;
   inset: 0 !important;
@@ -12,41 +7,26 @@
   pointer-events: none;
 }
 
-/* =========================================================
-   CALENDAR WINDOW
-========================================================= */
-
 .calendar-window {
   position: fixed !important;
-
   top: 120px !important;
   right: 38px !important;
   left: auto !important;
-
   width: 360px !important;
   min-width: 0 !important;
   max-width: calc(100vw - 32px) !important;
-
   max-height: calc(100vh - 105px) !important;
-
   display: flex;
   flex-direction: column;
-
   background: #ffffff;
-
   border: 1px solid #e2e8f0;
   border-radius: 18px;
-
   box-shadow:
     0 22px 55px rgba(15, 23, 42, 0.18),
     0 8px 24px rgba(79, 70, 229, 0.10);
-
   overflow: hidden;
-
   pointer-events: auto;
-
   z-index: 100000 !important;
-
   animation: calendarOpen 0.18s ease-out;
 }
 
@@ -62,85 +42,54 @@
   }
 }
 
-/* =========================================================
-   HEADER
-========================================================= */
-
 .calendar-window-header {
   height: 62px;
   min-height: 62px;
-
   padding: 0 12px 0 14px;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   background: #ffffff;
-
   border-bottom: 1px solid #edf1f7;
-
   user-select: none;
 }
 
 .calendar-window-title {
   min-width: 0;
-
   display: flex;
   align-items: center;
-
   gap: 10px;
 }
 
 .calendar-window-icon {
   width: 38px;
   height: 38px;
-
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 10px;
-
-  background: linear-gradient(
-    135deg,
-    #2563eb,
-    #4f46e5
-  );
-
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
   color: #ffffff;
-
   font-size: 15px;
-
-  box-shadow:
-    0 5px 14px rgba(79, 70, 229, 0.20);
+  box-shadow: 0 5px 14px rgba(79, 70, 229, 0.20);
 }
 
 .calendar-window-title strong {
   display: block;
-
   color: #172033;
-
   font-size: 14px;
   line-height: 1.2;
-
   font-weight: 800;
-
   white-space: nowrap;
 }
 
 .calendar-window-title span {
   display: block;
-
   margin-top: 3px;
-
   color: #94a3b8;
-
   font-size: 9px;
   line-height: 1.2;
-
   font-weight: 600;
 }
 
@@ -153,21 +102,15 @@
 .calendar-window-actions button {
   width: 30px;
   height: 30px;
-
   padding: 0;
-
   border: 0;
   border-radius: 8px;
-
   background: transparent;
   color: #64748b;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
-
   transition: 0.18s ease;
 }
 
@@ -181,18 +124,11 @@
   color: #dc2626;
 }
 
-/* =========================================================
-   BODY
-========================================================= */
-
 .calendar-window-body {
   padding: 14px 16px 16px;
-
   overflow-y: auto;
   overflow-x: hidden;
-
   min-height: 0;
-
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
 }
@@ -210,135 +146,151 @@
   border-radius: 10px;
 }
 
-/* =========================================================
-   TOOLBAR
-========================================================= */
-
 .calendar-toolbar {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-
   gap: 8px;
-
   margin-bottom: 12px;
 }
 
 .calendar-year-range {
   display: inline-flex;
-
   margin-bottom: 3px;
-
   padding: 3px 6px;
-
   border-radius: 5px;
-
   background: #eef2ff;
   color: #4f46e5;
-
   font-size: 7px;
   font-weight: 800;
-
   letter-spacing: 0.4px;
 }
 
 .calendar-toolbar h2 {
   margin: 0;
-
   color: #172033;
-
   font-size: 21px;
   line-height: 1.15;
-
   font-weight: 800;
 }
 
 .calendar-toolbar p {
   margin: 4px 0 0;
-
   color: #94a3b8;
-
   font-size: 9px;
   line-height: 1.3;
-
   font-weight: 600;
 }
 
 .calendar-controls {
   display: flex;
   align-items: center;
-  gap: 4px;
-
+  gap: 5px;
   flex-shrink: 0;
 }
 
-.calendar-today-btn,
-.calendar-nav-btn {
+.calendar-controls .calendar-today-btn,
+.calendar-controls .calendar-nav-btn {
   height: 30px;
-
-  border: 1px solid #dbe3ef;
-  border-radius: 8px;
-
-  background: #ffffff;
-  color: #475569;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
+  min-height: 30px;
+  border: 1px solid #dbe3ef !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: #475569 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   cursor: pointer;
-
   font-weight: 700;
-
-  transition: 0.18s ease;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+  box-sizing: border-box;
 }
 
-.calendar-today-btn {
+.calendar-controls .calendar-today-btn {
   padding: 0 9px;
   font-size: 9px;
 }
 
-.calendar-nav-btn {
-  width: 30px;
-  min-width: 30px;
-  padding: 0;
+.calendar-controls .calendar-nav-btn {
+  width: 32px !important;
+  min-width: 32px !important;
+  max-width: 32px !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  opacity: 1 !important;
 }
 
-.calendar-nav-btn svg {
-  width: 13px;
-  height: 13px;
+.calendar-controls .calendar-nav-btn svg {
+  display: block !important;
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  max-width: 14px !important;
+  max-height: 14px !important;
+  color: #475569 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  overflow: visible !important;
+  pointer-events: none;
 }
 
-.calendar-today-btn:hover,
-.calendar-nav-btn:hover {
-  border-color: #6366f1;
-  background: #eef2ff;
-  color: #4f46e5;
+.calendar-controls .calendar-nav-btn svg path,
+.calendar-controls .calendar-nav-btn svg polyline,
+.calendar-controls .calendar-nav-btn svg line {
+  color: #475569 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
-.calendar-nav-btn:disabled {
-  opacity: 0.4;
+.calendar-controls .calendar-nav-btn:hover:not(:disabled) {
+  border-color: #6366f1 !important;
+  background: #eef2ff !important;
+  color: #4f46e5 !important;
+}
+
+.calendar-controls .calendar-nav-btn:hover:not(:disabled) svg,
+.calendar-controls .calendar-nav-btn:hover:not(:disabled) svg path,
+.calendar-controls .calendar-nav-btn:hover:not(:disabled) svg polyline,
+.calendar-controls .calendar-nav-btn:hover:not(:disabled) svg line {
+  color: #4f46e5 !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
+}
+
+.calendar-controls .calendar-nav-btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.calendar-controls .calendar-nav-btn:disabled {
+  opacity: 0.4 !important;
   cursor: not-allowed;
 }
 
-/* =========================================================
-   MESSAGES
-========================================================= */
+.calendar-controls .calendar-nav-btn:disabled svg {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
 
 .calendar-refresh-message,
 .calendar-loading,
 .calendar-error {
   min-height: 28px;
-
   margin-bottom: 7px;
   padding: 6px 8px;
-
   display: flex;
   align-items: center;
   gap: 6px;
-
   border-radius: 7px;
-
   font-size: 8px;
   font-weight: 650;
 }
@@ -372,74 +324,45 @@
   }
 }
 
-/* =========================================================
-   WEEKDAYS
-========================================================= */
-
 .calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-
   gap: 4px;
-
   margin-bottom: 4px;
 }
 
 .calendar-weekday {
   height: 22px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   color: #94a3b8;
-
   font-size: 8px;
   font-weight: 800;
-
   text-transform: uppercase;
 }
 
-/* =========================================================
-   DAYS GRID
-========================================================= */
-
 .calendar-grid {
   display: grid;
-
   grid-template-columns: repeat(7, minmax(0, 1fr));
-
   gap: 4px;
 }
 
-/* =========================================================
-   DAY
-========================================================= */
-
 .calendar-day {
   min-width: 0;
-
   height: 52px;
-
   padding: 5px;
-
   border: 1px solid #e7ecf3;
   border-radius: 8px;
-
   background: #ffffff;
   color: #334155;
-
   cursor: pointer;
-
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
-
   text-align: left;
-
   overflow: hidden;
-
   transition:
     background 0.16s ease,
     border-color 0.16s ease,
@@ -450,7 +373,6 @@
 .calendar-day:hover:not(:disabled) {
   border-color: #6366f1;
   background: #f8f8ff;
-
   transform: translateY(-1px);
 }
 
@@ -466,47 +388,27 @@
 
 .calendar-day.selected {
   border-color: #4f46e5 !important;
-
-  background: linear-gradient(
-    135deg,
-    #2563eb,
-    #4f46e5
-  ) !important;
-
+  background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
   color: #ffffff !important;
-
-  box-shadow:
-    0 5px 12px rgba(79, 70, 229, 0.24);
+  box-shadow: 0 5px 12px rgba(79, 70, 229, 0.24);
 }
 
 .calendar-day.selected:hover {
-  background: linear-gradient(
-    135deg,
-    #1d4ed8,
-    #4338ca
-  ) !important;
+  background: linear-gradient(135deg, #1d4ed8, #4338ca) !important;
 }
-
-/* =========================================================
-   DAY NUMBER
-========================================================= */
 
 .calendar-day-top {
   width: 100%;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 2px;
 }
 
 .calendar-day-top > span {
   color: #334155;
-
   font-size: 11px;
   line-height: 1;
-
   font-weight: 800;
 }
 
@@ -516,9 +418,7 @@
 
 .calendar-day-top small {
   color: #4f46e5;
-
   font-size: 6px;
-
   font-weight: 800;
 }
 
@@ -526,44 +426,29 @@
   color: #ffffff !important;
 }
 
-/* =========================================================
-   EVENTS
-========================================================= */
-
 .calendar-day-events {
   width: 100%;
   min-width: 0;
-
   display: flex;
   align-items: center;
-
   gap: 3px;
-
   overflow: hidden;
-
   color: #6366f1;
 }
 
 .calendar-day-events svg {
   flex-shrink: 0;
-
   font-size: 6px;
 }
 
 .calendar-day-events span {
   min-width: 0;
-
   display: block;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
   white-space: nowrap;
-
   color: #6366f1;
-
   font-size: 6px;
-
   font-weight: 650;
 }
 
@@ -577,41 +462,27 @@
   border-color: #dbe4ff;
 }
 
-/* =========================================================
-   SELECTED DATE CARD
-========================================================= */
-
 .calendar-selected-card {
   margin-top: 12px;
-
   padding: 10px;
-
   display: flex;
   align-items: flex-start;
-
   gap: 8px;
-
   border: 1px solid #e5eaf2;
   border-radius: 10px;
-
   background: #fafbfe;
 }
 
 .calendar-selected-icon {
   width: 32px;
   height: 32px;
-
   flex-shrink: 0;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 8px;
-
   background: #eef2ff;
   color: #4f46e5;
-
   font-size: 12px;
 }
 
@@ -622,72 +493,51 @@
 
 .calendar-selected-card > .calendar-selected-content > span {
   display: block;
-
   color: #94a3b8;
-
   font-size: 7px;
   font-weight: 800;
-
   letter-spacing: 0.5px;
 }
 
 .calendar-selected-card h3 {
   margin: 3px 0 0;
-
   color: #172033;
-
   font-size: 11px;
   line-height: 1.25;
-
   font-weight: 800;
 }
 
 .calendar-selected-card p {
   margin: 3px 0 0;
-
   color: #94a3b8;
-
   font-size: 7px;
 }
 
-/* =========================================================
-   EVENT LIST
-========================================================= */
-
 .calendar-event-list {
   margin-top: 7px;
-
   display: flex;
   flex-direction: column;
-
   gap: 4px;
 }
 
 .calendar-event-item {
   display: flex;
   align-items: center;
-
   gap: 6px;
-
   padding: 6px;
-
   border: 1px solid #e8edf5;
   border-radius: 7px;
-
   background: #ffffff;
 }
 
 .calendar-event-item > svg {
   flex-shrink: 0;
-
   color: #f59e0b;
-
   font-size: 9px;
 }
 
 .calendar-event-item > span {
   flex-shrink: 0;
-
   font-size: 8px;
 }
 
@@ -697,12 +547,9 @@
 
 .calendar-event-item strong {
   display: block;
-
   color: #334155;
-
   font-size: 7px;
   font-weight: 750;
-
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -710,51 +557,34 @@
 
 .calendar-event-item small {
   display: block;
-
   margin-top: 2px;
-
   color: #94a3b8;
-
   font-size: 6px;
 }
-
-/* =========================================================
-   TABLET
-========================================================= */
 
 @media (max-width: 900px) {
   .calendar-window {
     top: 82px !important;
     right: 16px !important;
-
     width: 350px !important;
     max-width: calc(100vw - 28px) !important;
   }
 }
 
-/* =========================================================
-   MOBILE
-========================================================= */
-
 @media (max-width: 600px) {
   .calendar-window {
     top: 72px !important;
-
     right: 10px !important;
     left: 10px !important;
-
     width: auto !important;
     max-width: none !important;
-
     max-height: calc(100vh - 82px) !important;
-
     border-radius: 15px;
   }
 
   .calendar-window-header {
     height: 58px;
     min-height: 58px;
-
     padding: 0 10px 0 12px;
   }
 
@@ -778,7 +608,6 @@
   .calendar-toolbar {
     align-items: flex-start;
     flex-direction: column;
-
     gap: 8px;
   }
 
@@ -795,22 +624,21 @@
     justify-content: flex-end;
   }
 
+  .calendar-controls .calendar-nav-btn {
+    width: 32px !important;
+    min-width: 32px !important;
+  }
+
   .calendar-day {
     height: 50px;
   }
 }
 
-/* =========================================================
-   VERY SMALL MOBILE
-========================================================= */
-
 @media (max-width: 380px) {
   .calendar-window {
     top: 68px !important;
-
     right: 7px !important;
     left: 7px !important;
-
     max-height: calc(100vh - 76px) !important;
   }
 

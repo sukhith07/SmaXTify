@@ -6,6 +6,7 @@ import {
   FaTrash,
   FaArrowUp,
   FaArrowDown,
+  FaExchangeAlt,
   FaUniversity,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
@@ -31,12 +32,27 @@ function ExpenseList({ expenses = [], setExpenses }) {
     const keyword = search.toLowerCase().trim();
 
     const filtered = expenses.filter((item) => {
-      const title = item.title?.toLowerCase() || "";
-      const category = item.category?.toLowerCase() || "";
+      const title =
+        item.type === "Transfer"
+          ? `transfer to ${item.toAccount || ""}`.toLowerCase()
+          : item.title?.toLowerCase() || "";
+
+      const category =
+        item.type === "Transfer"
+          ? "transfer"
+          : item.category?.toLowerCase() || "";
+
+      const toAccount =
+        item.toAccount?.toLowerCase() || "";
+
+      const notes =
+        item.notes?.toLowerCase() || "";
 
       return (
         title.includes(keyword) ||
-        category.includes(keyword)
+        category.includes(keyword) ||
+        toAccount.includes(keyword) ||
+        notes.includes(keyword)
       );
     });
 
@@ -105,11 +121,75 @@ function ExpenseList({ expenses = [], setExpenses }) {
 
       toast.error(
         error.response?.data?.message ||
-        "Failed to delete transaction."
+          "Failed to delete transaction."
       );
     } finally {
       setDeleteLoading(false);
     }
+  };
+
+  const getDisplayTitle = (item) => {
+    if (item.type === "Transfer") {
+      if (item.toAccount?.trim()) {
+        return `Transfer to ${item.toAccount}`;
+      }
+
+      return "Transfer";
+    }
+
+    return item.title || "-";
+  };
+
+  const getDisplayCategory = (item) => {
+    if (item.type === "Transfer") {
+      return "Transfer";
+    }
+
+    return item.category || "-";
+  };
+
+  const getTypeClass = (type) => {
+    if (type === "Income") {
+      return "income-badge";
+    }
+
+    if (type === "Transfer") {
+      return "transfer-badge";
+    }
+
+    return "expense-badge";
+  };
+
+  const getAmountClass = (type) => {
+    if (type === "Income") {
+      return "income-text";
+    }
+
+    if (type === "Transfer") {
+      return "transfer-text";
+    }
+
+    return "expense-text";
+  };
+
+  const getAmountPrefix = (type) => {
+    if (type === "Income") {
+      return "+";
+    }
+
+    return "-";
+  };
+
+  const getTypeIcon = (type) => {
+    if (type === "Income") {
+      return <FaArrowUp />;
+    }
+
+    if (type === "Transfer") {
+      return <FaExchangeAlt />;
+    }
+
+    return <FaArrowDown />;
   };
 
   return (
@@ -130,6 +210,7 @@ function ExpenseList({ expenses = [], setExpenses }) {
       <div className="transaction-header">
         <div>
           <h2>Recent Transactions</h2>
+
           <p>
             {filteredExpenses.length} Transaction(s)
           </p>
@@ -201,13 +282,22 @@ function ExpenseList({ expenses = [], setExpenses }) {
                     }}
                   >
                     <td>
-                      <strong>
-                        {item.title || "-"}
-                      </strong>
+                      <div className="transaction-title-cell">
+                        <strong>
+                          {getDisplayTitle(item)}
+                        </strong>
+
+                        {item.type === "Transfer" &&
+                          item.notes?.trim() && (
+                            <small className="transfer-note">
+                              {item.notes}
+                            </small>
+                          )}
+                      </div>
                     </td>
 
                     <td>
-                      {item.category || "-"}
+                      {getDisplayCategory(item)}
                     </td>
 
                     <td>
@@ -236,32 +326,24 @@ function ExpenseList({ expenses = [], setExpenses }) {
 
                     <td>
                       <span
-                        className={
-                          item.type === "Income"
-                            ? "income-badge"
-                            : "expense-badge"
-                        }
-                      >
-                        {item.type === "Income" ? (
-                          <FaArrowUp />
-                        ) : (
-                          <FaArrowDown />
+                        className={getTypeClass(
+                          item.type
                         )}
+                      >
+                        {getTypeIcon(item.type)}
 
                         {item.type}
                       </span>
                     </td>
 
                     <td
-                      className={
-                        item.type === "Income"
-                          ? "income-text"
-                          : "expense-text"
-                      }
+                      className={getAmountClass(
+                        item.type
+                      )}
                     >
-                      {item.type === "Income"
-                        ? "+"
-                        : "-"}
+                      {getAmountPrefix(
+                        item.type
+                      )}
                       ₹
                       {Number(
                         item.amount || 0
@@ -315,7 +397,14 @@ function ExpenseList({ expenses = [], setExpenses }) {
 
       <DeleteConfirmModal
         isOpen={showDelete}
-        title={deleteItem?.title}
+        title={
+          selectedExpense?.type === "Transfer"
+            ? `Transfer to ${
+                selectedExpense?.toAccount ||
+                "destination"
+              }`
+            : deleteItem?.title
+        }
         onClose={closeDelete}
         onConfirm={deleteExpense}
         loading={deleteLoading}

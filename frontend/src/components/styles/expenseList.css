@@ -1,62 +1,70 @@
 .transaction-card {
+    width: 100%;
     margin-top: 30px;
     padding: 30px;
     border-radius: 24px;
-    background: rgba(255, 255, 255, 0.82);
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.55);
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
 }
 
 .transaction-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
-    gap: 20px;
-    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 24px;
 }
 
 .transaction-header h2 {
+    margin: 0;
     color: #312e81;
     font-size: 26px;
     font-weight: 700;
-    margin: 0;
+    line-height: 1.2;
 }
 
 .transaction-header p {
-    margin-top: 6px;
+    margin: 7px 0 0;
     color: #64748b;
     font-size: 14px;
+    font-weight: 500;
 }
 
 .search-wrapper {
     position: relative;
     width: 330px;
+    max-width: 100%;
+    flex-shrink: 0;
 }
 
 .search-icon {
     position: absolute;
-    left: 18px;
     top: 50%;
+    left: 18px;
+    z-index: 2;
     transform: translateY(-50%);
     color: #7c3aed;
     font-size: 16px;
-    z-index: 2;
+    pointer-events: none;
 }
 
 .search-box {
     width: 100%;
     height: 52px;
-    border: 1px solid #e2e8f0;
-    outline: none;
-    border-radius: 16px;
+    box-sizing: border-box;
     padding: 0 18px 0 48px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    outline: none;
     background: #ffffff;
     color: #1e293b;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    transition: 0.3s;
     font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    transition: 0.3s ease;
 }
 
 .search-box::placeholder {
@@ -71,18 +79,21 @@
 .table-wrapper {
     width: 100%;
     overflow-x: auto;
+    overflow-y: visible;
+    padding-bottom: 4px;
 }
 
 .expense-table {
     width: 100%;
+    min-width: 980px;
     border-collapse: separate;
-    border-spacing: 0 12px;
-    min-width: 900px;
+    border-spacing: 0 10px;
+    table-layout: auto;
 }
 
 .expense-table thead th {
+    padding: 12px 16px;
     text-align: left;
-    padding: 16px;
     color: #64748b;
     font-size: 14px;
     font-weight: 700;
@@ -91,8 +102,8 @@
 
 .expense-table tbody tr {
     background: #ffffff;
-    transition: 0.3s;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    transition: 0.25s ease;
 }
 
 .expense-table tbody tr:hover {
@@ -106,6 +117,7 @@
     color: #334155;
     font-size: 15px;
     font-weight: 500;
+    white-space: nowrap;
 }
 
 .expense-table tbody td:first-child {
@@ -116,38 +128,25 @@
     border-radius: 0 16px 16px 0;
 }
 
-/* ==========================
-   TITLE
-========================== */
-
 .expense-table tbody td:first-child strong {
+    display: block;
+    max-width: 230px;
+    overflow: hidden;
     color: #172554;
     font-size: 15px;
     font-weight: 700;
+    text-overflow: ellipsis;
 }
-
-/* ==========================
-   CATEGORY
-========================== */
 
 .expense-table tbody td:nth-child(2) {
     color: #475569;
     font-weight: 600;
 }
 
-/* ==========================
-   DATE
-========================== */
-
 .expense-table tbody td:nth-child(3) {
     color: #475569;
     font-weight: 600;
-    white-space: nowrap;
 }
-
-/* ==========================
-   ACCOUNT
-========================== */
 
 .account-cell {
     display: inline-flex;
@@ -159,33 +158,42 @@
 }
 
 .account-cell svg {
+    flex-shrink: 0;
     color: #7c3aed;
     font-size: 15px;
-    flex-shrink: 0;
 }
 
-/* ==========================
-   NO ACCOUNT
-========================== */
-
-.account-cell:has(svg) {
-    color: #334155;
+.transaction-title-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 120px;
 }
 
-/* ==========================
-   BADGES
-========================== */
+.transfer-note {
+    display: block;
+    max-width: 220px;
+    overflow: hidden;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 500;
+    text-overflow: ellipsis;
+}
 
 .income-badge,
-.expense-badge {
+.expense-badge,
+.transfer-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    gap: 7px;
+    min-width: 92px;
     padding: 8px 14px;
     border-radius: 50px;
     font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
+    box-sizing: border-box;
 }
 
 .income-badge {
@@ -198,9 +206,17 @@
     color: #dc2626;
 }
 
-/* ==========================
-   AMOUNT
-========================== */
+.transfer-badge {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.income-badge svg,
+.expense-badge svg,
+.transfer-badge svg {
+    flex-shrink: 0;
+    font-size: 12px;
+}
 
 .income-text {
     color: #16a34a !important;
@@ -214,9 +230,11 @@
     white-space: nowrap;
 }
 
-/* ==========================
-   BUTTONS
-========================== */
+.transfer-text {
+    color: #2563eb !important;
+    font-weight: 700 !important;
+    white-space: nowrap;
+}
 
 .action-buttons {
     display: flex;
@@ -228,13 +246,14 @@
 .delete-btn {
     width: 40px;
     height: 40px;
+    padding: 0;
     border: none;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: 0.3s;
+    transition: 0.3s ease;
     flex-shrink: 0;
 }
 
@@ -262,21 +281,14 @@
     box-shadow: 0 8px 18px rgba(220, 38, 38, 0.25);
 }
 
-/* ==========================
-   EMPTY / LOADING
-========================== */
-
 .no-data {
-    text-align: center;
-    padding: 40px;
+    padding: 45px 20px !important;
+    text-align: center !important;
     color: #94a3b8 !important;
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    border-radius: 16px;
 }
-
-/* ==========================
-   SCROLLBAR
-========================== */
 
 .table-wrapper::-webkit-scrollbar {
     height: 8px;
@@ -289,51 +301,180 @@
 
 .table-wrapper::-webkit-scrollbar-track {
     background: #f5f3ff;
+    border-radius: 20px;
 }
 
-/* ==========================
-   RESPONSIVE
-========================== */
+@media (max-width: 1200px) {
+    .transaction-card {
+        padding: 26px;
+    }
+
+    .expense-table {
+        min-width: 940px;
+    }
+
+    .expense-table tbody td {
+        padding: 16px 13px;
+    }
+
+    .expense-table thead th {
+        padding: 12px 13px;
+    }
+}
 
 @media (max-width: 992px) {
     .transaction-header {
-        flex-direction: column;
         align-items: flex-start;
+        flex-direction: column;
     }
 
     .search-wrapper {
         width: 100%;
     }
+
+    .search-box {
+        height: 50px;
+    }
+
+    .transaction-card {
+        padding: 24px;
+    }
 }
 
 @media (max-width: 768px) {
     .transaction-card {
+        margin-top: 24px;
         padding: 20px;
+        border-radius: 20px;
+    }
+
+    .transaction-header {
+        gap: 16px;
+        margin-bottom: 18px;
+    }
+
+    .transaction-header h2 {
+        font-size: 23px;
+    }
+
+    .transaction-header p {
+        font-size: 13px;
+    }
+
+    .search-wrapper {
+        width: 100%;
+    }
+
+    .search-box {
+        height: 48px;
+        border-radius: 14px;
     }
 
     .expense-table {
-        font-size: 14px;
+        min-width: 920px;
+    }
+
+    .expense-table thead th {
+        padding: 11px 12px;
+        font-size: 13px;
     }
 
     .expense-table tbody td {
-        padding: 14px 10px;
+        padding: 15px 12px;
+        font-size: 14px;
     }
 
-    .action-buttons {
-        flex-direction: column;
+    .income-badge,
+    .expense-badge,
+    .transfer-badge {
+        padding: 7px 12px;
+        font-size: 12px;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        width: 38px;
+        height: 38px;
     }
 }
 
 @media (max-width: 576px) {
     .transaction-card {
+        margin-top: 20px;
         padding: 16px;
+        border-radius: 18px;
+    }
+
+    .transaction-header {
+        width: 100%;
     }
 
     .transaction-header h2 {
-        font-size: 22px;
+        font-size: 21px;
+    }
+
+    .transaction-header p {
+        margin-top: 5px;
+        font-size: 12px;
+    }
+
+    .search-box {
+        height: 46px;
+        padding-left: 44px;
+        font-size: 14px;
+    }
+
+    .search-icon {
+        left: 15px;
+        font-size: 15px;
+    }
+
+    .table-wrapper {
+        margin-right: -2px;
     }
 
     .expense-table {
         min-width: 900px;
+    }
+
+    .expense-table tbody td {
+        padding: 13px 10px;
+    }
+
+    .action-buttons {
+        gap: 8px;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+    }
+
+    .transaction-title-cell {
+        min-width: 110px;
+    }
+
+    .transfer-note {
+        max-width: 180px;
+    }
+}
+
+@media (max-width: 400px) {
+    .transaction-card {
+        padding: 14px;
+    }
+
+    .transaction-header h2 {
+        font-size: 20px;
+    }
+
+    .search-box {
+        font-size: 13px;
+    }
+
+    .expense-table {
+        min-width: 880px;
     }
 }

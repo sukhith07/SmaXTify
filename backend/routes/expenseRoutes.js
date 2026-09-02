@@ -1,4 +1,5 @@
 const express = require("express");
+
 const router = express.Router();
 
 const protect = require("../middleware/authMiddleware");
@@ -12,14 +13,8 @@ const {
   getSummary,
 } = require("../controllers/expenseController");
 
-// ===============================
-// Dashboard Summary
-// ===============================
 router.get("/summary", protect, getSummary);
 
-// ===============================
-// Transactions
-// ===============================
 router.post("/", protect, addExpense);
 
 router.get("/", protect, getExpenses);

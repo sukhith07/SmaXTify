@@ -1,437 +1,872 @@
-/* ====================================
-   MODAL OVERLAY
-==================================== */
-
-.modal-overlay{
-
-    position:fixed;
-
-    inset:0;
-
-    background:rgba(15,23,42,.45);
-
-    backdrop-filter:blur(6px);
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    z-index:9999;
-
-    animation:fadeIn .25s ease;
-
-}
-
-/* ====================================
-   MODAL
-==================================== */
-
-.edit-modal{
-
-    width:460px;
-
-    max-width:92%;
-
-    background:#fff;
-
-    border-radius:24px;
-
-    padding:28px;
-
-    box-shadow:0 25px 60px rgba(0,0,0,.25);
-
-    animation:popup .30s ease;
-
-}
-
-/* ====================================
-   HEADER
-==================================== */
-
-.modal-header{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    margin-bottom:25px;
-
-}
-
-.modal-header svg{
-
-    font-size:28px;
-
-    color:#7c3aed;
-
-}
-
-.modal-header h2{
-
-    color:#312e81;
-
-    font-size:28px;
-
-    font-weight:700;
-
-}
-
-/* ====================================
-   FORM
-==================================== */
-
-.edit-modal form{
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:18px;
-
-}
-
-/* ====================================
-   INPUT BOX
-==================================== */
-
-.modal-input{
-
-    height:58px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    padding:0 18px;
-
-    border-radius:16px;
-
-    background:#f8fafc;
-
-    border:2px solid transparent;
-
-    transition:.3s;
-
-}
-
-.modal-input:focus-within{
-
-    border-color:#7c3aed;
-
-    background:#fff;
-
-    box-shadow:0 0 0 5px rgba(124,58,237,.12);
-
-}
-
-.modal-input svg{
-
-    color:#7c3aed;
-
-    font-size:18px;
-
-}
-
-.modal-input input{
-
-    flex:1;
-
-    border:none;
-
-    outline:none;
-
-    background:transparent;
-
-    font-size:15px;
-
-    color:#334155;
-
-}
-
-.modal-input input::placeholder{
-
-    color:#94a3b8;
-
-}
-
-/* ====================================
-   SELECT
-==================================== */
-
-.edit-modal select{
-
-    width:100%;
-
-    height:58px;
-
-    border:none;
-
-    outline:none;
-
-    border-radius:16px;
-
-    background:#f8fafc;
-
-    padding:0 18px;
-
-    font-size:15px;
-
-    transition:.3s;
-
-}
-
-.edit-modal select:focus{
-
-    box-shadow:0 0 0 5px rgba(124,58,237,.12);
-
-}
-
-/* ====================================
-   BUTTONS
-==================================== */
-
-.modal-buttons{
-
-    display:flex;
-
-    justify-content:flex-end;
-
-    gap:15px;
-
-    margin-top:12px;
-
-}
-
-.cancel-btn,
-
-.save-btn{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    border:none;
-
-    border-radius:14px;
-
-    padding:14px 24px;
-
-    font-size:15px;
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-}
-
-/* Cancel */
-
-.cancel-btn{
-
-    background:#e2e8f0;
-
-    color:#475569;
-
-}
-
-.cancel-btn:hover{
-
-    background:#cbd5e1;
-
-}
-
-/* Save */
-
-.save-btn{
-
-    background:linear-gradient(
-        135deg,
-        #7c3aed,
-        #4338ca
-    );
-
-    color:white;
-
-    box-shadow:0 10px 25px rgba(124,58,237,.30);
-
-}
-
-.save-btn:hover{
-
-    transform:translateY(-2px);
-
-    box-shadow:0 18px 35px rgba(124,58,237,.40);
-
-}
-
-.save-btn:disabled,
-
-.cancel-btn:disabled{
-
-    opacity:.7;
-
-    cursor:not-allowed;
-
-}
-.edit-selection-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+.edit-modal-overlay,
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
   width: 100%;
-}
-
-.edit-selection-row .custom-select {
-  min-width: 0;
-}
-
-.edit-selection-row .select-btn {
-  width: 100%;
-}
-
-.edit-selection-row .selected-item {
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.edit-selection-row .account-menu {
-  max-height: 220px;
+  height: 100%;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.68);
+  backdrop-filter: blur(5px);
+  box-sizing: border-box;
   overflow-y: auto;
 }
 
-.account-option-content {
+.edit-modal-container,
+.edit-modal {
+  position: relative;
+  width: min(620px, 100%);
+  max-height: calc(100vh - 40px);
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: visible;
+  box-shadow: 0 25px 70px rgba(15, 23, 42, 0.28);
+}
+
+.edit-modal-header,
+.modal-header {
+  min-height: 76px;
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #eef2f7;
+  box-sizing: border-box;
+}
+
+.edit-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.edit-title-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.edit-modal-title h2,
+.modal-header h2 {
+  margin: 0;
+  color: #312e81;
+  font-size: 24px;
+  font-weight: 750;
+}
+
+.edit-close-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 17px;
+  transition: all 0.2s ease;
+}
+
+.edit-close-btn:hover:not(:disabled) {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.edit-close-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.edit-modal-body {
+  padding: 20px 22px 22px;
+  max-height: calc(100vh - 116px);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.edit-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.edit-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.edit-modal-body::-webkit-scrollbar-thumb {
+  background: #c4b5fd;
+  border-radius: 20px;
+}
+
+.edit-type-tabs {
+  width: 100%;
+  min-height: 56px;
+  padding: 5px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  background: #f1f0ee;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
+.edit-type-tab {
+  min-height: 46px;
+  border: none;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.edit-type-tab:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.75);
+  color: #475569;
+}
+
+.edit-type-tab.active,
+.edit-type-tab.active:hover {
+  color: #ffffff;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+}
+
+.edit-type-tab.expense.active,
+.edit-type-tab.expense.active:hover {
+  background: #ef4444;
+}
+
+.edit-type-tab.income.active,
+.edit-type-tab.income.active:hover {
+  background: #22c55e;
+}
+
+.edit-type-tab.transfer.active,
+.edit-type-tab.transfer.active:hover {
+  background: #3b82f6;
+}
+
+.edit-type-tab:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 19px;
+}
+
+.edit-field-card {
+  position: relative;
+  width: 100%;
   min-width: 0;
 }
 
-.account-option-content strong {
+.edit-field-card > label {
+  display: block;
+  margin: 0 0 7px 2px;
+  color: #334155;
   font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-weight: 700;
 }
 
-.account-option-content span {
-  font-size: 12px;
-  color: #64748b;
-}
-
-.select-option.active .account-option-content span {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.no-accounts {
-  padding: 16px;
-  color: #64748b;
-  font-size: 14px;
-}
-
-.date-input-box {
-  position: relative;
-}
-
-.expense-datepicker {
+.edit-input-box,
+.modal-input {
   width: 100%;
+  height: 54px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid #dbe3ef;
+  border-radius: 14px;
+  background: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-input-box:focus-within,
+.modal-input:focus-within {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+.edit-input-box > svg,
+.modal-input > svg {
+  flex-shrink: 0;
+  color: #7c3aed;
+  font-size: 16px;
+}
+
+.edit-input-box input,
+.modal-input input {
+  width: 100%;
+  min-width: 0;
+  height: 52px;
+  padding: 0;
   border: none;
   outline: none;
   background: transparent;
+  color: #1e293b;
   font-size: 15px;
-  color: #334155;
-  cursor: pointer;
+  box-sizing: border-box;
 }
 
-@media (max-width: 600px) {
-  .edit-selection-row {
+.edit-input-box input::placeholder,
+.modal-input input::placeholder {
+  color: #94a3b8;
+}
+
+.edit-two-column,
+.edit-selection-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.edit-select-btn,
+.select-btn {
+  width: 100%;
+  height: 54px;
+  padding: 0 14px;
+  border: 1px solid #dbe3ef;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.edit-select-btn:hover:not(:disabled),
+.select-btn:hover:not(:disabled) {
+  border-color: #c4b5fd;
+  background: #faf9ff;
+}
+
+.edit-select-btn:focus-visible,
+.select-btn:focus-visible {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+.edit-select-btn > span,
+.select-btn .selected-item {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.edit-select-btn > span svg,
+.select-btn .selected-item svg {
+  flex-shrink: 0;
+  color: #7c3aed;
+}
+
+.edit-chevron,
+.select-btn > svg {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.edit-chevron.rotate,
+.select-btn > svg.rotate {
+  transform: rotate(180deg);
+}
+
+.custom-select {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.custom-select > label {
+  display: block;
+  margin: 0 0 7px 2px;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.select-menu,
+.edit-account-menu {
+  position: absolute;
+  z-index: 10000;
+  top: calc(100% + 7px);
+  left: 0;
+  width: 100%;
+  max-height: 220px;
+  padding: 6px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 16px 35px rgba(15, 23, 42, 0.18);
+  box-sizing: border-box;
+}
+
+.select-option,
+.edit-account-option {
+  width: 100%;
+  min-height: 48px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: #334155;
+  cursor: pointer;
+  text-align: left;
+  box-sizing: border-box;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.select-option:hover,
+.select-option.active,
+.edit-account-option:hover,
+.edit-account-option.active {
+  background: #f5f3ff;
+}
+
+.select-option > svg,
+.edit-account-option > svg {
+  flex-shrink: 0;
+  color: #7c3aed;
+}
+
+.account-option-content,
+.edit-account-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.account-option-content strong,
+.edit-account-info strong {
+  color: #334155;
+  font-size: 14px;
+}
+
+.account-option-content span,
+.edit-account-info small {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.no-accounts,
+.edit-no-accounts {
+  padding: 18px;
+  color: #94a3b8;
+  text-align: center;
+  font-size: 13px;
+}
+
+.edit-date-box,
+.date-input-box {
+  position: relative;
+  overflow: visible;
+}
+
+.edit-datepicker,
+.expense-datepicker {
+  width: 100%;
+  height: 52px;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #1e293b;
+  font-size: 15px;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.edit-datepicker:focus,
+.expense-datepicker:focus {
+  outline: none;
+}
+
+.edit-datepicker-popper,
+.react-datepicker-popper {
+  z-index: 1000000 !important;
+}
+
+.edit-calendar,
+.react-datepicker {
+  width: 310px !important;
+  min-width: 310px !important;
+  max-width: 310px !important;
+  border: none !important;
+  border-radius: 18px !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.2) !important;
+  overflow: hidden !important;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.edit-calendar .react-datepicker__month-container,
+.react-datepicker .react-datepicker__month-container {
+  float: none !important;
+  width: 310px !important;
+  min-width: 310px !important;
+  max-width: 310px !important;
+  box-sizing: border-box;
+}
+
+.edit-calendar .react-datepicker__header,
+.react-datepicker .react-datepicker__header {
+  width: 310px !important;
+  padding: 0 10px 10px !important;
+  border: none !important;
+  background: #ffffff !important;
+  box-sizing: border-box;
+}
+
+.edit-calendar-header {
+  width: calc(100% + 20px);
+  min-height: 58px;
+  margin: 0 -10px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: linear-gradient(
+    135deg,
+    #7c3aed 0%,
+    #6366f1 50%,
+    #3b82f6 100%
+  );
+  box-sizing: border-box;
+}
+
+.edit-calendar-header strong {
+  flex: 1;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.edit-calendar-nav {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 23px;
+  line-height: 1;
+  transition: background 0.2s ease;
+}
+
+.edit-calendar-nav:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.edit-calendar-nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.edit-calendar .react-datepicker__day-names,
+.react-datepicker .react-datepicker__day-names {
+  width: 100%;
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+  margin: 10px 0 4px !important;
+}
+
+.edit-calendar .react-datepicker__day-name,
+.react-datepicker .react-datepicker__day-name {
+  width: auto !important;
+  margin: 0 !important;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.edit-calendar .react-datepicker__month,
+.react-datepicker .react-datepicker__month {
+  width: 100%;
+  margin: 8px 0 8px !important;
+  box-sizing: border-box;
+}
+
+.edit-calendar .react-datepicker__week,
+.react-datepicker .react-datepicker__week {
+  width: 100%;
+  display: grid !important;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.edit-calendar .react-datepicker__day,
+.react-datepicker .react-datepicker__day {
+  width: 34px !important;
+  height: 34px !important;
+  margin: 2px auto !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.edit-calendar .react-datepicker__day:hover,
+.react-datepicker .react-datepicker__day:hover {
+  background: #ede9fe !important;
+  color: #6d28d9 !important;
+}
+
+.edit-calendar .react-datepicker__day--selected,
+.edit-calendar .react-datepicker__day--keyboard-selected,
+.react-datepicker .react-datepicker__day--selected,
+.react-datepicker .react-datepicker__day--keyboard-selected {
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+}
+
+.edit-calendar .react-datepicker__day--today,
+.react-datepicker .react-datepicker__day--today {
+  font-weight: 800;
+}
+
+.edit-calendar .react-datepicker__day--outside-month,
+.react-datepicker .react-datepicker__day--outside-month {
+  color: #cbd5e1 !important;
+}
+
+.edit-calendar .react-datepicker__month-dropdown-container,
+.edit-calendar .react-datepicker__year-dropdown-container,
+.react-datepicker .react-datepicker__month-dropdown-container,
+.react-datepicker .react-datepicker__year-dropdown-container {
+  margin: 5px 3px 0;
+}
+
+.edit-calendar .react-datepicker__month-select,
+.edit-calendar .react-datepicker__year-select,
+.react-datepicker .react-datepicker__month-select,
+.react-datepicker .react-datepicker__year-select {
+  padding: 5px 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  outline: none;
+  background: #ffffff;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.react-datepicker__today-button {
+  width: calc(100% - 20px) !important;
+  height: 38px !important;
+  margin: 5px 10px 10px !important;
+  border: none !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    135deg,
+    #7c3aed 0%,
+    #6366f1 50%,
+    #3b82f6 100%
+  ) !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 750 !important;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.react-datepicker__today-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 7px 16px rgba(99, 102, 241, 0.25);
+}
+
+.edit-transfer-mode {
+  width: 100%;
+  min-height: 56px;
+  padding: 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  background: #f1f0f5;
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+  box-sizing: border-box;
+}
+
+.edit-transfer-mode-btn {
+  position: relative;
+  width: 100%;
+  min-height: 46px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: #64748b;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.2s ease;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.edit-transfer-mode-btn svg {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.edit-transfer-mode-btn:hover:not(:disabled) {
+  background: #ffffff;
+  color: #475569;
+}
+
+.edit-transfer-mode-btn.active,
+.edit-transfer-mode-btn.active:hover,
+.edit-transfer-mode-btn.active:focus,
+.edit-transfer-mode-btn.active:focus-visible {
+  color: #ffffff !important;
+  background: linear-gradient(
+    135deg,
+    #3b82f6 0%,
+    #2563eb 100%
+  ) !important;
+  box-shadow: 0 7px 18px rgba(59, 130, 246, 0.28) !important;
+  transform: none;
+}
+
+.edit-transfer-mode-btn.active svg,
+.edit-transfer-mode-btn.active:hover svg {
+  color: #ffffff !important;
+}
+
+.edit-transfer-mode-btn:focus {
+  outline: none;
+}
+
+.edit-transfer-mode-btn:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.2);
+  outline-offset: 1px;
+}
+
+.edit-transfer-mode-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.edit-transfer-mode-btn:disabled.active {
+  opacity: 0.7;
+}
+
+.transfer-form {
+  gap: 15px;
+}
+
+.transfer-form .edit-select-btn,
+.transfer-form .edit-input-box {
+  min-height: 54px;
+}
+
+.transfer-form .edit-account-menu {
+  max-height: 210px;
+}
+
+.transfer-form .edit-form-actions {
+  margin-top: 2px;
+}
+
+.edit-transfer-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.edit-helper-text {
+  display: block;
+  margin: 6px 2px 0;
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.edit-form-actions {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.8fr) minmax(0, 1.6fr);
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.edit-cancel-btn,
+.edit-save-btn,
+.cancel-btn,
+.save-btn {
+  height: 54px;
+  border: none;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-cancel-btn,
+.cancel-btn {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.edit-cancel-btn:hover:not(:disabled),
+.cancel-btn:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
+.edit-save-btn,
+.save-btn {
+  background: #4f46e5;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.22);
+}
+
+.edit-save-btn:hover:not(:disabled),
+.save-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.28);
+}
+
+.transfer-save-btn {
+  background: #3b82f6;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.22);
+}
+
+.transfer-save-btn:hover:not(:disabled) {
+  box-shadow: 0 10px 24px rgba(59, 130, 246, 0.3);
+}
+
+.edit-cancel-btn:disabled,
+.edit-save-btn:disabled,
+.cancel-btn:disabled,
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 700px) {
+  .edit-modal-overlay,
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .edit-modal-container,
+  .edit-modal {
+    max-height: calc(100vh - 20px);
+  }
+
+  .edit-modal-body {
+    padding: 16px;
+  }
+
+  .edit-two-column,
+  .edit-selection-row,
+  .edit-transfer-bottom {
     grid-template-columns: 1fr;
-    gap: 18px;
   }
 }
 
-/* ====================================
-   ANIMATION
-==================================== */
+@media (max-width: 520px) {
+  .edit-type-tabs {
+    grid-template-columns: 1fr;
+  }
 
-@keyframes popup{
+  .edit-form-actions {
+    grid-template-columns: 1fr;
+  }
 
-    from{
+  .edit-transfer-mode {
+    min-height: 52px;
+  }
 
-        opacity:0;
+  .edit-transfer-mode-btn {
+    min-height: 42px;
+    padding: 0 8px;
+    font-size: 12px;
+  }
 
-        transform:scale(.9);
+  .edit-calendar,
+  .react-datepicker,
+  .edit-calendar .react-datepicker__month-container,
+  .react-datepicker .react-datepicker__month-container {
+    width: 290px !important;
+    min-width: 290px !important;
+    max-width: 290px !important;
+  }
 
-    }
-
-    to{
-
-        opacity:1;
-
-        transform:scale(1);
-
-    }
-
-}
-
-@keyframes fadeIn{
-
-    from{
-
-        opacity:0;
-
-    }
-
-    to{
-
-        opacity:1;
-
-    }
-
-}
-
-/* ====================================
-   MOBILE
-==================================== */
-
-@media(max-width:600px){
-
-    .edit-modal{
-
-        padding:22px;
-
-    }
-
-    .modal-header h2{
-
-        font-size:22px;
-
-    }
-
-    .modal-buttons{
-
-        flex-direction:column;
-
-    }
-
-    .cancel-btn,
-
-    .save-btn{
-
-        width:100%;
-
-        justify-content:center;
-
-    }
-
+  .edit-calendar .react-datepicker__header,
+  .react-datepicker .react-datepicker__header {
+    width: 290px !important;
+  }
 }

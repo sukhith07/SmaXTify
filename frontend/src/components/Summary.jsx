@@ -2,6 +2,7 @@ import {
   FaWallet,
   FaArrowUp,
   FaArrowDown,
+  FaExchangeAlt,
   FaPiggyBank,
 } from "react-icons/fa";
 
@@ -28,8 +29,15 @@ function Summary({
       0
     );
 
-  const balance =
-    income - expense;
+  const transfer = expenses
+    .filter((item) => item.type === "Transfer")
+    .reduce(
+      (total, item) =>
+        total + Number(item.amount || 0),
+      0
+    );
+
+  const balance = income - expense;
 
   const savings =
     income > 0
@@ -56,7 +64,6 @@ function Summary({
 
   return (
     <section className="summary-cards">
-
       <div className="summary-card balance-card">
         <div className="summary-icon">
           <FaWallet />
@@ -120,6 +127,27 @@ function Summary({
         </div>
       </div>
 
+      <div className="summary-card transfer-card">
+        <div className="summary-icon">
+          <FaExchangeAlt />
+        </div>
+
+        <div className="summary-content">
+          <span>Transfers</span>
+
+          <strong>
+            ₹
+            {transfer.toLocaleString(
+              "en-IN",
+              {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2,
+              }
+            )}
+          </strong>
+        </div>
+      </div>
+
       <div className="summary-card savings-card">
         <div className="summary-icon">
           <FaPiggyBank />
@@ -133,7 +161,6 @@ function Summary({
           </strong>
         </div>
       </div>
-
     </section>
   );
 }

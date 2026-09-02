@@ -2,28 +2,33 @@ const mongoose = require("mongoose");
 
 const expenseSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
     title: {
       type: String,
-      required: true,
       trim: true,
+      default: "",
     },
 
     amount: {
       type: Number,
       required: true,
-      min: 1,
+      min: 0,
     },
 
     category: {
       type: String,
-      required: true,
       trim: true,
       default: "Other",
     },
 
     type: {
       type: String,
-      enum: ["Income", "Expense"],
+      enum: ["Income", "Expense", "Transfer"],
       required: true,
     },
 
@@ -34,21 +39,32 @@ const expenseSchema = new mongoose.Schema(
 
     notes: {
       type: String,
-      default: "",
       trim: true,
-      maxlength: 300,
+      default: "",
     },
 
     account: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Account",
+      required: true,
+    },
+
+    toAccount: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    transferAccount: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
       default: null,
     },
 
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+    transferMode: {
+      type: String,
+      enum: ["account", "person"],
+      default: null,
     },
   },
   {

@@ -1,7 +1,7 @@
 .summary-cards {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 18px;
     margin: 0 0 28px;
     box-sizing: border-box;
@@ -39,32 +39,24 @@
 .summary-card::before {
     content: "";
     position: absolute;
-
     width: 135px;
     height: 135px;
-
     top: -65px;
     right: -50px;
-
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.11);
-
     pointer-events: none;
 }
 
 .summary-card::after {
     content: "";
     position: absolute;
-
     width: 75px;
     height: 75px;
-
     bottom: -32px;
     left: -20px;
-
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.08);
-
     pointer-events: none;
 }
 
@@ -74,7 +66,6 @@
 
     width: 52px;
     height: 52px;
-
     flex: 0 0 52px;
 
     display: flex;
@@ -82,14 +73,12 @@
     justify-content: center;
 
     border-radius: 14px;
-
     background: rgba(255, 255, 255, 0.18);
 
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 
     font-size: 22px;
-
     box-sizing: border-box;
 }
 
@@ -105,15 +94,12 @@
     align-items: flex-end;
 
     text-align: right;
-
     overflow: hidden;
 }
 
 .summary-content span {
     display: block;
-
     width: 100%;
-
     margin: 0;
 
     font-size: 12px;
@@ -129,12 +115,10 @@
 
 .summary-content strong {
     display: block;
-
     max-width: 100%;
-
     margin-top: 5px;
 
-    font-size: 23px;
+    font-size: 21px;
     line-height: 1.15;
     font-weight: 800;
 
@@ -169,6 +153,14 @@
     );
 }
 
+.transfer-card {
+    background: linear-gradient(
+        135deg,
+        #3b82f6,
+        #2563eb
+    );
+}
+
 .savings-card {
     background: linear-gradient(
         135deg,
@@ -176,11 +168,6 @@
         #2563eb
     );
 }
-
-
-/* ======================================
-   LARGE DESKTOP
-====================================== */
 
 @media (min-width: 1500px) {
     .summary-cards {
@@ -200,69 +187,29 @@
     }
 
     .summary-content strong {
-        font-size: 24px;
+        font-size: 22px;
     }
 }
 
-
-/* ======================================
-   DESKTOP / LAPTOP
-====================================== */
-
 @media (min-width: 1201px) and (max-width: 1499px) {
     .summary-cards {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
     }
 
     .summary-card {
         height: 114px;
-        padding: 16px;
-        gap: 10px;
+        padding: 15px;
+        gap: 9px;
         border-radius: 17px;
     }
 
     .summary-icon {
-        width: 48px;
-        height: 48px;
-        flex-basis: 48px;
-        border-radius: 13px;
-        font-size: 20px;
-    }
-
-    .summary-content span {
-        font-size: 11px;
-    }
-
-    .summary-content strong {
-        font-size: 21px;
-    }
-}
-
-
-/* ======================================
-   SMALL LAPTOP
-====================================== */
-
-@media (min-width: 1001px) and (max-width: 1200px) {
-    .summary-cards {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 12px;
-    }
-
-    .summary-card {
-        height: 108px;
-        padding: 13px;
-        gap: 8px;
-        border-radius: 16px;
-    }
-
-    .summary-icon {
-        width: 44px;
-        height: 44px;
-        flex-basis: 44px;
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
         border-radius: 12px;
-        font-size: 18px;
+        font-size: 19px;
     }
 
     .summary-content span {
@@ -274,10 +221,35 @@
     }
 }
 
+@media (min-width: 1001px) and (max-width: 1200px) {
+    .summary-cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
 
-/* ======================================
-   TABLET LANDSCAPE
-====================================== */
+    .summary-card {
+        height: 108px;
+        padding: 14px;
+        gap: 9px;
+        border-radius: 16px;
+    }
+
+    .summary-icon {
+        width: 45px;
+        height: 45px;
+        flex-basis: 45px;
+        border-radius: 12px;
+        font-size: 19px;
+    }
+
+    .summary-content span {
+        font-size: 10px;
+    }
+
+    .summary-content strong {
+        font-size: 18px;
+    }
+}
 
 @media (min-width: 769px) and (max-width: 1000px) {
     .summary-cards {
@@ -306,11 +278,6 @@
         font-size: 22px;
     }
 }
-
-
-/* ======================================
-   TABLET PORTRAIT / IPAD
-====================================== */
 
 @media (min-width: 601px) and (max-width: 768px) {
     .summary-cards {
@@ -342,11 +309,6 @@
         font-size: 20px;
     }
 }
-
-
-/* ======================================
-   MOBILE
-====================================== */
 
 @media (max-width: 600px) {
     .summary-cards {
@@ -380,11 +342,6 @@
     }
 }
 
-
-/* ======================================
-   SMALL MOBILE
-====================================== */
-
 @media (max-width: 430px) {
     .summary-cards {
         gap: 10px;
@@ -414,11 +371,6 @@
     }
 }
 
-
-/* ======================================
-   VERY SMALL PHONES
-====================================== */
-
 @media (max-width: 360px) {
     .summary-cards {
         grid-template-columns: 1fr;
@@ -445,11 +397,6 @@
         font-size: 18px;
     }
 }
-
-
-/* ======================================
-   TOUCH DEVICES
-====================================== */
 
 @media (hover: none) and (pointer: coarse) {
     .summary-card:hover {

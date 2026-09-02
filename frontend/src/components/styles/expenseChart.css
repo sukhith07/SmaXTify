@@ -1,357 +1,282 @@
-/* ==========================================================
-   INCOME VS EXPENSE CHART CARD
-========================================================== */
-
 .chart-card {
     width: 100%;
     height: 100%;
     min-height: 100%;
-
     display: flex;
     flex-direction: column;
-
     background: rgba(255, 255, 255, 0.82);
-
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-
     border-radius: 24px;
-
     padding: 30px;
-
     border: 1px solid rgba(255, 255, 255, 0.45);
-
-    box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.08);
-
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
     transition:
         transform 0.35s ease,
         box-shadow 0.35s ease;
-
     box-sizing: border-box;
 }
 
 .chart-card:hover {
     transform: translateY(-4px);
-
-    box-shadow:
-        0 22px 45px rgba(124, 58, 237, 0.16);
+    box-shadow: 0 22px 45px rgba(124, 58, 237, 0.16);
 }
-
-
-/* ==========================================================
-   TITLE
-========================================================== */
 
 .chart-card h2 {
     margin: 0 0 28px;
-
     font-size: 24px;
-
     font-weight: 700;
-
     color: #312e81;
-
     line-height: 1.2;
-
     flex-shrink: 0;
 }
-
-
-/* ==========================================================
-   CHART CONTENT
-========================================================== */
 
 .chart-wrapper {
     flex: 1;
-
     min-height: 0;
-
     width: 100%;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
-    gap: 55px;
-
+    gap: 45px;
     box-sizing: border-box;
 }
 
-
-/* ==========================================================
-   DOUGHNUT AREA
-========================================================== */
-
 .chart-box {
-    width: min(360px, 42%);
-
+    width: min(350px, 42%);
     aspect-ratio: 1 / 1;
-
     flex-shrink: 0;
-
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     position: relative;
 }
 
 .chart-box canvas {
     width: 100% !important;
-
     height: 100% !important;
 }
 
-
-/* ==========================================================
-   LEGEND
-========================================================== */
-
 .chart-legend {
-    width: 230px;
-
+    width: 220px;
     flex-shrink: 0;
-
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
-
-    gap: 22px;
+    gap: 14px;
 }
-
-
-/* ==========================================================
-   LEGEND CARD
-========================================================== */
 
 .legend-card {
     width: 100%;
-
-    min-height: 96px;
-
+    min-height: 82px;
     display: flex;
-
     align-items: center;
-
-    gap: 18px;
-
-    padding: 18px 20px;
-
-    border-radius: 18px;
-
+    gap: 15px;
+    padding: 15px 17px;
+    border-radius: 17px;
     color: #ffffff;
-
-    box-shadow:
-        0 10px 25px rgba(0, 0, 0, 0.12);
-
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
     cursor: pointer;
-
     transition:
         transform 0.3s ease,
         box-shadow 0.3s ease;
-
     box-sizing: border-box;
 }
 
 .legend-card:hover {
     transform: translateX(6px);
-
-    box-shadow:
-        0 15px 30px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.16);
 }
-
-
-/* ==========================================================
-   LEGEND ICON
-========================================================== */
 
 .legend-card svg {
     flex-shrink: 0;
-
-    font-size: 30px;
+    font-size: 27px;
 }
 
-
-/* ==========================================================
-   LEGEND TEXT
-========================================================== */
+.legend-card div {
+    min-width: 0;
+}
 
 .legend-card span {
     display: block;
-
     margin: 0;
-
-    font-size: 14px;
-
-    font-weight: 500;
-
+    font-size: 13px;
+    font-weight: 600;
     opacity: 0.92;
 }
 
 .legend-card h3 {
     margin: 5px 0 0;
-
-    font-size: 22px;
-
+    font-size: 19px;
     font-weight: 700;
-
     line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
-
-/* ==========================================================
-   INCOME
-========================================================== */
 
 .legend-card.income {
-    background:
-        linear-gradient(
-            135deg,
-            #10b981,
-            #059669
-        );
+    background: linear-gradient(
+        135deg,
+        #10b981,
+        #059669
+    );
 }
-
-
-/* ==========================================================
-   EXPENSE
-========================================================== */
 
 .legend-card.expense {
-    background:
-        linear-gradient(
-            135deg,
-            #ef4444,
-            #dc2626
-        );
+    background: linear-gradient(
+        135deg,
+        #ef4444,
+        #dc2626
+    );
 }
 
+.legend-card.transfer {
+    background: linear-gradient(
+        135deg,
+        #3b82f6,
+        #2563eb
+    );
+}
 
-/* ==========================================================
-   LARGE DESKTOP
-========================================================== */
-
-@media (min-width: 1367px) {
-
+@media (min-width: 1500px) {
     .chart-wrapper {
-        gap: 65px;
+        gap: 55px;
     }
 
     .chart-box {
-        width: 350px;
+        width: 360px;
     }
 
     .chart-legend {
-        width: 235px;
-    }
-
-}
-
-
-/* ==========================================================
-   DESKTOP / LAPTOP
-========================================================== */
-
-@media (max-width: 1366px) and (min-width: 1101px) {
-
-    .chart-card {
-        padding: 26px;
-    }
-
-    .chart-wrapper {
-        gap: 30px;
-    }
-
-    .chart-box {
-        width: min(310px, 48%);
-    }
-
-    .chart-legend {
-        width: 210px;
+        width: 230px;
+        gap: 15px;
     }
 
     .legend-card {
-        min-height: 88px;
-
-        padding: 16px;
+        min-height: 86px;
+        padding: 16px 18px;
     }
 
     .legend-card h3 {
         font-size: 20px;
     }
-
 }
 
+@media (max-width: 1499px) and (min-width: 1201px) {
+    .chart-card {
+        padding: 26px;
+    }
 
-/* ==========================================================
-   TABLET
-========================================================== */
+    .chart-wrapper {
+        gap: 28px;
+    }
 
-@media (max-width: 1100px) {
+    .chart-box {
+        width: min(300px, 45%);
+    }
 
+    .chart-legend {
+        width: 205px;
+        gap: 12px;
+    }
+
+    .legend-card {
+        min-height: 78px;
+        padding: 13px 14px;
+        gap: 12px;
+    }
+
+    .legend-card svg {
+        font-size: 24px;
+    }
+
+    .legend-card span {
+        font-size: 12px;
+    }
+
+    .legend-card h3 {
+        font-size: 17px;
+    }
+}
+
+@media (max-width: 1200px) and (min-width: 1001px) {
+    .chart-card {
+        padding: 24px;
+    }
+
+    .chart-wrapper {
+        gap: 20px;
+    }
+
+    .chart-box {
+        width: min(280px, 43%);
+    }
+
+    .chart-legend {
+        width: 190px;
+        gap: 10px;
+    }
+
+    .legend-card {
+        min-height: 75px;
+        padding: 12px;
+        gap: 10px;
+    }
+
+    .legend-card svg {
+        font-size: 22px;
+    }
+
+    .legend-card span {
+        font-size: 11px;
+    }
+
+    .legend-card h3 {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 1000px) {
     .chart-card {
         height: auto;
-
-        min-height: 520px;
+        min-height: 560px;
     }
 
     .chart-wrapper {
         flex-direction: column;
-
         gap: 28px;
-
         justify-content: center;
     }
 
     .chart-box {
         width: 300px;
-
         max-width: 75vw;
     }
 
     .chart-legend {
         width: 100%;
-
-        max-width: 500px;
-
+        max-width: 650px;
         flex-direction: row;
-
-        gap: 16px;
+        gap: 12px;
     }
 
     .legend-card {
         flex: 1;
-
-        min-height: 88px;
+        min-width: 0;
+        min-height: 82px;
     }
-
 }
 
-
-/* ==========================================================
-   MOBILE
-========================================================== */
-
 @media (max-width: 768px) {
-
     .chart-card {
         padding: 22px;
-
         min-height: auto;
-
         border-radius: 20px;
     }
 
     .chart-card h2 {
         margin-bottom: 22px;
-
         font-size: 21px;
     }
 
@@ -361,25 +286,19 @@
 
     .chart-box {
         width: 270px;
-
         max-width: 82vw;
     }
 
     .chart-legend {
         width: 100%;
-
         max-width: none;
-
         flex-direction: column;
-
         gap: 12px;
     }
 
     .legend-card {
         min-height: 76px;
-
         padding: 15px 16px;
-
         border-radius: 16px;
     }
 
@@ -394,37 +313,26 @@
     .legend-card h3 {
         font-size: 19px;
     }
-
 }
 
-
-/* ==========================================================
-   SMALL MOBILE
-========================================================== */
-
 @media (max-width: 480px) {
-
     .chart-card {
         padding: 18px;
-
         border-radius: 18px;
     }
 
     .chart-card h2 {
         font-size: 19px;
-
         margin-bottom: 18px;
     }
 
     .chart-box {
         width: 220px;
-
         max-width: 75vw;
     }
 
     .legend-card {
         min-height: 70px;
-
         padding: 13px 14px;
     }
 
@@ -435,16 +343,9 @@
     .legend-card h3 {
         font-size: 17px;
     }
-
 }
 
-
-/* ==========================================================
-   VERY SMALL MOBILE
-========================================================== */
-
 @media (max-width: 360px) {
-
     .chart-card {
         padding: 15px;
     }
@@ -455,12 +356,10 @@
 
     .legend-card {
         gap: 12px;
-
         padding: 12px;
     }
 
     .legend-card h3 {
         font-size: 16px;
     }
-
 }
