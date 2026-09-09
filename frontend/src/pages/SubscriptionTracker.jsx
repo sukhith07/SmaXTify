@@ -514,6 +514,12 @@ function SubscriptionTracker() {
   const [showModal, setShowModal] =
     useState(false);
 
+  const [showDeleteConfirm, setShowDeleteConfirm] =
+    useState(false);
+
+  const [subscriptionToDelete, setSubscriptionToDelete] =
+    useState(null);
+
   const [editingId, setEditingId] =
     useState(null);
 
@@ -756,17 +762,34 @@ function SubscriptionTracker() {
     setShowModal(true);
   };
 
-  const deleteSubscription = async (
-    id
+  const requestDeleteSubscription = (
+    subscription
   ) => {
-    const subscription =
-      subscriptions.find(
-        (item) =>
-          item._id === id ||
-          item.id === id
-      );
-
     if (!subscription) {
+      return;
+    }
+
+    setSubscriptionToDelete(subscription);
+    setShowDeleteConfirm(true);
+  };
+
+  const cancelDeleteSubscription = () => {
+    setShowDeleteConfirm(false);
+    setSubscriptionToDelete(null);
+  };
+
+  const confirmDeleteSubscription = async () => {
+    if (!subscriptionToDelete) {
+      return;
+    }
+
+    const id =
+      subscriptionToDelete._id ||
+      subscriptionToDelete.id;
+
+    if (!id) {
+      toast.error("Unable to delete this subscription.");
+      cancelDeleteSubscription();
       return;
     }
 
@@ -784,8 +807,10 @@ function SubscriptionTracker() {
       );
 
       toast.success(
-        `${subscription.name} deleted successfully.`
+        `${subscriptionToDelete.name} deleted successfully.`
       );
+
+      cancelDeleteSubscription();
     } catch (error) {
       console.error(
         "Delete Subscription Error:",
@@ -3637,8 +3662,8 @@ function SubscriptionTracker() {
                                   className="danger"
                                   title="Delete"
                                   onClick={() =>
-                                    deleteSubscription(
-                                      id
+                                    requestDeleteSubscription(
+                                      subscription
                                     )
                                   }
                                 >
@@ -4019,6 +4044,70 @@ function SubscriptionTracker() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {showDeleteConfirm && subscriptionToDelete && (
+        <div
+          className="subscription-delete-overlay"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              cancelDeleteSubscription();
+            }
+          }}
+        >
+          <div
+            className="subscription-delete-dialog"
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="delete-subscription-title"
+            aria-describedby="delete-subscription-description"
+          >
+            <button
+              type="button"
+              className="subscription-delete-close"
+              onClick={cancelDeleteSubscription}
+              aria-label="Close delete confirmation"
+              title="Close"
+            >
+              <FaTimes />
+            </button>
+
+            <div className="subscription-delete-icon">
+              <FaTrash />
+            </div>
+
+            <div className="subscription-delete-content">
+              <h2 id="delete-subscription-title">
+                Delete subscription ?
+              </h2>
+
+              <p id="delete-subscription-description">
+                Are you sure you want to delete
+                <strong> {subscriptionToDelete.name}</strong>..?
+                
+              </p>
+            </div>
+
+            <div className="subscription-delete-actions">
+              <button
+                type="button"
+                className="subscription-delete-cancel"
+                onClick={cancelDeleteSubscription}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="subscription-delete-confirm"
+                onClick={confirmDeleteSubscription}
+              >
+                <FaTrash />
+                Delete Subscription
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

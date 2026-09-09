@@ -11,14 +11,15 @@ import {
   FaTrash,
   FaTimes,
   FaSave,
+  FaExclamationTriangle,
 } from "react-icons/fa";
 
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
-
 import API from "../services/api";
 
 import "../components/styles/accounts.css";
+
 const accountTypes = [
   {
     value: "bank",
@@ -49,15 +50,18 @@ const accountTypes = [
 
 function Accounts() {
   const [accounts, setAccounts] = useState([]);
-
   const [loading, setLoading] = useState(true);
 
+  /* Edit / Add modal */
   const [showModal, setShowModal] = useState(false);
+  const [editingAccount, setEditingAccount] = useState(null);
 
-  const [editingAccount, setEditingAccount] =
-    useState(null);
+  /* Delete modal */
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [accountToDelete, setAccountToDelete] = useState(null);
 
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -65,6 +69,10 @@ function Accounts() {
     details: "",
     balance: "",
   });
+
+  /* =========================================================
+     LOAD ACCOUNTS
+     ========================================================= */
 
   useEffect(() => {
     loadAccounts();
@@ -92,6 +100,10 @@ function Accounts() {
       setLoading(false);
     }
   };
+
+  /* =========================================================
+     FORM
+     ========================================================= */
 
   const resetForm = () => {
     setFormData({
@@ -133,10 +145,7 @@ function Accounts() {
   };
 
   const handleChange = (e) => {
-    const {
-      name,
-      value,
-    } = e.target;
+    const { name, value } = e.target;
 
     setFormData((previous) => ({
       ...previous,
@@ -144,53 +153,48 @@ function Accounts() {
     }));
   };
 
+  /* =========================================================
+     ADD / EDIT ACCOUNT
+     ========================================================= */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      toast.error(
-        "Account name is required."
-      );
-
+      toast.error("Account name is required.");
       return;
     }
 
-    const balance = Number(
-      formData.balance || 0
-    );
+    const balance = Number(formData.balance || 0);
 
-    if (
-      Number.isNaN(balance) ||
-      balance < 0
-    ) {
-      toast.error(
-        "Enter a valid balance."
-      );
-
+    if (Number.isNaN(balance) || balance < 0) {
+      toast.error("Enter a valid balance.");
       return;
     }
 
     try {
       setSaving(true);
 
+      const payload = {
+        name: formData.name.trim(),
+        type: formData.type,
+        details: formData.details.trim(),
+        balance,
+      };
+
+      /* UPDATE */
       if (editingAccount) {
         const res = await API.put(
           `/accounts/${editingAccount._id}`,
-          {
-            name: formData.name,
-            type: formData.type,
-            details: formData.details,
-            balance,
-          }
+          payload
         );
 
         const updatedAccount =
-          res.data.account;
+          res.data.account || res.data;
 
         setAccounts((previous) =>
           previous.map((account) =>
-            account._id ===
-            updatedAccount._id
+            account._id === updatedAccount._id
               ? updatedAccount
               : account
           )
@@ -199,19 +203,20 @@ function Accounts() {
         toast.success(
           "Account Updated Successfully!"
         );
-      } else {
+      }
+
+      /* ADD */
+      else {
         const res = await API.post(
           "/accounts",
-          {
-            name: formData.name,
-            type: formData.type,
-            details: formData.details,
-            balance,
-          }
+          payload
         );
 
+        const newAccount =
+          res.data.account || res.data;
+
         setAccounts((previous) => [
-          res.data.account,
+          newAccount,
           ...previous,
         ]);
 
@@ -220,8 +225,11 @@ function Accounts() {
         );
       }
 
-      closeModal();
+      setShowModal(false);
+      resetForm();
     } catch (error) {
+      console.error(error);
+
       toast.error(
         error.response?.data?.message ||
           "Failed to save account."
@@ -231,36 +239,64 @@ function Accounts() {
     }
   };
 
-  const handleDelete = async (account) => {
-    const confirmed =
-      window.confirm(
-        `Are you sure you want to delete "${account.name}"?`
-      );
+  /* =========================================================
+     DELETE MODAL
+     ========================================================= */
 
-    if (!confirmed) return;
+  const openDeleteModal = (account) => {
+    setAccountToDelete(account);
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    if (deleting) return;
+
+    setShowDeleteModal(false);
+    setAccountToDelete(null);
+  };
+
+  /* =========================================================
+     DELETE ACCOUNT
+     ========================================================= */
+
+  const handleDelete = async () => {
+    if (!accountToDelete) return;
 
     try {
+      setDeleting(true);
+
       await API.delete(
-        `/accounts/${account._id}`
+        `/accounts/${accountToDelete._id}`
       );
 
       setAccounts((previous) =>
         previous.filter(
-          (item) =>
-            item._id !== account._id
+          (account) =>
+            account._id !== accountToDelete._id
         )
       );
 
       toast.success(
         "Account Deleted Successfully!"
       );
+
+      setShowDeleteModal(false);
+      setAccountToDelete(null);
     } catch (error) {
+      console.error(error);
+
       toast.error(
         error.response?.data?.message ||
           "Failed to delete account."
       );
+    } finally {
+      setDeleting(false);
     }
   };
+
+  /* =========================================================
+     ACCOUNT TYPE
+     ========================================================= */
 
   const getAccountType = (type) => {
     return (
@@ -270,6 +306,10 @@ function Accounts() {
     );
   };
 
+  /* =========================================================
+     TOTAL BALANCE
+     ========================================================= */
+
   const totalBalance = accounts.reduce(
     (sum, account) =>
       sum + Number(account.balance || 0),
@@ -278,44 +318,63 @@ function Accounts() {
 
   return (
     <div className="accounts-page">
+
       <Sidebar />
 
       <div className="accounts-content">
+
         <Navbar />
 
         <main className="accounts-main">
-          <div className="accounts-header">
-            <div>
-              <h1>
-                <FaWallet />
-                My Accounts
-              </h1>
+
+          {/* =================================================
+              PAGE HEADER
+              ================================================= */}
+
+          <section className="accounts-page-header accounts-animate">
+
+            <div className="accounts-page-header-icon">
+              <FaWallet />
+            </div>
+
+            <div className="accounts-page-header-content">
+              <h1>My Accounts</h1>
 
               <p>
-                Manage your bank accounts,
-                wallets, cash and cards
+                Manage your bank accounts, wallets,
+                cash and cards
               </p>
             </div>
 
-            <button
-              type="button"
-              className="add-account-btn"
-              onClick={openAddModal}
-            >
-              <FaPlus />
-              Add Account
-            </button>
-          </div>
+            <div className="accounts-page-header-actions">
 
-          <div className="accounts-summary">
+              <button
+                type="button"
+                className="add-account-btn"
+                onClick={openAddModal}
+              >
+                <FaPlus />
+                <span>Add Account</span>
+              </button>
+
+            </div>
+
+          </section>
+
+
+          {/* =================================================
+              TOTAL BALANCE
+              ================================================= */}
+
+          <section className="accounts-summary accounts-animate accounts-delay-1">
+
             <div className="accounts-summary-icon">
               <FaWallet />
             </div>
 
-            <div>
-              <span>
-                Total Balance
-              </span>
+            <div className="accounts-summary-details">
+
+              <span>Total Balance</span>
 
               <h2>
                 ₹
@@ -327,9 +386,11 @@ function Accounts() {
                   }
                 )}
               </h2>
+
             </div>
 
             <div className="account-count">
+
               <strong>
                 {accounts.length}
               </strong>
@@ -339,19 +400,36 @@ function Accounts() {
                   ? "Account"
                   : "Accounts"}
               </span>
+
             </div>
-          </div>
+
+          </section>
+
+
+          {/* =================================================
+              ACCOUNTS
+              ================================================= */}
 
           {loading ? (
-            <div className="accounts-loading">
+
+            <div className="accounts-loading accounts-animate accounts-delay-2">
+
               <div className="loading-spinner"></div>
 
               <p>
                 Loading accounts...
               </p>
+
             </div>
+
           ) : accounts.length === 0 ? (
-            <div className="accounts-empty">
+
+            /* =================================================
+               EMPTY
+               ================================================= */
+
+            <div className="accounts-empty accounts-animate accounts-delay-2">
+
               <div className="empty-icon">
                 <FaWallet />
               </div>
@@ -361,9 +439,8 @@ function Accounts() {
               </h2>
 
               <p>
-                Add your first account to
-                start managing your money
-                separately.
+                Add your first account to start
+                managing your money separately.
               </p>
 
               <button
@@ -374,99 +451,152 @@ function Accounts() {
                 <FaPlus />
                 Add Your First Account
               </button>
+
             </div>
+
           ) : (
+
+            /* =================================================
+               ACCOUNT GRID
+               ================================================= */
+
             <div className="accounts-grid">
-              {accounts.map((account) => {
-                const accountType =
-                  getAccountType(
-                    account.type
-                  );
 
-                return (
-                  <div
-                    className="account-card"
-                    key={account._id}
-                  >
-                    <div className="account-card-top">
-                      <div className="account-icon">
-                        {accountType.icon}
+              {accounts.map(
+                (account, index) => {
+
+                  const accountType =
+                    getAccountType(
+                      account.type
+                    );
+
+                  return (
+                    <div
+                      className={`account-card accounts-animate accounts-card-delay-${Math.min(
+                        index + 1,
+                        5
+                      )}`}
+                      key={account._id}
+                    >
+
+                      {/* =========================
+                          CARD TOP
+                          ========================= */}
+
+                      <div className="account-card-top">
+
+                        <div className="account-icon">
+                          {accountType.icon}
+                        </div>
+
+                        <div className="account-actions">
+
+                          {/* EDIT */}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openEditModal(account)
+                            }
+                            aria-label="Edit account"
+                            title="Edit Account"
+                          >
+                            <FaEdit />
+                          </button>
+
+                          {/* DELETE */}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              openDeleteModal(
+                                account
+                              )
+                            }
+                            aria-label="Delete account"
+                            title="Delete Account"
+                          >
+                            <FaTrash />
+                          </button>
+
+                        </div>
+
                       </div>
 
-                      <div className="account-actions">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            openEditModal(
-                              account
-                            )
-                          }
-                          aria-label="Edit account"
-                        >
-                          <FaEdit />
-                        </button>
 
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleDelete(
-                              account
-                            )
-                          }
-                          aria-label="Delete account"
-                        >
-                          <FaTrash />
-                        </button>
-                      </div>
-                    </div>
+                      {/* =========================
+                          ACCOUNT INFO
+                          ========================= */}
 
-                    <div className="account-info">
-                      <h3>
-                        {account.name}
-                      </h3>
+                      <div className="account-info">
 
-                      <span>
-                        {accountType.label}
-                      </span>
+                        <h3>
+                          {account.name}
+                        </h3>
 
-                      {account.details && (
-                        <p>
-                          {account.details}
-                        </p>
-                      )}
-                    </div>
+                        <span>
+                          {accountType.label}
+                        </span>
 
-                    <div className="account-balance">
-                      <span>
-                        Available Balance
-                      </span>
-
-                      <h2>
-                        ₹
-                        {Number(
-                          account.balance || 0
-                        ).toLocaleString(
-                          "en-IN",
-                          {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }
+                        {account.details && (
+                          <p>
+                            {account.details}
+                          </p>
                         )}
-                      </h2>
+
+                      </div>
+
+
+                      {/* =========================
+                          BALANCE
+                          ========================= */}
+
+                      <div className="account-balance">
+
+                        <span>
+                          Available Balance
+                        </span>
+
+                        <h2>
+                          ₹
+                          {Number(
+                            account.balance || 0
+                          ).toLocaleString(
+                            "en-IN",
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }
+                          )}
+                        </h2>
+
+                      </div>
+
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                }
+              )}
+
             </div>
           )}
+
         </main>
+
       </div>
 
+
+      {/* =====================================================
+          ADD / EDIT ACCOUNT MODAL
+          ===================================================== */}
+
       {showModal && (
+
         <div className="account-modal-overlay">
+
           <div className="account-modal">
+
             <div className="account-modal-header">
+
               <div>
+
                 <h2>
                   {editingAccount
                     ? "Edit Account"
@@ -478,6 +608,7 @@ function Accounts() {
                     ? "Update your account details"
                     : "Add a new financial account"}
                 </p>
+
               </div>
 
               <button
@@ -489,13 +620,19 @@ function Accounts() {
               >
                 <FaTimes />
               </button>
+
             </div>
+
 
             <form
               className="account-form"
               onSubmit={handleSubmit}
             >
+
+              {/* ACCOUNT NAME */}
+
               <div className="account-field">
+
                 <label>
                   Account Name
                 </label>
@@ -508,16 +645,23 @@ function Accounts() {
                   onChange={handleChange}
                   required
                 />
+
               </div>
 
+
+              {/* ACCOUNT TYPE */}
+
               <div className="account-field">
+
                 <label>
                   Account Type
                 </label>
 
                 <div className="account-type-grid">
+
                   {accountTypes.map(
                     (type) => (
+
                       <button
                         type="button"
                         key={type.value}
@@ -531,12 +675,12 @@ function Accounts() {
                           setFormData(
                             (previous) => ({
                               ...previous,
-                              type:
-                                type.value,
+                              type: type.value,
                             })
                           )
                         }
                       >
+
                         <span>
                           {type.icon}
                         </span>
@@ -544,13 +688,20 @@ function Accounts() {
                         <small>
                           {type.label}
                         </small>
+
                       </button>
                     )
                   )}
+
                 </div>
+
               </div>
 
+
+              {/* BALANCE */}
+
               <div className="account-field">
+
                 <label>
                   Current Balance
                 </label>
@@ -564,14 +715,24 @@ function Accounts() {
                   value={formData.balance}
                   onChange={handleChange}
                 />
+
               </div>
 
+
+              {/* DETAILS */}
+
               <div className="account-field">
+
                 <label>
-                  Details
-                  <span>
+
+                  <span className="details-label">
+                    Details
+                  </span>
+
+                  <span className="optional-label">
                     Optional
                   </span>
+
                 </label>
 
                 <input
@@ -581,9 +742,14 @@ function Accounts() {
                   value={formData.details}
                   onChange={handleChange}
                 />
+
               </div>
 
+
+              {/* BUTTONS */}
+
               <div className="account-modal-buttons">
+
                 <button
                   type="button"
                   className="account-cancel-btn"
@@ -599,6 +765,7 @@ function Accounts() {
                   className="account-save-btn"
                   disabled={saving}
                 >
+
                   {editingAccount ? (
                     <FaSave />
                   ) : (
@@ -610,12 +777,130 @@ function Accounts() {
                     : editingAccount
                     ? "Save Changes"
                     : "Add Account"}
+
                 </button>
+
               </div>
+
             </form>
+
           </div>
+
         </div>
       )}
+
+
+      {/* =====================================================
+          DELETE ACCOUNT MODAL
+          ===================================================== */}
+
+      {showDeleteModal &&
+        accountToDelete && (
+
+          <div className="account-modal-overlay">
+
+            <div className="account-delete-modal">
+
+              {/* ==============================
+                  DELETE HEADER
+                  ============================== */}
+
+              <div className="account-modal-header">
+
+                <div>
+
+                  <h2 className="delete-modal-title">
+                    Delete Account
+                  </h2>
+
+                  <p>
+                    This action cannot be undone.
+                  </p>
+
+                </div>
+
+                <button
+                  type="button"
+                  className="account-modal-close"
+                  onClick={closeDeleteModal}
+                  disabled={deleting}
+                  aria-label="Close"
+                >
+                  <FaTimes />
+                </button>
+
+              </div>
+
+
+              {/* ==============================
+                  DELETE CONTENT
+                  ============================== */}
+
+              <div className="account-delete-content">
+
+                <div className="delete-warning-icon">
+                  <FaExclamationTriangle />
+                </div>
+
+                <h3>
+                  Are you sure?
+                </h3>
+
+                <p>
+                  You are about to delete
+                  <strong>
+                    {" "}
+                    "{accountToDelete.name}"
+                  </strong>
+                  .
+                </p>
+
+                <p className="delete-warning-text">
+                  All information related to this
+                  account will be removed.
+                </p>
+
+              </div>
+
+
+              {/* ==============================
+                  DELETE BUTTONS
+                  ============================== */}
+
+              <div className="account-delete-buttons">
+
+                <button
+                  type="button"
+                  className="delete-cancel-btn"
+                  onClick={closeDeleteModal}
+                  disabled={deleting}
+                >
+                  <FaTimes />
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  className="delete-confirm-btn"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                >
+
+                  <FaTrash />
+
+                  {deleting
+                    ? "Deleting..."
+                    : "Delete Account"}
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+        )}
+
     </div>
   );
 }

@@ -5,7 +5,6 @@ import {
   FaChartBar,
   FaExchangeAlt,
   FaCreditCard,
-  FaBell,
   FaCog,
   FaSignOutAlt,
   FaUserCircle,
@@ -83,6 +82,47 @@ function Sidebar() {
     },
   ];
 
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--smaxtify-sidebar-width",
+      collapsed ? "90px" : "280px"
+    );
+
+    document.body.classList.toggle(
+      "smaxtify-sidebar-collapsed",
+      collapsed
+    );
+
+    document.body.classList.toggle(
+      "smaxtify-sidebar-expanded",
+      !collapsed
+    );
+
+    return () => {
+      document.documentElement.style.removeProperty(
+        "--smaxtify-sidebar-width"
+      );
+
+      document.body.classList.remove(
+        "smaxtify-sidebar-collapsed",
+        "smaxtify-sidebar-expanded"
+      );
+    };
+  }, [collapsed]);
+
+  useEffect(() => {
+    document.body.classList.toggle(
+      "mobile-sidebar-open",
+      mobileOpen
+    );
+
+    return () => {
+      document.body.classList.remove(
+        "mobile-sidebar-open"
+      );
+    };
+  }, [mobileOpen]);
+
   const toggleSidebar = () => {
     setCollapsed((previous) => {
       const nextState = !previous;
@@ -104,19 +144,6 @@ function Sidebar() {
     navigate(path);
     setMobileOpen(false);
   };
-
-  useEffect(() => {
-    document.body.classList.toggle(
-      "mobile-sidebar-open",
-      mobileOpen
-    );
-
-    return () => {
-      document.body.classList.remove(
-        "mobile-sidebar-open"
-      );
-    };
-  }, [mobileOpen]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -192,7 +219,7 @@ function Sidebar() {
           </div>
 
           {!collapsed && (
-            <div>
+            <div className="sidebar-logo-text">
               <h2>SmaXTify</h2>
               <p>Personal Finance</p>
             </div>
@@ -203,7 +230,7 @@ function Sidebar() {
           <FaUserCircle className="user-avatar" />
 
           {!collapsed && (
-            <div>
+            <div className="sidebar-user-text">
               <h3>User</h3>
               <span>Premium</span>
             </div>
@@ -223,10 +250,14 @@ function Sidebar() {
                 handleNavigation(item.path)
               }
             >
-              {item.icon}
+              <span className="sidebar-menu-icon">
+                {item.icon}
+              </span>
 
               {!collapsed && (
-                <span>{item.title}</span>
+                <span className="sidebar-menu-title">
+                  {item.title}
+                </span>
               )}
             </li>
           ))}

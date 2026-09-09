@@ -1,319 +1,269 @@
-/* ==========================================================
+/* =========================================================
    REPORT FILTERS
-========================================================== */
+========================================================= */
 
 .report-filters {
-    margin-top: 24px;
-    padding: 24px;
-
-    border-radius: 22px;
-
-    background: rgba(255, 255, 255, 0.96);
-
+    position: relative;
+    z-index: 10;
+    margin-top: 20px;
+    padding: 19px 20px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.97);
     border: 1px solid #e2e8f0;
-
-    box-shadow:
-        0 10px 30px rgba(15, 23, 42, 0.06);
-
-    animation: reportFilterFade 0.4s ease;
-
-    overflow: visible;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+    animation: reportFilterFade 0.35s ease;
+    overflow: visible !important;
 }
 
 
-/* ==========================================================
-   HEADER
-========================================================== */
+/* =========================================================
+   FILTER HEADING
+========================================================= */
 
 .report-filter-heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
-    gap: 20px;
-
-    margin-bottom: 22px;
+    gap: 18px;
+    margin-bottom: 17px;
 }
-
 
 .report-filter-title {
     display: flex;
     align-items: center;
-
-    gap: 13px;
+    gap: 11px;
 }
 
-
 .report-filter-icon {
-    width: 44px;
-    height: 44px;
-
+    width: 40px;
+    height: 40px;
     flex-shrink: 0;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
-    border-radius: 13px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eff6ff,
-            #ede9fe
-        );
-
+    border-radius: 11px;
+    background: linear-gradient(135deg, #eff6ff, #ede9fe);
     color: #4f46e5;
 }
 
-
 .report-filter-icon svg {
-    font-size: 17px;
+    font-size: 15px;
 }
-
 
 .report-filter-title-content {
     min-width: 0;
 }
 
-
 .report-filter-title h2 {
     margin: 0;
-
     color: #0f172a;
-
-    font-size: 17px;
-
+    font-size: 16px;
     font-weight: 800;
 }
 
-
 .report-filter-title p {
-    margin: 4px 0 0;
-
+    margin: 3px 0 0;
     color: #94a3b8;
-
-    font-size: 12px;
-
+    font-size: 11px;
     font-weight: 500;
 }
 
 
-/* ==========================================================
+/* =========================================================
    RESET BUTTON
-========================================================== */
+========================================================= */
 
 .report-reset-btn {
+    height: 35px;
+    padding: 0 13px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-
     gap: 7px;
 
-    height: 38px;
-
-    padding: 0 14px;
-
     border: 1px solid #e2e8f0;
-
     border-radius: 10px;
 
     background: #ffffff;
-
     color: #64748b;
 
-    font-size: 12px;
-
+    font-family: inherit;
+    font-size: 11px;
     font-weight: 700;
 
     cursor: pointer;
 
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
 }
-
 
 .report-reset-btn:hover {
     border-color: #c7d2fe;
-
     color: #4f46e5;
-
     background: #f8faff;
-
     transform: translateY(-1px);
 }
 
 
-/* ==========================================================
+/* =========================================================
    FILTER CONTROLS
-========================================================== */
+========================================================= */
 
 .report-filter-controls {
+    position: relative;
+    z-index: 20;
+
     display: grid;
 
     grid-template-columns:
         minmax(0, 1fr)
-        240px;
+        230px;
 
-    gap: 20px;
+    gap: 15px;
 
-    overflow: visible;
+    overflow: visible !important;
 }
-
 
 .report-filter-group {
-    display: flex;
+    position: relative;
 
+    display: flex;
     flex-direction: column;
-
-    gap: 9px;
-
-    min-width: 0;
-}
-
-
-.report-filter-group label {
-    display: flex;
-    align-items: center;
 
     gap: 7px;
 
+    min-width: 0;
+
+    overflow: visible !important;
+}
+
+.report-filter-group > label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
     color: #475569;
 
-    font-size: 12px;
-
+    font-size: 11px;
     font-weight: 750;
 }
 
-
-.report-filter-group label svg {
+.report-filter-group > label svg {
     color: #6366f1;
-
-    font-size: 12px;
+    font-size: 11px;
 }
 
 
-/* ==========================================================
+/* =========================================================
    PERIOD BUTTONS
-========================================================== */
+========================================================= */
 
 .report-period-buttons {
     display: flex;
-
-    gap: 8px;
+    gap: 6px;
 
     padding: 4px;
 
-    border-radius: 13px;
+    border-radius: 12px;
 
     background: #f1f5f9;
 }
 
-
 .report-period-buttons button {
     flex: 1;
 
-    min-height: 42px;
+    min-height: 40px;
 
-    padding: 0 12px;
+    padding: 0 9px;
 
     border: none;
-
-    border-radius: 10px;
+    border-radius: 9px;
 
     background: transparent;
-
     color: #64748b;
 
-    font-size: 12px;
-
+    font-family: inherit;
+    font-size: 11px;
     font-weight: 700;
 
     cursor: pointer;
-
     white-space: nowrap;
 
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
 }
-
 
 .report-period-buttons button:hover {
-    color: #4f46e5;
-
     background: #ffffff;
-
-    transform: translateY(-1px);
+    color: #4f46e5;
 }
-
 
 .report-period-buttons button.active {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #7c3aed
+    );
+
     color: #ffffff;
 
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #7c3aed
-        );
-
     box-shadow:
-        0 5px 14px rgba(79, 70, 229, 0.22);
+        0 4px 12px
+        rgba(79, 70, 229, 0.20);
 }
 
 
-/* ==========================================================
+/* =========================================================
    CATEGORY
-========================================================== */
+========================================================= */
 
 .category-filter {
     min-width: 0;
 }
 
-
 .report-category-select {
     width: 100%;
+    height: 44px;
 
-    height: 50px;
-
-    padding: 0 14px;
+    padding: 0 12px;
 
     border: 1px solid #e2e8f0;
-
-    border-radius: 12px;
+    border-radius: 11px;
 
     outline: none;
 
     background: #ffffff;
-
     color: #0f172a;
 
-    font-size: 13px;
-
+    font-family: inherit;
+    font-size: 12px;
     font-weight: 650;
 
     cursor: pointer;
 
-    transition: all 0.25s ease;
+    transition: all 0.2s ease;
 }
-
 
 .report-category-select:hover {
     border-color: #c7d2fe;
 }
 
-
 .report-category-select:focus {
     border-color: #6366f1;
 
     box-shadow:
-        0 0 0 4px rgba(99, 102, 241, 0.10);
+        0 0 0 3px
+        rgba(99, 102, 241, 0.10);
 }
 
 
-/* ==========================================================
+/* =========================================================
    CUSTOM DATE RANGE
-========================================================== */
+========================================================= */
 
 .report-custom-date-range {
+    position: relative;
+    z-index: 30;
+
     grid-column: 1 / -1;
 
     display: grid;
@@ -321,11 +271,11 @@
     grid-template-columns:
         repeat(2, minmax(0, 1fr));
 
-    gap: 18px;
+    gap: 14px;
 
-    padding: 18px;
+    padding: 13px;
 
-    border-radius: 17px;
+    border-radius: 15px;
 
     background:
         linear-gradient(
@@ -336,197 +286,277 @@
 
     border: 1px solid #e0e7ff;
 
-    animation: customDateFade 0.3s ease;
+    animation: customDateFade 0.25s ease;
 
-    overflow: visible;
+    overflow: visible !important;
 }
 
+
+/* =========================================================
+   DATE GROUP
+========================================================= */
 
 .report-date-group {
-    display: flex;
+    position: relative;
+    z-index: 40;
 
+    display: flex;
     flex-direction: column;
-
-    gap: 8px;
-
-    min-width: 0;
-
-    overflow: visible;
-}
-
-
-.report-date-group label {
-    display: flex;
-    align-items: center;
 
     gap: 7px;
 
-    color: #475569;
+    min-width: 0;
 
-    font-size: 12px;
-
-    font-weight: 750;
+    overflow: visible !important;
 }
 
 
-.report-date-group label svg {
-    color: #6366f1;
+/* =========================================================
+   START / END DATE LABEL
+========================================================= */
 
-    font-size: 12px;
-}
-
-
-/* ==========================================================
-   DATE INPUT
-========================================================== */
-
-.report-date-picker {
-    width: 100%;
-
-    height: 50px;
-
-    box-sizing: border-box;
-
-    padding: 0 14px;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 12px;
-
-    outline: none;
-
-    background: #ffffff;
-
-    color: #0f172a;
-
-    font-family: inherit;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    transition: all 0.25s ease;
-}
-
-
-.report-date-picker::placeholder {
-    color: #94a3b8;
-
-    font-weight: 500;
-}
-
-
-.report-date-picker:hover {
-    border-color: #c7d2fe;
-}
-
-
-.report-date-picker:focus {
-    border-color: #6366f1;
-
-    box-shadow:
-        0 0 0 4px rgba(99, 102, 241, 0.10);
-}
-
-
-/* ==========================================================
-   DATEPICKER POPPER
-========================================================== */
-
-.report-datepicker-popper {
-    z-index: 999999 !important;
-}
-
-
-/* ==========================================================
-   CALENDAR
-========================================================== */
-
-.report-calendar {
-    width: 280px !important;
-
-    border: none !important;
-
-    border-radius: 18px !important;
-
-    overflow: hidden;
-
-    background: #ffffff !important;
-
-    box-shadow:
-        0 20px 50px rgba(15, 23, 42, 0.20) !important;
-
-    font-family: inherit;
-}
-
-
-/* ==========================================================
-   CUSTOM CALENDAR HEADER
-========================================================== */
-
-.report-calendar-header {
-    width: 100%;
-
-    min-height: 58px;
-
-    box-sizing: border-box;
-
+.report-date-label {
     display: flex;
-
     align-items: center;
+    gap: 9px;
 
-    justify-content: space-between;
-
-    gap: 10px;
-
-    padding: 10px 12px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #7c3aed
-        );
+    min-height: 34px;
 }
 
-
-.report-calendar-title {
-    flex: 1;
-
-    text-align: center;
-
-    color: #ffffff;
-
-    font-size: 14px;
-
-    font-weight: 800;
-
-    white-space: nowrap;
-}
-
-
-/* ==========================================================
-   PREVIOUS / NEXT BUTTONS
-========================================================== */
-
-.report-calendar-nav {
-    width: 34px;
-    height: 34px;
+.report-date-label-icon {
+    width: 30px;
+    height: 30px;
 
     flex-shrink: 0;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
-    padding: 0;
-
-    border: none;
-
     border-radius: 9px;
 
-    background: rgba(255, 255, 255, 0.16);
+    background: #eef2ff;
+    color: #4f46e5;
+
+    box-shadow:
+        inset 0 0 0 1px
+        rgba(99, 102, 241, 0.08);
+}
+
+.report-date-label-icon svg {
+    font-size: 12px;
+}
+
+.report-date-label-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.report-date-label-text strong {
+    color: #334155;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    line-height: 1.2;
+}
+
+.report-date-label-text small {
+    color: #94a3b8;
+
+    font-size: 9px;
+    font-weight: 500;
+
+    line-height: 1.2;
+}
+
+
+/* =========================================================
+   DATE PICKER
+========================================================= */
+
+.report-date-picker-wrapper {
+    position: relative;
+
+    width: 100%;
+
+    overflow: visible !important;
+}
+
+.report-date-picker-button {
+    width: 100%;
+    height: 45px;
+
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 8px;
+
+    padding: 0 11px 0 13px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 11px;
+
+    outline: none;
+
+    background: #ffffff;
+    color: #94a3b8;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.report-date-picker-button:hover {
+    border-color: #c7d2fe;
+}
+
+.report-date-picker-button.open {
+    border-color: #6366f1;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(99, 102, 241, 0.09);
+}
+
+.report-date-picker-button.has-value {
+    color: #0f172a;
+}
+
+.report-date-value {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   CLEAR DATE
+========================================================= */
+
+.report-date-clear {
+    width: 17px;
+    height: 17px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #2778b6;
+    color: #ffffff;
+
+    font-size: 8px;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.report-date-clear:hover {
+    background: #1d5f91;
+    transform: scale(1.08);
+}
+
+
+/* =========================================================
+   CALENDAR
+========================================================= */
+
+.report-custom-calendar {
+    position: fixed;
+    width: 260px;
+    box-sizing: border-box;
+    z-index: 2147483647;
+
+    overflow: hidden;
+
+    background: #ffffff;
+
+    
+    border: none !important;
+
+    border-radius: 14px;
+
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22);
+
+    font-family: inherit;
+
+    isolation: isolate;
+}
+
+/* =========================================================
+   CALENDAR HEADER
+
+========================================================= */
+
+.report-custom-calendar-header {
+    width: calc(100% + 2px);
+    height: 49px;
+    min-height: 49px;
+
+    box-sizing: border-box;
+
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) 28px;
+
+    align-items: center;
+    gap: 6px;
+    margin: -1px 0 0 -1px;
+
+    padding: 8px 9px;
+
+    border: none !important;
+    outline: none !important;
+
+    background: linear-gradient(
+        135deg,
+        #2563eb 0%,
+        #4f46e5 50%,
+        #7c3aed 100%
+    );
+
+    color: #ffffff;
+
+    border-radius: 14px 14px 0 0;
+
+    box-shadow: none !important;
+}
+
+/* =========================================================
+   CALENDAR NAV BUTTONS
+========================================================= */
+
+.report-calendar-nav {
+    width: 28px;
+    height: 28px;
+
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0 !important;
+    outline: 0 !important;
+
+    border-radius: 8px;
+
+    background:
+        rgba(255, 255, 255, 0.16);
 
     color: #ffffff;
 
@@ -535,218 +565,288 @@
     transition: all 0.2s ease;
 }
 
+.report-calendar-nav:hover {
+    background:
+        rgba(255, 255, 255, 0.28);
 
-.report-calendar-nav:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.30);
-
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
-
-.report-calendar-nav:active:not(:disabled) {
+.report-calendar-nav:active {
     transform: scale(0.96);
 }
 
-
-.report-calendar-nav:disabled {
-    opacity: 0.35;
-
-    cursor: not-allowed;
-}
-
-
 .report-calendar-nav svg {
-    font-size: 12px;
+    font-size: 10px;
 }
 
 
-/* ==========================================================
-   DAY NAMES
-========================================================== */
+/* =========================================================
+   MONTH / YEAR SELECTS
+========================================================= */
 
-.report-calendar
-.react-datepicker__day-names {
-    margin-top: 8px;
+.report-calendar-selects {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
 }
 
+.report-calendar-selects select {
+    height: 28px;
 
-.report-calendar
-.react-datepicker__day-name {
-    width: 32px;
+    min-width: 0;
 
-    margin: 3px;
+    padding: 0 5px;
 
-    color: #64748b !important;
+    border: 0 !important;
+    outline: 0 !important;
+
+    border-radius: 7px;
+
+    background:
+        rgba(255, 255, 255, 0.16);
+
+    color: #ffffff;
+
+    font-family: inherit;
 
     font-size: 10px;
+    font-weight: 800;
 
+    cursor: pointer;
+}
+
+.report-calendar-selects select:first-child {
+    width: 82px;
+}
+
+.report-calendar-selects select:last-child {
+    width: 56px;
+}
+
+.report-calendar-selects select option {
+    background: #ffffff;
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   WEEKDAYS
+========================================================= */
+
+.report-calendar-weekdays {
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, 1fr);
+
+    padding:
+        8px 9px 4px;
+
+    background: #ffffff;
+
+    border: 0;
+}
+
+.report-calendar-weekdays div {
+    height: 19px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #64748b;
+
+    font-size: 8px;
     font-weight: 800;
 }
 
 
-/* ==========================================================
-   DAYS
-========================================================== */
+/* =========================================================
+   CALENDAR DAYS
+========================================================= */
 
-.report-calendar
-.react-datepicker__day {
-    width: 32px;
+.report-calendar-days {
+    display: grid;
 
-    height: 32px;
+    grid-template-columns:
+        repeat(7, 1fr);
 
-    line-height: 32px;
+    padding:
+        0 9px 7px;
 
-    margin: 3px;
+    background: #ffffff;
+
+    border: 0;
+}
+
+.report-calendar-day {
+    width: 29px;
+    height: 29px;
+
+    margin: 2px auto;
+
+    padding: 0;
+
+    border: 0 !important;
+    outline: 0 !important;
 
     border-radius: 50%;
 
+    background: transparent;
+
     color: #0f172a;
 
-    font-size: 12px;
+    font-family: inherit;
 
+    font-size: 10px;
     font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.18s ease;
+}
+
+.report-calendar-day:hover:not(:disabled) {
+    background: #eef2ff;
+    color: #4f46e5;
+
+    transform: scale(1.05);
+}
+
+.report-calendar-day.outside-month {
+    color: #cbd5e1;
+}
+
+.report-calendar-day.selected {
+    background: #2563eb;
+    color: #ffffff;
+
+    font-weight: 800;
+}
+
+.report-calendar-day.today {
+    box-shadow:
+        inset 0 0 0 1.5px #6366f1;
+}
+
+.report-calendar-day.selected.today {
+    box-shadow: none;
+}
+
+.report-calendar-day.disabled {
+    color: #e2e8f0;
+
+    cursor: not-allowed;
+
+    background: transparent;
+}
+
+
+/* =========================================================
+   TODAY
+========================================================= */
+
+.report-calendar-today {
+    width: calc(100% - 18px);
+
+    height: 31px;
+
+    margin:
+        0 9px 9px;
+
+    padding: 0;
+
+    border: 0 !important;
+    outline: 0 !important;
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #2563eb
+        );
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    cursor: pointer;
 
     transition: all 0.2s ease;
 }
 
-
-.report-calendar
-.react-datepicker__day:hover {
-    background: #eef2ff !important;
-
-    color: #4f46e5 !important;
-
-    transform: scale(1.05);
-}
-
-
-/* ==========================================================
-   SELECTED
-========================================================== */
-
-.report-calendar
-.react-datepicker__day--selected,
-
-.report-calendar
-.react-datepicker__day--keyboard-selected {
-    background: #2563eb !important;
-
-    color: #ffffff !important;
-
-    font-weight: 800;
-}
-
-
-/* ==========================================================
-   TODAY
-========================================================== */
-
-.report-calendar
-.react-datepicker__day--today {
-    font-weight: 800;
+.report-calendar-today:hover {
+    transform: translateY(-1px);
 
     box-shadow:
-        inset 0 0 0 1px #6366f1;
+        0 5px 14px
+        rgba(79, 70, 229, 0.22);
 }
 
 
-/* ==========================================================
-   OUTSIDE MONTH
-========================================================== */
-
-.report-calendar
-.react-datepicker__day--outside-month {
-    color: #cbd5e1 !important;
-}
-
-
-/* ==========================================================
-   MONTH CONTAINER
-========================================================== */
-
-.report-calendar
-.react-datepicker__month {
-    margin: 8px 12px 12px;
-}
-
-
-/* ==========================================================
-   REMOVE DEFAULT HEADER
-========================================================== */
-
-.report-calendar
-.react-datepicker__header {
-    padding: 0 !important;
-
-    border: none !important;
-
-    background: #ffffff !important;
-}
-
-
-/* ==========================================================
+/* =========================================================
    ANIMATIONS
-========================================================== */
+========================================================= */
 
 @keyframes reportFilterFade {
     from {
         opacity: 0;
-
-        transform: translateY(8px);
+        transform: translateY(6px);
     }
 
     to {
         opacity: 1;
-
         transform: translateY(0);
     }
 }
-
 
 @keyframes customDateFade {
     from {
         opacity: 0;
-
-        transform: translateY(-6px);
+        transform: translateY(-5px);
     }
 
     to {
         opacity: 1;
-
         transform: translateY(0);
     }
 }
 
 
-/* ==========================================================
-   RESPONSIVE — TABLET
-========================================================== */
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
-@media (max-width: 900px) {
-
+@media (max-width: 1100px) {
     .report-filter-controls {
         grid-template-columns: 1fr;
     }
 
     .report-custom-date-range {
         grid-column: 1;
-
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
     }
 }
 
-
-/* ==========================================================
-   RESPONSIVE — MOBILE
-========================================================== */
+@media (max-width: 700px) {
+    .report-custom-date-range {
+        grid-template-columns: 1fr;
+    }
+}
 
 @media (max-width: 650px) {
-
     .report-filters {
-        padding: 18px;
-
-        border-radius: 18px;
+        padding: 16px;
+        border-radius: 17px;
     }
 
     .report-filter-heading {
@@ -755,41 +855,30 @@
 
     .report-period-buttons {
         display: grid;
-
         grid-template-columns:
             repeat(2, 1fr);
 
-        gap: 6px;
+        gap: 5px;
     }
 
     .report-period-buttons button {
-        min-height: 40px;
-
-        padding: 0 8px;
-
-        font-size: 11px;
+        min-height: 38px;
+        padding: 0 7px;
+        font-size: 10px;
     }
 
     .report-custom-date-range {
-        grid-template-columns: 1fr;
-
-        gap: 14px;
-
-        padding: 14px;
+        gap: 12px;
+        padding: 12px;
     }
 
-    .report-calendar {
-        width: 270px !important;
+    .report-custom-calendar {
+        width: 250px;
+        border-radius: 14px;
     }
 }
 
-
-/* ==========================================================
-   SMALL MOBILE
-========================================================== */
-
 @media (max-width: 430px) {
-
     .report-filter-heading {
         flex-direction: column;
     }
@@ -803,19 +892,25 @@
     }
 
     .report-filter-title h2 {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .report-filter-title p {
-        font-size: 11px;
-    }
-
-    .report-period-buttons {
-        grid-template-columns: 1fr 1fr;
+        font-size: 10px;
     }
 
     .report-category-select,
-    .report-date-picker {
-        height: 48px;
+    .report-date-picker-button {
+        height: 44px;
+    }
+
+    .report-custom-calendar {
+        width: 245px;
+    }
+
+    .report-calendar-day {
+        width: 27px;
+        height: 27px;
+        font-size: 9px;
     }
 }
