@@ -18,9 +18,9 @@
 .subscription-hero {
   position: relative;
 
-  min-height: 120px;
+  min-height: 100px;
 
-  padding: 25px 30px;
+  padding: 22px 28px;
 
   margin-bottom: 30px;
 
@@ -8311,5 +8311,144 @@
   .professional-calendar-v4-grid {
     padding-left: 11px !important;
     padding-right: 11px !important;
+  }
+}
+
+
+.subscription-hero {
+  animation: subscription-header-show 0.65s ease both;
+}
+
+.subscription-hero::before,
+.subscription-hero::after {
+  animation: subscription-header-circle 0.75s ease 0.08s both;
+}
+
+.subscription-title-icon {
+  animation: subscription-header-icon 0.75s ease 0.08s both;
+}
+
+.subscription-title-row > div:not(.subscription-title-icon) {
+  animation: subscription-header-content 0.65s ease 0.12s both;
+}
+
+.subscription-add-btn {
+  animation: subscription-header-content 0.65s ease 0.18s both;
+}
+
+.subscription-summary,
+.subscription-renewal-alert,
+.subscription-category-section,
+.subscription-overview-section,
+.subscription-health-section,
+.subscription-renewal-intelligence,
+.subscription-subscriptions-section,
+.subscription-upcoming-section {
+  animation: subscription-section-show 0.65s ease both;
+}
+
+.subscription-summary {
+  animation-delay: 0.08s;
+}
+
+.subscription-renewal-alert {
+  animation-delay: 0.14s;
+}
+
+.subscription-category-section {
+  animation-delay: 0.20s;
+}
+
+.subscription-overview-section {
+  animation-delay: 0.26s;
+}
+
+.subscription-health-section {
+  animation-delay: 0.32s;
+}
+
+.subscription-renewal-intelligence {
+  animation-delay: 0.38s;
+}
+
+.subscription-subscriptions-section {
+  animation-delay: 0.44s;
+}
+
+.subscription-upcoming-section {
+  animation-delay: 0.50s;
+}
+
+@keyframes subscription-header-show {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes subscription-header-icon {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.88) rotate(-6deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0);
+  }
+}
+
+@keyframes subscription-header-content {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes subscription-header-circle {
+  from {
+    opacity: 0;
+    transform: scale(0.75);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes subscription-section-show {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .subscription-hero,
+  .subscription-hero::before,
+  .subscription-hero::after,
+  .subscription-title-icon,
+  .subscription-title-row > div:not(.subscription-title-icon),
+  .subscription-add-btn,
+  .subscription-summary,
+  .subscription-renewal-alert,
+  .subscription-category-section,
+  .subscription-overview-section,
+  .subscription-health-section,
+  .subscription-renewal-intelligence,
+  .subscription-subscriptions-section,
+  .subscription-upcoming-section {
+    animation: none;
   }
 }

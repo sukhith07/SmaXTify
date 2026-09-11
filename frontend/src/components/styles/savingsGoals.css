@@ -1,105 +1,161 @@
-/* ==========================================================
-   SAVINGS GOALS PAGE
-========================================================== */
+/* =========================================================
+   SMAxTIFY - SAVINGS GOALS PAGE
+   ========================================================= */
+
+.budget-page {
+    width: 100%;
+
+    min-height: 100vh;
+
+    background: #ffffff;
+
+    box-sizing: border-box;
+
+    overflow-x: hidden;
+}
+
+.budget-content {
+    width: calc(100% - var(--smaxtify-sidebar-width, 90px));
+
+    min-height: 100vh;
+
+    margin-left: var(--smaxtify-sidebar-width, 90px);
+
+    box-sizing: border-box;
+
+    overflow-x: hidden;
+
+    transition:
+        margin-left 0.3s ease,
+        width 0.3s ease;
+}
+
+.budget-main {
+    width: 100%;
+
+    max-width: 1600px;
+
+    margin: 0 auto;
+
+    padding: 23px 20px 40px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SAVINGS GOALS HEADER
+   ========================================================= */
 
 .budget-page-header {
     position: relative;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    width: 100%;
 
-    gap: 24px;
+    min-height: 100px;
 
-    min-height: 120px;
+    padding: 22px 28px;
 
-    padding: 28px 32px;
+    margin-bottom: 22px;
 
-    margin-bottom: 32px;
-
-    border-radius: 24px;
+    border-radius: 22px;
 
     overflow: hidden;
 
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    box-sizing: border-box;
+
     background:
-        radial-gradient(
-            circle at 88% 20%,
-            rgba(255, 255, 255, 0.16) 0,
-            rgba(255, 255, 255, 0) 30%
-        ),
         linear-gradient(
             135deg,
             #2563eb 0%,
-            #4338ca 50%,
+            #4338ca 52%,
             #7c3aed 100%
         );
 
     border: none;
 
-    box-shadow:
-        0 18px 40px rgba(37, 99, 235, 0.22);
-
-    animation: fadeGoals 0.5s ease;
-
     color: #ffffff;
+
+    box-shadow:
+        0 15px 35px rgba(67, 56, 202, 0.22);
+
+    animation:
+        savings-header-show 0.65s ease both;
 }
 
 
-/* ==========================================================
-   DECORATIVE BACKGROUND
-========================================================== */
+/* =========================================================
+   DECORATIVE BACKGROUND CIRCLES
+   ========================================================= */
 
 .budget-page-header::before {
     content: "";
 
     position: absolute;
 
-    width: 190px;
-    height: 190px;
+    width: 230px;
+    height: 230px;
 
     right: 70px;
-    top: -105px;
+    bottom: -175px;
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.08);
+    background:
+        rgba(255, 255, 255, 0.08);
 
     pointer-events: none;
-}
 
+    animation:
+        savings-circle-left 1s ease both;
+}
 
 .budget-page-header::after {
     content: "";
 
     position: absolute;
 
-    width: 150px;
-    height: 150px;
+    width: 180px;
+    height: 180px;
 
-    left: 38%;
-    bottom: -105px;
+    right: -55px;
+    top: -100px;
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.07);
+    background:
+        rgba(255, 255, 255, 0.10);
 
     pointer-events: none;
+
+    animation:
+        savings-circle-right 1s ease 0.08s both;
 }
 
 
-/* ==========================================================
+/* =========================================================
    HEADER ICON
-========================================================== */
+   ========================================================= */
 
 .budget-page-icon {
     position: relative;
 
     z-index: 2;
 
-    width: 68px;
-    height: 68px;
+    width: 64px;
+    height: 64px;
 
-    min-width: 68px;
+    min-width: 64px;
+
+    flex-shrink: 0;
 
     border-radius: 18px;
 
@@ -108,138 +164,219 @@
     align-items: center;
     justify-content: center;
 
-    background: rgba(255, 255, 255, 0.14);
+    background:
+        rgba(255, 255, 255, 0.16);
 
-    border: 1px solid rgba(255, 255, 255, 0.28);
+    border:
+        1px solid rgba(255, 255, 255, 0.22);
 
     color: #ffffff;
 
-    font-size: 30px;
+    font-size: 27px;
 
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.15),
-        0 10px 25px rgba(0, 0, 0, 0.12);
+        inset 0 1px 0 rgba(255, 255, 255, 0.18),
+        0 8px 20px rgba(30, 64, 175, 0.18);
 
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
+
+    -webkit-backdrop-filter: blur(12px);
+
+   animation:
+        accounts-header-icon 0.75s ease 0.08s both;
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.budget-page-header:hover .budget-page-icon {
+    transform:
+        scale(1.05)
+        rotate(-2deg);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.22),
+        0 12px 25px rgba(30, 64, 175, 0.25);
 }
 
 
-/* ==========================================================
+/* =========================================================
    HEADER CONTENT
-========================================================== */
+   ========================================================= */
 
 .budget-page-content {
     position: relative;
 
     z-index: 2;
 
+    min-width: 0;
+
     flex: 1;
+
+    animation:
+        accounts-header-content 0.65s ease 0.12s both;
 }
 
-
 .budget-page-content h1 {
-    margin: 0;
+    margin: 0 0 6px;
 
     color: #ffffff;
 
-    font-size: 30px;
+    font-size: 29px;
 
-    font-weight: 800;
+    font-weight: 750;
 
     line-height: 1.2;
 
     letter-spacing: -0.5px;
 }
 
-
 .budget-page-content p {
-    margin: 8px 0 0;
-
     max-width: 720px;
 
-    color: rgba(255, 255, 255, 0.82);
+    margin: 0;
 
-    font-size: 15px;
+    color:
+        rgba(255, 255, 255, 0.82);
 
-    font-weight: 500;
+    font-size: 14px;
 
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 
-/* ==========================================================
+/* =========================================================
    ADD GOAL BUTTON
-========================================================== */
+   ========================================================= */
 
 .goal-add-btn {
     position: relative;
 
     z-index: 3;
 
-    display: flex;
+    height: 48px;
 
-    align-items: center;
-    justify-content: center;
+    padding: 0 21px;
 
-    gap: 10px;
+    flex-shrink: 0;
 
-    height: 46px;
+    border-radius: 14px;
 
-    padding: 0 20px;
+    border:
+        1px solid rgba(255, 255, 255, 0.30);
 
-    border: 1px solid rgba(255, 255, 255, 0.28);
-
-    border-radius: 12px;
-
-    cursor: pointer;
-
-    background: rgba(255, 255, 255, 0.14);
+    background:
+        rgba(255, 255, 255, 0.14);
 
     color: #ffffff;
 
     font-size: 14px;
 
-    font-weight: 700;
+    font-weight: 750;
 
     white-space: nowrap;
 
-    backdrop-filter: blur(8px);
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    cursor: pointer;
+
+    backdrop-filter: blur(14px);
+
+    -webkit-backdrop-filter: blur(14px);
 
     box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.10);
+        inset 0 1px 0 rgba(255, 255, 255, 0.20),
+        0 8px 22px rgba(49, 46, 129, 0.20);
+
+    overflow: hidden;
+
+    animation:
+        savings-action-show 0.65s ease 0.22s both;
 
     transition:
         transform 0.25s ease,
         background 0.25s ease,
+        border-color 0.25s ease,
         box-shadow 0.25s ease;
 }
 
+.goal-add-btn::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.16),
+            rgba(124, 58, 237, 0.18)
+        );
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease;
+}
+
+.goal-add-btn > * {
+    position: relative;
+
+    z-index: 2;
+}
 
 .goal-add-btn:hover {
-    transform: translateY(-2px);
+    transform:
+        translateY(-2px);
 
-    background: rgba(255, 255, 255, 0.22);
+    background:
+        rgba(124, 58, 237, 0.30);
+
+    border-color:
+        rgba(255, 255, 255, 0.45);
 
     box-shadow:
-        0 12px 25px rgba(0, 0, 0, 0.15);
+        inset 0 1px 0 rgba(255, 255, 255, 0.25),
+        0 12px 28px rgba(49, 46, 129, 0.30);
 }
 
+.goal-add-btn:hover::before {
+    opacity: 1;
+}
 
 .goal-add-btn:active {
-    transform: translateY(0);
+    transform:
+        translateY(0);
 }
-
 
 .goal-add-btn svg {
-    font-size: 17px;
+    position: relative;
+
+    z-index: 2;
+
+    font-size: 15px;
 }
 
 
-/* ==========================================================
+/* =========================================================
    GOAL GRID
-========================================================== */
+   ========================================================= */
 
 .goal-grid {
+    width: 100%;
+
+    min-width: 0;
+
     display: grid;
 
     grid-template-columns:
@@ -248,155 +385,461 @@
             minmax(360px, 1fr)
         );
 
-    gap: 28px;
+    gap: 22px;
 
-    animation: fadeGoals 0.45s ease;
+    box-sizing: border-box;
+
+    animation:
+        savings-section-show 0.65s ease 0.10s both;
 }
 
 
-/* ==========================================================
+/* =========================================================
+   GOAL CARDS
+   ========================================================= */
+
+.goal-grid > * {
+    animation:
+        savings-card-show 0.6s ease both;
+}
+
+.goal-grid > *:nth-child(1) {
+    animation-delay: 0.10s;
+}
+
+.goal-grid > *:nth-child(2) {
+    animation-delay: 0.16s;
+}
+
+.goal-grid > *:nth-child(3) {
+    animation-delay: 0.22s;
+}
+
+.goal-grid > *:nth-child(4) {
+    animation-delay: 0.28s;
+}
+
+.goal-grid > *:nth-child(5) {
+    animation-delay: 0.34s;
+}
+
+.goal-grid > *:nth-child(6) {
+    animation-delay: 0.40s;
+}
+
+
+/* =========================================================
    EMPTY STATE
-========================================================== */
+   ========================================================= */
 
 .empty-goals {
+    width: 100%;
+
+    min-height: 340px;
+
+    padding: 60px 30px;
+
     background: #ffffff;
 
-    border: 1px solid #e2e8f0;
+    border:
+        1px solid rgba(226, 232, 240, 0.85);
 
-    border-radius: 24px;
-
-    padding: 70px 30px;
+    border-radius: 22px;
 
     text-align: center;
 
-    box-shadow:
-        0 12px 35px rgba(15, 23, 42, 0.08);
+    box-sizing: border-box;
 
-    animation: fadeGoals 0.45s ease;
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, 0.07);
+
+    animation:
+        savings-section-show 0.65s ease 0.12s both;
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
+.empty-goals:hover {
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 17px 38px rgba(15, 23, 42, 0.10);
+}
 
 .empty-goals h2 {
-    margin: 0 0 14px;
+    margin: 0 0 12px;
 
-    color: #0f172a;
+    color: #172033;
 
-    font-size: 32px;
+    font-size: 28px;
 
-    font-weight: 800;
+    font-weight: 750;
+
+    line-height: 1.25;
 }
-
 
 .empty-goals p {
     max-width: 560px;
 
-    margin: auto;
+    margin: 0 auto;
 
     color: #64748b;
 
-    font-size: 17px;
+    font-size: 15px;
 
-    line-height: 1.8;
+    line-height: 1.7;
 }
 
 
-/* ==========================================================
+/* =========================================================
    LOADING
-========================================================== */
+   ========================================================= */
 
 .loading-goals {
+    width: 100%;
+
+    min-height: 280px;
+
     display: flex;
 
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
-    min-height: 260px;
+    color: #4f46e5;
 
-    font-size: 22px;
+    font-size: 16px;
 
     font-weight: 700;
 
-    color: #2563eb;
+    background: #ffffff;
+
+    border-radius: 20px;
+
+    box-sizing: border-box;
+
+    animation:
+        savings-section-show 0.5s ease both;
 }
 
 
-/* ==========================================================
-   PAGE ANIMATION
-========================================================== */
+/* =========================================================
+   LOADING SPINNER SUPPORT
+   ========================================================= */
 
-@keyframes fadeGoals {
+.loading-goals::after {
+    content: "";
 
+    width: 28px;
+    height: 28px;
+
+    margin-left: 12px;
+
+    border:
+        3px solid #e9d5ff;
+
+    border-top-color: #7c3aed;
+
+    border-radius: 50%;
+
+    animation:
+        savings-spin 0.8s linear infinite;
+}
+
+
+/* =========================================================
+   COMMON ANIMATIONS
+   ========================================================= */
+
+@keyframes savings-header-show {
     from {
         opacity: 0;
 
-        transform: translateY(20px);
+        transform:
+            translateY(20px)
+            scale(0.985);
     }
 
     to {
         opacity: 1;
 
-        transform: translateY(0);
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+@keyframes savings-icon-show {
+    from {
+        opacity: 0;
+
+        transform:
+            scale(0.82)
+            rotate(-5deg);
     }
 
+    to {
+        opacity: 1;
+
+        transform:
+            scale(1)
+            rotate(0);
+    }
+}
+
+@keyframes savings-content-show {
+    from {
+        opacity: 0;
+
+        transform:
+            translateX(-12px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateX(0);
+    }
+}
+
+@keyframes savings-action-show {
+    from {
+        opacity: 0;
+
+        transform:
+            translateX(12px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateX(0);
+    }
+}
+
+@keyframes savings-circle-left {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(20px)
+            scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+@keyframes savings-circle-right {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(-20px)
+            scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+@keyframes savings-section-show {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+@keyframes savings-card-show {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+@keyframes savings-spin {
+    to {
+        transform:
+            rotate(360deg);
+    }
 }
 
 
-/* ==========================================================
-   TABLET
-========================================================== */
+/* =========================================================
+   UNIVERSAL BOX SIZING
+   ========================================================= */
 
-@media (max-width: 992px) {
+.budget-page *,
+.budget-page *::before,
+.budget-page *::after {
+    box-sizing: border-box;
+}
 
-    .budget-page-header {
-        flex-wrap: wrap;
 
-        align-items: flex-start;
+/* =========================================================
+   RESPONSIVE - 1200px
+   ========================================================= */
 
-        padding: 25px;
+@media (max-width: 1200px) {
+
+    .budget-main {
+        padding: 28px;
     }
 
-    .budget-page-content {
-        width: auto;
+    .budget-page-header {
+        padding: 22px 24px;
     }
 
     .budget-page-content h1 {
-        font-size: 28px;
+        font-size: 27px;
     }
 
-    .goal-add-btn {
-        margin-left: auto;
+    .goal-grid {
+        gap: 20px;
     }
-
 }
 
 
-/* ==========================================================
-   MOBILE
-========================================================== */
+/* =========================================================
+   RESPONSIVE - 1100px
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .budget-content {
+        width: 100%;
+
+        margin-left: 0;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - 992px
+   ========================================================= */
+
+@media (max-width: 992px) {
+
+    .budget-main {
+        padding: 24px;
+    }
+
+    .budget-page-header {
+        min-height: 108px;
+
+        padding: 20px;
+
+        gap: 15px;
+    }
+
+    .budget-page-icon {
+        width: 56px;
+        height: 56px;
+
+        min-width: 56px;
+
+        font-size: 24px;
+    }
+
+    .budget-page-content h1 {
+        font-size: 25px;
+    }
+
+    .budget-page-content p {
+        font-size: 13px;
+    }
+
+    .goal-add-btn {
+        height: 46px;
+
+        padding: 0 17px;
+    }
+
+    .goal-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap: 18px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - 768px
+   ========================================================= */
 
 @media (max-width: 768px) {
 
+    .budget-content {
+        width: 100%;
+
+        margin-left: 0;
+    }
+
+    .budget-main {
+        padding: 22px 18px;
+    }
+
     .budget-page-header {
+        min-height: auto;
+
+        padding: 20px;
+
+        border-radius: 19px;
+
         flex-direction: column;
 
         align-items: flex-start;
 
-        gap: 16px;
+        justify-content: center;
 
-        padding: 25px 22px;
-
-        min-height: auto;
+        gap: 15px;
     }
 
     .budget-page-icon {
-        width: 62px;
-        height: 62px;
+        width: 52px;
+        height: 52px;
 
-        min-width: 62px;
+        min-width: 52px;
 
-        border-radius: 17px;
+        border-radius: 15px;
 
-        font-size: 27px;
+        font-size: 22px;
     }
 
     .budget-page-content {
@@ -404,77 +847,226 @@
     }
 
     .budget-page-content h1 {
-        font-size: 27px;
+        font-size: 23px;
     }
 
     .budget-page-content p {
-        font-size: 14px;
+        font-size: 12px;
+
+        max-width: 100%;
     }
 
     .goal-add-btn {
         width: 100%;
 
-        margin-left: 0;
+        height: 46px;
 
-        height: 48px;
+        margin-left: 0;
     }
 
     .goal-grid {
         grid-template-columns: 1fr;
 
-        gap: 22px;
+        gap: 16px;
     }
 
     .empty-goals {
+        min-height: 300px;
+
         padding: 48px 22px;
     }
 
     .empty-goals h2 {
-        font-size: 26px;
+        font-size: 25px;
     }
 
+    .empty-goals p {
+        font-size: 14px;
+    }
 }
 
 
-/* ==========================================================
-   SMALL MOBILE
-========================================================== */
+/* =========================================================
+   RESPONSIVE - 600px
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .budget-main {
+        padding: 18px 14px;
+    }
+
+    .budget-page-header {
+        padding: 18px;
+
+        gap: 13px;
+    }
+
+    .budget-page-icon {
+        width: 48px;
+        height: 48px;
+
+        min-width: 48px;
+
+        font-size: 20px;
+    }
+
+    .budget-page-content h1 {
+        font-size: 21px;
+    }
+
+    .budget-page-content p {
+        font-size: 11px;
+    }
+
+    .goal-add-btn {
+        height: 44px;
+
+        font-size: 13px;
+    }
+
+    .empty-goals {
+        padding: 40px 18px;
+    }
+
+    .empty-goals h2 {
+        font-size: 23px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - 480px
+   ========================================================= */
 
 @media (max-width: 480px) {
 
     .budget-page-header {
-        padding: 22px 18px;
+        padding: 17px;
 
-        border-radius: 20px;
+        border-radius: 18px;
     }
 
     .budget-page-icon {
-        width: 58px;
-        height: 58px;
+        width: 46px;
+        height: 46px;
 
-        min-width: 58px;
+        min-width: 46px;
 
-        border-radius: 16px;
+        border-radius: 14px;
 
-        font-size: 23px;
+        font-size: 19px;
     }
 
     .budget-page-content h1 {
-        font-size: 24px;
+        font-size: 20px;
     }
 
     .budget-page-content p {
-        font-size: 13px;
+        font-size: 11px;
 
-        line-height: 1.6;
+        line-height: 1.55;
     }
 
     .goal-add-btn {
-        height: 48px;
-
-        font-size: 14px;
+        height: 43px;
 
         border-radius: 12px;
+
+        font-size: 12px;
     }
 
+    .goal-grid {
+        gap: 14px;
+    }
+
+    .empty-goals {
+        min-height: 270px;
+
+        padding: 35px 16px;
+
+        border-radius: 18px;
+    }
+
+    .empty-goals h2 {
+        font-size: 21px;
+    }
+
+    .empty-goals p {
+        font-size: 13px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - 400px
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    .budget-main {
+        padding: 15px 11px;
+    }
+
+    .budget-page-header {
+        padding: 16px;
+
+        gap: 10px;
+    }
+
+    .budget-page-icon {
+        width: 44px;
+        height: 44px;
+
+        min-width: 44px;
+
+        border-radius: 13px;
+
+        font-size: 18px;
+    }
+
+    .budget-page-content h1 {
+        font-size: 19px;
+    }
+
+    .budget-page-content p {
+        font-size: 10px;
+    }
+
+    .goal-add-btn {
+        height: 42px;
+
+        border-radius: 11px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .budget-page-header,
+    .budget-page-icon,
+    .budget-page-content,
+    .goal-add-btn,
+    .budget-page-header::before,
+    .budget-page-header::after,
+    .goal-grid,
+    .goal-grid > *,
+    .empty-goals,
+    .loading-goals {
+        animation: none;
+    }
+
+    .budget-page-icon,
+    .goal-add-btn,
+    .empty-goals {
+        transition: none;
+    }
+
+    .loading-goals::after {
+        animation: none;
+    }
 }
