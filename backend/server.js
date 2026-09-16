@@ -55,6 +55,9 @@ const notificationRoutes =
 const accountRoutes =
   require("./routes/accountRoutes");
 
+const settingsRoutes =
+  require("./routes/settingsRoutes");
+
 app.use(
   "/api/auth",
   authRoutes
@@ -108,6 +111,11 @@ app.use(
 app.use(
   "/api/accounts",
   accountRoutes
+);
+
+app.use(
+  "/api/settings",
+  settingsRoutes
 );
 
 app.get("/", (req, res) => {

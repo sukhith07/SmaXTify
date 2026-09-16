@@ -353,7 +353,8 @@
   white-space: nowrap;
 }
 
-.notification-item.notification-unread .notification-item-content h3 {
+.notification-item.notification-unread
+  .notification-item-content h3 {
   color: #172033;
 }
 
@@ -408,7 +409,8 @@
   background: #eef2ff;
 }
 
-.notification-item-actions .notification-delete:hover {
+.notification-item-actions
+  .notification-delete:hover {
   color: #dc2626;
   background: #fef2f2;
 }

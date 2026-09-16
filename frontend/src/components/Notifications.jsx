@@ -47,7 +47,7 @@ function Notifications() {
       return;
     }
 
-    navigate(-1);
+    navigate("/dashboard");
   };
 
   const getNotificationIcon = (type) => {
@@ -178,11 +178,8 @@ function Notifications() {
 
   return (
     <div className="notifications-screen">
-
       <header className="notifications-header">
-
         <div className="notifications-header-left">
-
           <div className="notifications-main-icon">
             <FaBell />
           </div>
@@ -196,7 +193,6 @@ function Notifications() {
               Stay updated with your SmaXTify financial activity
             </p>
           </div>
-
         </div>
 
         <button
@@ -208,15 +204,11 @@ function Notifications() {
         >
           <FaTimes />
         </button>
-
       </header>
 
       <main className="notifications-content">
-
         <section className="notifications-summary">
-
           <div className="notification-summary-card">
-
             <div className="notification-summary-icon">
               <FaBell />
             </div>
@@ -230,11 +222,9 @@ function Notifications() {
                 {notifications.length}
               </strong>
             </div>
-
           </div>
 
           <div className="notification-summary-card">
-
             <div className="notification-summary-icon unread">
               <FaInfoCircle />
             </div>
@@ -248,11 +238,9 @@ function Notifications() {
                 {unreadCount}
               </strong>
             </div>
-
           </div>
 
           <div className="notifications-summary-actions">
-
             {unreadCount > 0 && (
               <button
                 type="button"
@@ -274,15 +262,11 @@ function Notifications() {
                 Clear all
               </button>
             )}
-
           </div>
-
         </section>
 
         <section className="notifications-panel">
-
           <div className="notifications-panel-header">
-
             <div>
               <h2>
                 Recent Notifications
@@ -298,13 +282,10 @@ function Notifications() {
                 {unreadCount} unread
               </span>
             )}
-
           </div>
 
           {notifications.length === 0 ? (
-
             <div className="notifications-empty">
-
               <div className="notifications-empty-icon">
                 <FaBell />
               </div>
@@ -319,16 +300,11 @@ function Notifications() {
                 other financial updates
                 will appear here.
               </p>
-
             </div>
-
           ) : (
-
             <div className="notifications-list">
-
               {notifications.map(
                 (notification) => {
-
                   const type =
                     getNotificationType(
                       notification.type
@@ -343,7 +319,6 @@ function Notifications() {
                           : "notification-unread"
                       }`}
                     >
-
                       <div
                         className={`notification-item-icon ${type}`}
                       >
@@ -353,9 +328,7 @@ function Notifications() {
                       </div>
 
                       <div className="notification-item-content">
-
                         <div className="notification-item-top">
-
                           <h3>
                             {notification.title}
                           </h3>
@@ -363,7 +336,6 @@ function Notifications() {
                           {!notification.read && (
                             <span className="notification-unread-dot" />
                           )}
-
                         </div>
 
                         <p>
@@ -375,11 +347,9 @@ function Notifications() {
                             notification.time
                           )}
                         </span>
-
                       </div>
 
                       <div className="notification-item-actions">
-
                         {!notification.read && (
                           <button
                             type="button"
@@ -408,22 +378,15 @@ function Notifications() {
                         >
                           <FaTrash />
                         </button>
-
                       </div>
-
                     </article>
                   );
                 }
               )}
-
             </div>
-
           )}
-
         </section>
-
       </main>
-
     </div>
   );
 }

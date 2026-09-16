@@ -23,11 +23,12 @@ import Notifications from "./components/Notifications";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import ForgotPassword from "./pages/ForgotPassword";
+import ForgotPassword from "./pages/forgotpassword";
 import VerifyOTP from "./pages/VerifyOTP";
 import ResetPassword from "./pages/ResetPassword";
 
 import Dashboard from "./pages/Dashboard";
+import Accounts from "./pages/Accounts";
 import BudgetPlannerPage from "./pages/BudgetPlannerPage";
 import SavingsGoals from "./pages/SavingsGoals";
 import Reports from "./pages/Reports";
@@ -35,7 +36,6 @@ import CurrencyConverter from "./pages/CurrencyConverter";
 import SubscriptionTracker from "./pages/SubscriptionTracker";
 import BillReminders from "./pages/BillReminders";
 import Settings from "./pages/Settings";
-import Accounts from "./pages/Accounts";
 
 function App() {
   const location = useLocation();
@@ -50,13 +50,97 @@ function App() {
     );
   }, [location]);
 
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    );
+
+    const applyTheme = (selectedTheme) => {
+      const theme =
+        selectedTheme ||
+        localStorage.getItem("smaxtify-theme") ||
+        "light";
+
+      const resolvedTheme =
+        theme === "dark"
+          ? "dark"
+          : theme === "system"
+          ? mediaQuery.matches
+            ? "dark"
+            : "light"
+          : "light";
+
+      document.documentElement.setAttribute(
+        "data-theme",
+        resolvedTheme
+      );
+
+      document.body.setAttribute(
+        "data-theme",
+        resolvedTheme
+      );
+
+      document.documentElement.style.colorScheme =
+        resolvedTheme;
+
+      document.body.style.colorScheme =
+        resolvedTheme;
+    };
+
+    const handleThemeChange = () => {
+      applyTheme();
+    };
+
+    const handleSystemThemeChange = () => {
+      const selectedTheme =
+        localStorage.getItem("smaxtify-theme") ||
+        "light";
+
+      if (selectedTheme === "system") {
+        applyTheme(selectedTheme);
+      }
+    };
+
+    applyTheme();
+
+    window.addEventListener(
+      "smaxtify-theme-change",
+      handleThemeChange
+    );
+
+    window.addEventListener(
+      "storage",
+      handleThemeChange
+    );
+
+    mediaQuery.addEventListener(
+      "change",
+      handleSystemThemeChange
+    );
+
+    return () => {
+      window.removeEventListener(
+        "smaxtify-theme-change",
+        handleThemeChange
+      );
+
+      window.removeEventListener(
+        "storage",
+        handleThemeChange
+      );
+
+      mediaQuery.removeEventListener(
+        "change",
+        handleSystemThemeChange
+      );
+    };
+  }, []);
+
   return (
-    <CalendarProvider>
-      <CalculatorProvider>
-        <NotificationProvider>
-
+    <NotificationProvider>
+      <CalendarProvider>
+        <CalculatorProvider>
           <Routes>
-
             <Route
               path="/"
               element={
@@ -101,17 +185,23 @@ function App() {
 
             <Route
               path="/forgot-password"
-              element={<ForgotPassword />}
+              element={
+                <ForgotPassword />
+              }
             />
 
             <Route
               path="/verify-otp"
-              element={<VerifyOTP />}
+              element={
+                <VerifyOTP />
+              }
             />
 
             <Route
               path="/reset-password"
-              element={<ResetPassword />}
+              element={
+                <ResetPassword />
+              }
             />
 
             <Route
@@ -277,7 +367,6 @@ function App() {
                 />
               }
             />
-
           </Routes>
 
           <Calendar />
@@ -293,10 +382,9 @@ function App() {
             closeOnClick
             pauseOnHover
           />
-
-        </NotificationProvider>
-      </CalculatorProvider>
-    </CalendarProvider>
+        </CalculatorProvider>
+      </CalendarProvider>
+    </NotificationProvider>
   );
 }
 

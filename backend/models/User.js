@@ -47,6 +47,48 @@ const userSchema = new mongoose.Schema({
     default: null,
   },
 
+  settings: {
+    theme: {
+      type: String,
+      enum: ["light", "dark", "system"],
+      default: "light",
+    },
+
+    notifications: {
+      push: {
+        type: Boolean,
+        default: true,
+      },
+
+      email: {
+        type: Boolean,
+        default: true,
+      },
+
+      billReminders: {
+        type: Boolean,
+        default: true,
+      },
+
+      financialAlerts: {
+        type: Boolean,
+        default: true,
+      },
+    },
+
+    currency: {
+      type: String,
+      default: "INR",
+      trim: true,
+    },
+
+    timezone: {
+      type: String,
+      default: "Asia/Kolkata",
+      trim: true,
+    },
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
