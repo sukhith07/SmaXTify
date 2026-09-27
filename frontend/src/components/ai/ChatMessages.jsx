@@ -2,43 +2,93 @@ import React from "react";
 import MessageBubble from "./MessageBubble";
 import TypingIndicator from "./TypingIndicator";
 
-const ChatMessages = ({ messages, loading, bottomRef }) => {
+const ChatMessages = ({
+  messages,
+  loading,
+  bottomRef,
+}) => {
+  const hasMessages =
+    Array.isArray(messages) && messages.length > 0;
+
   return (
     <div className="chat-messages">
 
-      {messages.length === 0 ? (
+      {!hasMessages ? (
         <div className="empty-chat">
-          <h2>👋 Welcome to SmaXTify.AI</h2>
+
+          <div className="empty-chat-icon">
+            👋
+          </div>
+
+          <h2>
+            Welcome to SmaXTify.AI
+          </h2>
 
           <p>
-            Ask me anything about coding, technology, finance,
-            budgeting, investments, or general knowledge.
+            Ask me anything about coding, technology,
+            finance, budgeting, investments, or general knowledge.
           </p>
 
           <div className="suggestion-grid">
 
-            <div className="suggestion-card">
-              💰 Analyze my monthly expenses
-            </div>
+            <button
+              type="button"
+              className="suggestion-card"
+            >
+              <span className="suggestion-icon">
+                💰
+              </span>
 
-            <div className="suggestion-card">
-              📈 Give me saving tips
-            </div>
+              <span>
+                Analyze my monthly expenses
+              </span>
+            </button>
 
-            <div className="suggestion-card">
-              💻 Help me with React
-            </div>
+            <button
+              type="button"
+              className="suggestion-card"
+            >
+              <span className="suggestion-icon">
+                📈
+              </span>
 
-            <div className="suggestion-card">
-              🤖 Explain Artificial Intelligence
-            </div>
+              <span>
+                Give me saving tips
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className="suggestion-card"
+            >
+              <span className="suggestion-icon">
+                💻
+              </span>
+
+              <span>
+                Help me with React
+              </span>
+            </button>
+
+            <button
+              type="button"
+              className="suggestion-card"
+            >
+              <span className="suggestion-icon">
+                🤖
+              </span>
+
+              <span>
+                Explain Artificial Intelligence
+              </span>
+            </button>
 
           </div>
         </div>
       ) : (
         messages.map((message, index) => (
           <MessageBubble
-            key={index}
+            key={`${message.time || "message"}-${index}`}
             message={message}
           />
         ))
@@ -46,8 +96,10 @@ const ChatMessages = ({ messages, loading, bottomRef }) => {
 
       {loading && <TypingIndicator />}
 
-      <div ref={bottomRef} />
-
+      <div
+        ref={bottomRef}
+        className="chat-bottom-anchor"
+      />
     </div>
   );
 };

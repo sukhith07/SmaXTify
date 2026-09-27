@@ -15,10 +15,21 @@ import { CalendarProvider } from "./context/CalendarContext";
 import { CalculatorProvider } from "./context/CalculatorContext";
 import { NotificationProvider } from "./context/NotificationContext";
 
+// =========================================================
+// GLOBAL COMPONENTS
+// =========================================================
+
 import Calendar from "./pages/Calendar";
 import Calculator from "./components/Calculator";
 import NotificationPanel from "./components/NotificationPanel";
 import Notifications from "./components/Notifications";
+
+// SmaXTify.AI
+import SmaXTifyAI from "./components/ai/SmaXTifyAI";
+
+// =========================================================
+// PUBLIC PAGES
+// =========================================================
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -26,6 +37,10 @@ import Register from "./pages/Register";
 import ForgotPassword from "./pages/forgotpassword";
 import VerifyOTP from "./pages/VerifyOTP";
 import ResetPassword from "./pages/ResetPassword";
+
+// =========================================================
+// AUTHENTICATED PAGES
+// =========================================================
 
 import Dashboard from "./pages/Dashboard";
 import Accounts from "./pages/Accounts";
@@ -37,18 +52,46 @@ import SubscriptionTracker from "./pages/SubscriptionTracker";
 import BillReminders from "./pages/BillReminders";
 import Settings from "./pages/Settings";
 
+// =========================================================
+// ADMIN PANEL
+// =========================================================
+
+import AdminLayout from "./admin/AdminLayout";
+import AdminDashboard from "./admin/AdminDashboard";
+import AdminUsers from "./admin/AdminUsers";
+import AdminAccounts from "./admin/AdminAccounts";
+import AdminTransactions from "./admin/AdminTransactions";
+import AdminSubscriptions from "./admin/AdminSubscriptions";
+import AdminAuditLogs from "./admin/AdminAuditLogs";
+
+// =========================================================
+// APP
+// =========================================================
+
 function App() {
   const location = useLocation();
+
+  // =======================================================
+  // AUTH TOKEN
+  // =======================================================
 
   const [token, setToken] = useState(
     localStorage.getItem("token")
   );
+
+  // =======================================================
+  // UPDATE TOKEN WHEN ROUTE CHANGES
+  // =======================================================
 
   useEffect(() => {
     setToken(
       localStorage.getItem("token")
     );
   }, [location]);
+
+  // =======================================================
+  // THEME SYSTEM
+  // =======================================================
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(
@@ -93,10 +136,13 @@ function App() {
 
     const handleSystemThemeChange = () => {
       const selectedTheme =
-        localStorage.getItem("smaxtify-theme") ||
-        "light";
+        localStorage.getItem(
+          "smaxtify-theme"
+        ) || "light";
 
-      if (selectedTheme === "system") {
+      if (
+        selectedTheme === "system"
+      ) {
         applyTheme(selectedTheme);
       }
     };
@@ -136,11 +182,29 @@ function App() {
     };
   }, []);
 
+  // =======================================================
+  // ADMIN ROUTE DETECTION
+  // =======================================================
+
+  const isAdminRoute =
+    location.pathname.startsWith(
+      "/admin"
+    );
+
+  // =======================================================
+  // RENDER
+  // =======================================================
+
   return (
     <NotificationProvider>
       <CalendarProvider>
         <CalculatorProvider>
           <Routes>
+
+            {/* =================================================
+                LANDING
+            ================================================= */}
+
             <Route
               path="/"
               element={
@@ -154,6 +218,10 @@ function App() {
                 )
               }
             />
+
+            {/* =================================================
+                LOGIN
+            ================================================= */}
 
             <Route
               path="/login"
@@ -169,6 +237,10 @@ function App() {
               }
             />
 
+            {/* =================================================
+                REGISTER
+            ================================================= */}
+
             <Route
               path="/register"
               element={
@@ -183,12 +255,20 @@ function App() {
               }
             />
 
+            {/* =================================================
+                FORGOT PASSWORD
+            ================================================= */}
+
             <Route
               path="/forgot-password"
               element={
                 <ForgotPassword />
               }
             />
+
+            {/* =================================================
+                VERIFY OTP
+            ================================================= */}
 
             <Route
               path="/verify-otp"
@@ -197,12 +277,20 @@ function App() {
               }
             />
 
+            {/* =================================================
+                RESET PASSWORD
+            ================================================= */}
+
             <Route
               path="/reset-password"
               element={
                 <ResetPassword />
               }
             />
+
+            {/* =================================================
+                DASHBOARD
+            ================================================= */}
 
             <Route
               path="/dashboard"
@@ -218,6 +306,10 @@ function App() {
               }
             />
 
+            {/* =================================================
+                ACCOUNTS
+            ================================================= */}
+
             <Route
               path="/accounts"
               element={
@@ -231,6 +323,10 @@ function App() {
                 )
               }
             />
+
+            {/* =================================================
+                BUDGET
+            ================================================= */}
 
             <Route
               path="/budget"
@@ -246,6 +342,10 @@ function App() {
               }
             />
 
+            {/* =================================================
+                SAVINGS GOALS
+            ================================================= */}
+
             <Route
               path="/goals"
               element={
@@ -259,6 +359,10 @@ function App() {
                 )
               }
             />
+
+            {/* =================================================
+                REPORTS
+            ================================================= */}
 
             <Route
               path="/reports"
@@ -274,6 +378,10 @@ function App() {
               }
             />
 
+            {/* =================================================
+                CURRENCY
+            ================================================= */}
+
             <Route
               path="/currency"
               element={
@@ -287,6 +395,10 @@ function App() {
                 )
               }
             />
+
+            {/* =================================================
+                SUBSCRIPTIONS
+            ================================================= */}
 
             <Route
               path="/subscriptions"
@@ -302,6 +414,10 @@ function App() {
               }
             />
 
+            {/* =================================================
+                REMINDERS
+            ================================================= */}
+
             <Route
               path="/reminders"
               element={
@@ -315,6 +431,10 @@ function App() {
                 )
               }
             />
+
+            {/* =================================================
+                SETTINGS
+            ================================================= */}
 
             <Route
               path="/settings"
@@ -330,6 +450,10 @@ function App() {
               }
             />
 
+            {/* =================================================
+                CALENDAR
+            ================================================= */}
+
             <Route
               path="/calendar"
               element={
@@ -343,6 +467,10 @@ function App() {
                 )
               }
             />
+
+            {/* =================================================
+                NOTIFICATIONS
+            ================================================= */}
 
             <Route
               path="/notifications"
@@ -358,6 +486,96 @@ function App() {
               }
             />
 
+            {/* =================================================
+                ADMIN PANEL
+            ================================================= */}
+
+            <Route
+              path="/admin"
+              element={
+                token ? (
+                  <AdminLayout />
+                ) : (
+                  <Navigate
+                    to="/login"
+                    replace
+                  />
+                )
+              }
+            >
+
+              {/* =================================================
+                  ADMIN DASHBOARD
+              ================================================= */}
+
+              <Route
+                index
+                element={
+                  <AdminDashboard />
+                }
+              />
+
+              {/* =================================================
+                  ADMIN USERS
+              ================================================= */}
+
+              <Route
+                path="users"
+                element={
+                  <AdminUsers />
+                }
+              />
+
+              {/* =================================================
+                  ADMIN ACCOUNTS
+              ================================================= */}
+
+              <Route
+                path="accounts"
+                element={
+                  <AdminAccounts />
+                }
+              />
+
+              {/* =================================================
+                  ADMIN TRANSACTIONS
+              ================================================= */}
+
+              <Route
+                path="transactions"
+                element={
+                  <AdminTransactions />
+                }
+              />
+
+              {/* =================================================
+                  ADMIN SUBSCRIPTIONS
+              ================================================= */}
+
+              <Route
+                path="subscriptions"
+                element={
+                  <AdminSubscriptions />
+                }
+              />
+
+              {/* =================================================
+                  ADMIN AUDIT LOGS
+              ================================================= */}
+
+              <Route
+                path="audit-logs"
+                element={
+                  <AdminAuditLogs />
+                }
+              />
+
+            </Route>
+
+            {/* =================================================
+                FALLBACK
+            ================================================= */}
+
             <Route
               path="*"
               element={
@@ -367,13 +585,29 @@ function App() {
                 />
               }
             />
+
           </Routes>
 
-          <Calendar />
+          {/* =================================================
+              GLOBAL AUTHENTICATED COMPONENTS
+          ================================================= */}
 
-          <Calculator />
+          {token &&
+            !isAdminRoute && (
+              <>
+                <Calendar />
 
-          <NotificationPanel />
+                <Calculator />
+
+                <NotificationPanel />
+
+                <SmaXTifyAI />
+              </>
+            )}
+
+          {/* =================================================
+              TOAST NOTIFICATIONS
+          ================================================= */}
 
           <ToastContainer
             position="top-right"
@@ -382,6 +616,7 @@ function App() {
             closeOnClick
             pauseOnHover
           />
+
         </CalculatorProvider>
       </CalendarProvider>
     </NotificationProvider>

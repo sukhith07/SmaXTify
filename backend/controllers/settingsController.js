@@ -1,6 +1,40 @@
 const User = require("../models/User");
 const Expense = require("../models/Expense");
 const Account = require("../models/Account");
+const bcrypt = require("bcryptjs");
+
+// ============================
+// Default Settings
+// ============================
+
+const getDefaultSettings = () => ({
+  theme: "light",
+
+  appearance: {
+    accentColor: "blue",
+    animations: true,
+    compactMode: false,
+  },
+
+  notifications: {
+    push: true,
+    email: true,
+    financialAlerts: true,
+  },
+
+  currency: "INR",
+  timezone: "Asia/Kolkata",
+
+  ai: {
+    enabled: true,
+    confirmActions: true,
+    saveChatHistory: true,
+  },
+});
+
+// ============================
+// Get Settings
+// ============================
 
 const getSettings = async (req, res) => {
   try {
@@ -20,8 +54,13 @@ const getSettings = async (req, res) => {
       user,
       settings: user.settings,
     });
+
   } catch (error) {
-    console.error("Get Settings Error:", error);
+
+    console.error(
+      "Get Settings Error:",
+      error
+    );
 
     res.status(500).json({
       success: false,
@@ -30,8 +69,13 @@ const getSettings = async (req, res) => {
   }
 };
 
+// ============================
+// Update Profile
+// ============================
+
 const updateProfile = async (req, res) => {
   try {
+
     const { name } = req.body;
 
     if (!name || !name.trim()) {
@@ -57,6 +101,7 @@ const updateProfile = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Profile updated successfully",
+
       user: {
         id: user._id,
         name: user.name,
@@ -65,8 +110,13 @@ const updateProfile = async (req, res) => {
         photo: user.photo,
       },
     });
+
   } catch (error) {
-    console.error("Update Profile Error:", error);
+
+    console.error(
+      "Update Profile Error:",
+      error
+    );
 
     res.status(500).json({
       success: false,
@@ -75,13 +125,20 @@ const updateProfile = async (req, res) => {
   }
 };
 
+// ============================
+// Update Preferences
+// ============================
+
 const updatePreferences = async (req, res) => {
   try {
+
     const {
       theme,
+      appearance,
       notifications,
       currency,
       timezone,
+      ai,
     } = req.body;
 
     const user = await User.findById(req.user.id);
@@ -93,8 +150,15 @@ const updatePreferences = async (req, res) => {
       });
     }
 
+    // ============================
+    // THEME
+    // ============================
+
     if (theme !== undefined) {
-      if (!["light", "dark", "system"].includes(theme)) {
+
+      if (
+        !["light", "dark", "system"].includes(theme)
+      ) {
         return res.status(400).json({
           success: false,
           message: "Invalid theme",
@@ -104,7 +168,71 @@ const updatePreferences = async (req, res) => {
       user.settings.theme = theme;
     }
 
+    // ============================
+    // APPEARANCE
+    // ============================
+
+    if (appearance !== undefined) {
+
+      if (
+        typeof appearance !== "object" ||
+        appearance === null
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid appearance data",
+        });
+      }
+
+      const allowedAccentColors = [
+        "blue",
+        "purple",
+        "green",
+        "orange",
+        "rose",
+        "cyan",
+      ];
+
+      if (
+        appearance.accentColor !== undefined
+      ) {
+
+        if (
+          !allowedAccentColors.includes(
+            appearance.accentColor
+          )
+        ) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid accent color",
+          });
+        }
+
+        user.settings.appearance.accentColor =
+          appearance.accentColor;
+      }
+
+      if (
+        appearance.animations !== undefined
+      ) {
+        user.settings.appearance.animations =
+          Boolean(appearance.animations);
+      }
+
+      if (
+        appearance.compactMode !== undefined
+      ) {
+        user.settings.appearance.compactMode =
+          Boolean(appearance.compactMode);
+      }
+    }
+
+    // ============================
+    // NOTIFICATIONS
+    // ============================
+
     if (notifications !== undefined) {
+
       if (
         typeof notifications !== "object" ||
         notifications === null
@@ -118,19 +246,27 @@ const updatePreferences = async (req, res) => {
       const notificationKeys = [
         "push",
         "email",
-        "billReminders",
         "financialAlerts",
       ];
 
       notificationKeys.forEach((key) => {
-        if (notifications[key] !== undefined) {
+
+        if (
+          notifications[key] !== undefined
+        ) {
           user.settings.notifications[key] =
             Boolean(notifications[key]);
         }
+
       });
     }
 
+    // ============================
+    // CURRENCY
+    // ============================
+
     if (currency !== undefined) {
+
       if (
         typeof currency !== "string" ||
         !currency.trim()
@@ -141,10 +277,16 @@ const updatePreferences = async (req, res) => {
         });
       }
 
-      user.settings.currency = currency.trim().toUpperCase();
+      user.settings.currency =
+        currency.trim().toUpperCase();
     }
 
+    // ============================
+    // TIMEZONE
+    // ============================
+
     if (timezone !== undefined) {
+
       if (
         typeof timezone !== "string" ||
         !timezone.trim()
@@ -155,7 +297,44 @@ const updatePreferences = async (req, res) => {
         });
       }
 
-      user.settings.timezone = timezone.trim();
+      user.settings.timezone =
+        timezone.trim();
+    }
+
+    // ============================
+    // AI SETTINGS
+    // ============================
+
+    if (ai !== undefined) {
+
+      if (
+        typeof ai !== "object" ||
+        ai === null
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid AI settings",
+        });
+      }
+
+      if (ai.enabled !== undefined) {
+        user.settings.ai.enabled =
+          Boolean(ai.enabled);
+      }
+
+      if (
+        ai.confirmActions !== undefined
+      ) {
+        user.settings.ai.confirmActions =
+          Boolean(ai.confirmActions);
+      }
+
+      if (
+        ai.saveChatHistory !== undefined
+      ) {
+        user.settings.ai.saveChatHistory =
+          Boolean(ai.saveChatHistory);
+      }
     }
 
     await user.save();
@@ -165,8 +344,13 @@ const updatePreferences = async (req, res) => {
       message: "Settings updated successfully",
       settings: user.settings,
     });
+
   } catch (error) {
-    console.error("Update Preferences Error:", error);
+
+    console.error(
+      "Update Preferences Error:",
+      error
+    );
 
     res.status(500).json({
       success: false,
@@ -175,16 +359,22 @@ const updatePreferences = async (req, res) => {
   }
 };
 
+// ============================
+// Change Password
+// ============================
+
 const changePassword = async (req, res) => {
   try {
-    const bcrypt = require("bcryptjs");
 
     const {
       currentPassword,
       newPassword,
     } = req.body;
 
-    if (!currentPassword || !newPassword) {
+    if (
+      !currentPassword ||
+      !newPassword
+    ) {
       return res.status(400).json({
         success: false,
         message:
@@ -209,7 +399,10 @@ const changePassword = async (req, res) => {
       });
     }
 
-    if (user.provider === "google" && !user.password) {
+    if (
+      user.provider === "google" &&
+      !user.password
+    ) {
       return res.status(400).json({
         success: false,
         message:
@@ -217,22 +410,25 @@ const changePassword = async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(
-      currentPassword,
-      user.password
-    );
+    const isMatch =
+      await bcrypt.compare(
+        currentPassword,
+        user.password
+      );
 
     if (!isMatch) {
       return res.status(400).json({
         success: false,
-        message: "Current password is incorrect",
+        message:
+          "Current password is incorrect",
       });
     }
 
-    const isSamePassword = await bcrypt.compare(
-      newPassword,
-      user.password
-    );
+    const isSamePassword =
+      await bcrypt.compare(
+        newPassword,
+        user.password
+      );
 
     if (isSamePassword) {
       return res.status(400).json({
@@ -242,10 +438,11 @@ const changePassword = async (req, res) => {
       });
     }
 
-    user.password = await bcrypt.hash(
-      newPassword,
-      10
-    );
+    user.password =
+      await bcrypt.hash(
+        newPassword,
+        10
+      );
 
     user.provider = "local";
 
@@ -253,21 +450,34 @@ const changePassword = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Password changed successfully",
+      message:
+        "Password changed successfully",
     });
+
   } catch (error) {
-    console.error("Change Password Error:", error);
+
+    console.error(
+      "Change Password Error:",
+      error
+    );
 
     res.status(500).json({
       success: false,
-      message: "Failed to change password",
+      message:
+        "Failed to change password",
     });
   }
 };
 
+// ============================
+// Reset Settings
+// ============================
+
 const resetSettings = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+
+    const user =
+      await User.findById(req.user.id);
 
     if (!user) {
       return res.status(404).json({
@@ -276,58 +486,73 @@ const resetSettings = async (req, res) => {
       });
     }
 
-    user.settings = {
-      theme: "light",
-      notifications: {
-        push: true,
-        email: true,
-        billReminders: true,
-        financialAlerts: true,
-      },
-      currency: "INR",
-      timezone: "Asia/Kolkata",
-    };
+    user.settings =
+      getDefaultSettings();
 
     await user.save();
 
     res.status(200).json({
       success: true,
-      message: "Settings reset successfully",
+      message:
+        "Settings reset successfully",
       settings: user.settings,
     });
+
   } catch (error) {
-    console.error("Reset Settings Error:", error);
+
+    console.error(
+      "Reset Settings Error:",
+      error
+    );
 
     res.status(500).json({
       success: false,
-      message: "Failed to reset settings",
+      message:
+        "Failed to reset settings",
     });
   }
 };
 
-const deleteAllTransactions = async (req, res) => {
+// ============================
+// Delete All Transactions
+// ============================
+
+const deleteAllTransactions = async (
+  req,
+  res
+) => {
   try {
-    const result = await Expense.deleteMany({
-      user: req.user.id,
-    });
+
+    const result =
+      await Expense.deleteMany({
+        user: req.user.id,
+      });
 
     if (Account) {
+
       await Account.updateMany(
-        { user: req.user.id },
+        {
+          user: req.user.id,
+        },
         {
           $set: {
             balance: 0,
           },
         }
       );
+
     }
 
     res.status(200).json({
       success: true,
-      message: "All transactions deleted successfully",
-      deletedCount: result.deletedCount,
+      message:
+        "All transactions deleted successfully",
+      deletedCount:
+        result.deletedCount,
     });
+
   } catch (error) {
+
     console.error(
       "Delete All Transactions Error:",
       error
@@ -341,9 +566,18 @@ const deleteAllTransactions = async (req, res) => {
   }
 };
 
-const deleteAccount = async (req, res) => {
+// ============================
+// Delete Account
+// ============================
+
+const deleteAccount = async (
+  req,
+  res
+) => {
   try {
-    const user = await User.findById(req.user.id);
+
+    const user =
+      await User.findById(req.user.id);
 
     if (!user) {
       return res.status(404).json({
@@ -357,26 +591,41 @@ const deleteAccount = async (req, res) => {
     });
 
     if (Account) {
+
       await Account.deleteMany({
         user: req.user.id,
       });
+
     }
 
-    await User.findByIdAndDelete(req.user.id);
+    await User.findByIdAndDelete(
+      req.user.id
+    );
 
     res.status(200).json({
       success: true,
-      message: "Account deleted successfully",
+      message:
+        "Account deleted successfully",
     });
+
   } catch (error) {
-    console.error("Delete Account Error:", error);
+
+    console.error(
+      "Delete Account Error:",
+      error
+    );
 
     res.status(500).json({
       success: false,
-      message: "Failed to delete account",
+      message:
+        "Failed to delete account",
     });
   }
 };
+
+// ============================
+// EXPORTS
+// ============================
 
 module.exports = {
   getSettings,

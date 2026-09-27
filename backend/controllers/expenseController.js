@@ -1,617 +1,24 @@
-const mongoose = require("mongoose");
-
 const Expense = require("../models/Expense");
 const Budget = require("../models/Budget");
 const Account = require("../models/Account");
 
-const cleanCategory = (category) => {
-  if (
-    typeof category !== "string" ||
-    !category.trim()
-  ) {
-    return "Other";
-  }
-
-  return category
-    .trim()
-    .replace(/\s+/g, " ")
-    .replace(/^["']|["']$/g, "");
-};
-
-const getAccount = async (
-  accountId,
-  userId
-) => {
-  if (
-    !accountId ||
-    !mongoose.Types.ObjectId.isValid(
-      accountId
-    )
-  ) {
-    return null;
-  }
-
-  return Account.findOne({
-    _id: accountId,
-    user: userId,
-  });
-};
-
-const recalculateBudget = async (
-  userId,
-  date
-) => {
-  try {
-    const transactionDate =
-      new Date(date);
-
-    if (
-      Number.isNaN(
-        transactionDate.getTime()
-      )
-    ) {
-      return;
-    }
-
-    const month =
-      transactionDate
-        .toISOString()
-        .slice(0, 7);
-
-    const budget =
-      await Budget.findOne({
-        user: userId,
-        month,
-      });
-
-    if (!budget) {
-      return;
-    }
-
-    const startDate =
-      new Date(`${month}-01`);
-
-    const endDate =
-      new Date(startDate);
-
-    endDate.setMonth(
-      endDate.getMonth() + 1
-    );
-
-    const expenses =
-      await Expense.find({
-        user: userId,
-        type: "Expense",
-        date: {
-          $gte: startDate,
-          $lt: endDate,
-        },
-      });
-
-    const categories =
-      budget.categories.map(
-        (item) => {
-          const spent =
-            expenses
-              .filter(
-                (expense) =>
-                  expense.category ===
-                  item.category
-              )
-              .reduce(
-                (sum, expense) =>
-                  sum +
-                  Number(
-                    expense.amount || 0
-                  ),
-                0
-              );
-
-          return {
-            category:
-              item.category,
-            limit: Number(
-              item.limit || 0
-            ),
-            spent,
-          };
-        }
-      );
-
-    const totalBudget =
-      categories.reduce(
-        (sum, item) =>
-          sum +
-          Number(
-            item.limit || 0
-          ),
-        0
-      );
-
-    const totalSpent =
-      categories.reduce(
-        (sum, item) =>
-          sum +
-          Number(
-            item.spent || 0
-          ),
-        0
-      );
-
-    budget.categories =
-      categories;
-
-    budget.totalBudget =
-      totalBudget;
-
-    budget.totalSpent =
-      totalSpent;
-
-    budget.remainingBudget =
-      totalBudget -
-      totalSpent;
-
-    await budget.save();
-  } catch (error) {
-    console.error(
-      "Budget Update Error:",
-      error.message
-    );
-  }
-};
-
-const updateAccountBalance = async (
-  accountId,
-  userId,
-  amount,
-  type
-) => {
-  const account =
-    await getAccount(
-      accountId,
-      userId
-    );
-
-  if (!account) {
-    throw new Error(
-      "Selected account not found."
-    );
-  }
-
-  const transactionAmount =
-    Number(amount);
-
-  if (
-    !Number.isFinite(
-      transactionAmount
-    ) ||
-    transactionAmount <= 0
-  ) {
-    throw new Error(
-      "Invalid transaction amount."
-    );
-  }
-
-  const oldBalance =
-    Number(
-      account.balance || 0
-    );
-
-  if (type === "Income") {
-    account.balance =
-      oldBalance +
-      transactionAmount;
-  }
-
-  if (type === "Expense") {
-    if (
-      oldBalance <
-      transactionAmount
-    ) {
-      throw new Error(
-        `Insufficient balance in ${account.name}.`
-      );
-    }
-
-    account.balance =
-      oldBalance -
-      transactionAmount;
-  }
-
-  await account.save();
-
-  return account;
-};
-
-const reverseAccountBalance = async (
-  accountId,
-  userId,
-  amount,
-  type
-) => {
-  const account =
-    await getAccount(
-      accountId,
-      userId
-    );
-
-  if (!account) {
-    throw new Error(
-      "Original account no longer exists."
-    );
-  }
-
-  const transactionAmount =
-    Number(amount);
-
-  const currentBalance =
-    Number(
-      account.balance || 0
-    );
-
-  if (type === "Income") {
-    if (
-      currentBalance <
-      transactionAmount
-    ) {
-      throw new Error(
-        `Unable to reverse income because ${account.name} does not have enough balance.`
-      );
-    }
-
-    account.balance =
-      currentBalance -
-      transactionAmount;
-  }
-
-  if (type === "Expense") {
-    account.balance =
-      currentBalance +
-      transactionAmount;
-  }
-
-  await account.save();
-
-  return account;
-};
-
-const applyInternalTransfer =
-  async (
-    fromAccountId,
-    toAccountId,
-    userId,
-    amount
-  ) => {
-    const fromAccount =
-      await getAccount(
-        fromAccountId,
-        userId
-      );
-
-    const toAccount =
-      await getAccount(
-        toAccountId,
-        userId
-      );
-
-    if (!fromAccount) {
-      throw new Error(
-        "From account not found."
-      );
-    }
-
-    if (!toAccount) {
-      throw new Error(
-        "Destination account not found."
-      );
-    }
-
-    if (
-      fromAccount._id.toString() ===
-      toAccount._id.toString()
-    ) {
-      throw new Error(
-        "From Account and To Account cannot be the same."
-      );
-    }
-
-    const transactionAmount =
-      Number(amount);
-
-    if (
-      !Number.isFinite(
-        transactionAmount
-      ) ||
-      transactionAmount <= 0
-    ) {
-      throw new Error(
-        "Invalid transfer amount."
-      );
-    }
-
-    const fromBalance =
-      Number(
-        fromAccount.balance || 0
-      );
-
-    const toBalance =
-      Number(
-        toAccount.balance || 0
-      );
-
-    if (
-      fromBalance <
-      transactionAmount
-    ) {
-      throw new Error(
-        `Insufficient balance in ${fromAccount.name}.`
-      );
-    }
-
-    const oldFromBalance =
-      fromBalance;
-
-    const oldToBalance =
-      toBalance;
-
-    try {
-      fromAccount.balance =
-        oldFromBalance -
-        transactionAmount;
-
-      await fromAccount.save();
-
-      toAccount.balance =
-        oldToBalance +
-        transactionAmount;
-
-      await toAccount.save();
-
-      return {
-        fromAccount,
-        toAccount,
-      };
-    } catch (error) {
-      try {
-        fromAccount.balance =
-          oldFromBalance;
-
-        await fromAccount.save();
-      } catch {}
-
-      try {
-        toAccount.balance =
-          oldToBalance;
-
-        await toAccount.save();
-      } catch {}
-
-      throw error;
-    }
-  };
-
-const reverseInternalTransfer =
-  async (
-    expense,
-    userId
-  ) => {
-    const fromAccount =
-      await getAccount(
-        expense.account,
-        userId
-      );
-
-    const toAccount =
-      await getAccount(
-        expense.transferAccount,
-        userId
-      );
-
-    if (!fromAccount) {
-      throw new Error(
-        "Original source account no longer exists."
-      );
-    }
-
-    if (!toAccount) {
-      throw new Error(
-        "Original destination account no longer exists."
-      );
-    }
-
-    const amount =
-      Number(expense.amount);
-
-    if (
-      !Number.isFinite(amount) ||
-      amount <= 0
-    ) {
-      throw new Error(
-        "Invalid transfer amount."
-      );
-    }
-
-    const fromBalance =
-      Number(
-        fromAccount.balance || 0
-      );
-
-    const toBalance =
-      Number(
-        toAccount.balance || 0
-      );
-
-    if (
-      toBalance < amount
-    ) {
-      throw new Error(
-        `Unable to reverse transfer because ${toAccount.name} does not have enough balance.`
-      );
-    }
-
-    const oldFromBalance =
-      fromBalance;
-
-    const oldToBalance =
-      toBalance;
-
-    try {
-      fromAccount.balance =
-        oldFromBalance + amount;
-
-      await fromAccount.save();
-
-      toAccount.balance =
-        oldToBalance - amount;
-
-      await toAccount.save();
-    } catch (error) {
-      try {
-        fromAccount.balance =
-          oldFromBalance;
-
-        await fromAccount.save();
-      } catch {}
-
-      try {
-        toAccount.balance =
-          oldToBalance;
-
-        await toAccount.save();
-      } catch {}
-
-      throw error;
-    }
-  };
-
-const getTransferMode = (
-  expense
-) => {
-  if (
-    expense.transferMode ===
-    "account"
-  ) {
-    return "account";
-  }
-
-  if (
-    expense.transferMode ===
-    "person"
-  ) {
-    return "person";
-  }
-
-  if (expense.transferAccount) {
-    return "account";
-  }
-
-  return "person";
-};
-
-const applyTransfer = async (
-  fromAccountId,
-  transferMode,
-  destinationAccountId,
-  userId,
-  amount
-) => {
-  if (
-    transferMode === "account"
-  ) {
-    return applyInternalTransfer(
-      fromAccountId,
-      destinationAccountId,
-      userId,
-      amount
-    );
-  }
-
-  return updateAccountBalance(
-    fromAccountId,
-    userId,
-    amount,
-    "Expense"
-  );
-};
-
-const reverseTransfer = async (
-  expense,
-  userId
-) => {
-  const transferMode =
-    getTransferMode(expense);
-
-  if (
-    transferMode === "account"
-  ) {
-    return reverseInternalTransfer(
-      expense,
-      userId
-    );
-  }
-
-  return reverseAccountBalance(
-    expense.account,
-    userId,
-    expense.amount,
-    "Expense"
-  );
-};
-
-const applyTransaction = async (
-  type,
-  account,
-  transferMode,
-  transferAccount,
-  amount,
-  userId
-) => {
-  if (
-    type === "Transfer"
-  ) {
-    return applyTransfer(
-      account,
-      transferMode,
-      transferAccount,
-      userId,
-      amount
-    );
-  }
-
-  return updateAccountBalance(
-    account,
-    userId,
-    amount,
-    type
-  );
-};
-
-const reverseTransaction = async (
-  expense,
-  userId
-) => {
-  if (
-    expense.type ===
-    "Transfer"
-  ) {
-    return reverseTransfer(
-      expense,
-      userId
-    );
-  }
-
-  return reverseAccountBalance(
-    expense.account,
-    userId,
-    expense.amount,
-    expense.type
-  );
-};
-
-exports.addExpense = async (
-  req,
-  res
-) => {
+const {
+  cleanCategory,
+  getAccount,
+  recalculateBudget,
+  getTransferMode,
+  applyTransaction,
+  reverseTransaction,
+  createTransaction,
+  updateTransaction,
+  deleteTransaction,
+} = require("../services/transactionService");
+
+// =========================================================
+// ADD TRANSACTION
+// =========================================================
+
+exports.addExpense = async (req, res) => {
   try {
     const {
       title,
@@ -626,11 +33,7 @@ exports.addExpense = async (
       transferMode,
     } = req.body;
 
-    if (
-      !amount ||
-      !type ||
-      !account
-    ) {
+    if (!amount || !type || !account) {
       return res.status(400).json({
         success: false,
         message:
@@ -638,94 +41,74 @@ exports.addExpense = async (
       });
     }
 
-    if (
-      ![
-        "Income",
-        "Expense",
-        "Transfer",
-      ].includes(type)
-    ) {
+    if (!["Income", "Expense", "Transfer"].includes(type)) {
       return res.status(400).json({
         success: false,
-        message:
-          "Invalid transaction type.",
+        message: "Invalid transaction type.",
       });
     }
 
-    const transactionAmount =
-      Number(amount);
+    const transactionAmount = Number(amount);
 
     if (
-      !Number.isFinite(
-        transactionAmount
-      ) ||
+      !Number.isFinite(transactionAmount) ||
       transactionAmount <= 0
     ) {
       return res.status(400).json({
         success: false,
-        message:
-          "Please enter a valid amount.",
+        message: "Please enter a valid amount.",
       });
     }
 
     if (
       type !== "Transfer" &&
-      (!title ||
-        !String(title).trim())
+      (!title || !String(title).trim())
     ) {
       return res.status(400).json({
         success: false,
-        message:
-          "Please enter a transaction title.",
+        message: "Please enter a transaction title.",
       });
     }
 
     if (
       type !== "Transfer" &&
-      (!category ||
-        !String(category).trim())
+      (!category || !String(category).trim())
     ) {
       return res.status(400).json({
         success: false,
-        message:
-          "Please enter a category.",
+        message: "Please enter a category.",
       });
     }
 
-    const selectedAccount =
-      await getAccount(
-        account,
-        req.user.id
-      );
+    const selectedAccount = await getAccount(
+      account,
+      req.user.id
+    );
 
     if (!selectedAccount) {
       return res.status(404).json({
         success: false,
-        message:
-          "Selected account not found.",
+        message: "Selected account not found.",
       });
     }
 
     let finalTransferMode = null;
-    let finalTransferAccount =
-      null;
+    let finalTransferAccount = null;
     let finalToAccount = "";
 
-    if (
-      type === "Transfer"
-    ) {
+    // =====================================================
+    // TRANSFER VALIDATION
+    // =====================================================
+
+    if (type === "Transfer") {
       finalTransferMode =
         transferMode === "account"
           ? "account"
           : "person";
 
-      if (
-        finalTransferMode ===
-        "account"
-      ) {
+      if (finalTransferMode === "account") {
         const destinationId =
-          transferAccount ||
-          toAccount;
+          transferAccount || toAccount;
 
         if (!destinationId) {
           return res.status(400).json({
@@ -764,8 +147,7 @@ exports.addExpense = async (
           finalTransferAccount.name;
       } else {
         finalToAccount =
-          typeof toAccount ===
-          "string"
+          typeof toAccount === "string"
             ? toAccount.trim()
             : "";
 
@@ -777,10 +159,7 @@ exports.addExpense = async (
           });
         }
 
-        if (
-          finalToAccount.length >
-          100
-        ) {
+        if (finalToAccount.length > 100) {
           return res.status(400).json({
             success: false,
             message:
@@ -788,126 +167,29 @@ exports.addExpense = async (
           });
         }
       }
-
-      if (
-        Number(
-          selectedAccount.balance ||
-            0
-        ) <
-        transactionAmount
-      ) {
-        return res.status(400).json({
-          success: false,
-          message:
-            `Insufficient balance in ${selectedAccount.name}.`,
-        });
-      }
     }
 
-    if (
-      type === "Expense" &&
-      Number(
-        selectedAccount.balance ||
-          0
-      ) <
-        transactionAmount
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          `Insufficient balance in ${selectedAccount.name}.`,
-      });
-    }
+    // =====================================================
+    // CREATE TRANSACTION THROUGH SERVICE
+    // =====================================================
 
     const expense =
-      await Expense.create({
-        user: req.user.id,
-
-        title:
-          type === "Transfer"
-            ? ""
-            : String(title).trim(),
-
-        amount:
-          transactionAmount,
-
-        category:
-          type === "Transfer"
-            ? "Transfer"
-            : cleanCategory(category),
-
+      await createTransaction({
+        userId: req.user.id,
+        title,
+        amount: transactionAmount,
+        category,
         type,
-
-        date:
-          date || Date.now(),
-
-        notes:
-          notes
-            ? String(notes).trim()
-            : "",
-
+        date,
+        notes,
         account,
-
-        toAccount:
-          type === "Transfer"
-            ? finalToAccount
-            : "",
-
+        toAccount: finalToAccount,
         transferAccount:
-          type === "Transfer" &&
-          finalTransferMode ===
-            "account"
+          finalTransferAccount
             ? finalTransferAccount._id
             : null,
-
-        transferMode:
-          type === "Transfer"
-            ? finalTransferMode
-            : null,
+        transferMode: finalTransferMode,
       });
-
-    try {
-      await applyTransaction(
-        type,
-        account,
-        finalTransferMode,
-        finalTransferAccount
-          ? finalTransferAccount._id
-          : null,
-        transactionAmount,
-        req.user.id
-      );
-    } catch (accountError) {
-      await expense.deleteOne();
-
-      return res.status(400).json({
-        success: false,
-        message:
-          accountError.message,
-      });
-    }
-
-    if (
-      type === "Expense"
-    ) {
-      await recalculateBudget(
-        req.user.id,
-        expense.date
-      );
-    }
-
-    const populatedExpense =
-      await Expense.findById(
-        expense._id
-      )
-        .populate(
-          "account",
-          "name type balance"
-        )
-        .populate(
-          "transferAccount",
-          "name type balance"
-        );
 
     return res.status(201).json({
       success: true,
@@ -915,8 +197,7 @@ exports.addExpense = async (
         type === "Transfer"
           ? "Transfer Added Successfully"
           : "Transaction Added Successfully",
-      expense:
-        populatedExpense,
+      expense,
     });
   } catch (error) {
     console.error(
@@ -924,17 +205,18 @@ exports.addExpense = async (
       error
     );
 
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-exports.getExpenses = async (
-  req,
-  res
-) => {
+// =========================================================
+// GET ALL TRANSACTIONS
+// =========================================================
+
+exports.getExpenses = async (req, res) => {
   try {
     const expenses =
       await Expense.find({
@@ -971,6 +253,10 @@ exports.getExpenses = async (
   }
 };
 
+// =========================================================
+// GET TRANSACTION BY ID
+// =========================================================
+
 exports.getExpenseById = async (
   req,
   res
@@ -992,8 +278,7 @@ exports.getExpenseById = async (
     if (!expense) {
       return res.status(404).json({
         success: false,
-        message:
-          "Transaction not found",
+        message: "Transaction not found",
       });
     }
 
@@ -1003,8 +288,7 @@ exports.getExpenseById = async (
     ) {
       return res.status(401).json({
         success: false,
-        message:
-          "Not Authorized",
+        message: "Not Authorized",
       });
     }
 
@@ -1025,6 +309,10 @@ exports.getExpenseById = async (
   }
 };
 
+// =========================================================
+// UPDATE TRANSACTION
+// =========================================================
+
 exports.updateExpense = async (
   req,
   res
@@ -1038,8 +326,7 @@ exports.updateExpense = async (
     if (!expense) {
       return res.status(404).json({
         success: false,
-        message:
-          "Transaction not found",
+        message: "Transaction not found",
       });
     }
 
@@ -1049,417 +336,29 @@ exports.updateExpense = async (
     ) {
       return res.status(401).json({
         success: false,
-        message:
-          "Not Authorized",
+        message: "Not Authorized",
       });
     }
 
-    const oldAmount =
-      Number(expense.amount);
-
-    const oldType =
-      expense.type;
-
-    const oldAccountId =
-      expense.account
-        ? expense.account.toString()
-        : null;
-
-    const oldTransferAccountId =
-      expense.transferAccount
-        ? expense.transferAccount.toString()
-        : null;
-
-    const oldTransferMode =
-      getTransferMode(expense);
-
-    const oldToAccount =
-      expense.toAccount || "";
-
-    const oldDate =
-      expense.date;
-
-    const newType =
-      req.body.type !== undefined
-        ? req.body.type
-        : oldType;
-
-    if (
-      ![
-        "Income",
-        "Expense",
-        "Transfer",
-      ].includes(newType)
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Invalid transaction type.",
-      });
-    }
-
-    const newAmount =
-      req.body.amount !== undefined
-        ? Number(req.body.amount)
-        : oldAmount;
-
-    if (
-      !Number.isFinite(
-        newAmount
-      ) ||
-      newAmount <= 0
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Please enter a valid amount.",
-      });
-    }
-
-    const newAccountId =
-      req.body.account !==
-      undefined
-        ? req.body.account
-        : oldAccountId;
-
-    if (!newAccountId) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Please select an account.",
-      });
-    }
-
-    const newAccount =
-      await getAccount(
-        newAccountId,
-        req.user.id
-      );
-
-    if (!newAccount) {
-      return res.status(404).json({
-        success: false,
-        message:
-          "Selected account not found.",
-      });
-    }
-
-    let newTransferMode = null;
-    let newTransferAccount =
-      null;
-    let newToAccount = "";
-
-    if (
-      newType === "Transfer"
-    ) {
-      newTransferMode =
-        req.body.transferMode ===
-        "account"
-          ? "account"
-          : req.body.transferMode ===
-            "person"
-          ? "person"
-          : oldTransferMode;
-
-      if (
-        newTransferMode !==
-          "account" &&
-        newTransferMode !==
-          "person"
-      ) {
-        newTransferMode =
-          "person";
-      }
-
-      if (
-        newTransferMode ===
-        "account"
-      ) {
-        const destinationId =
-          req.body.transferAccount !==
-          undefined
-            ? req.body.transferAccount
-            : req.body.toAccount !==
-              undefined
-            ? req.body.toAccount
-            : oldTransferAccountId;
-
-        if (!destinationId) {
-          return res.status(400).json({
-            success: false,
-            message:
-              "Please select the destination account.",
-          });
-        }
-
-        newTransferAccount =
-          await getAccount(
-            destinationId,
-            req.user.id
-          );
-
-        if (!newTransferAccount) {
-          return res.status(404).json({
-            success: false,
-            message:
-              "Destination account not found.",
-          });
-        }
-
-        if (
-          newTransferAccount._id.toString() ===
-          newAccount._id.toString()
-        ) {
-          return res.status(400).json({
-            success: false,
-            message:
-              "From Account and To Account cannot be the same.",
-          });
-        }
-
-        newToAccount =
-          newTransferAccount.name;
-      } else {
-        newToAccount =
-          req.body.toAccount !==
-          undefined
-            ? String(
-                req.body.toAccount
-              ).trim()
-            : oldToAccount;
-
-        if (!newToAccount) {
-          return res.status(400).json({
-            success: false,
-            message:
-              "Please enter the person's name.",
-          });
-        }
-
-        if (
-          newToAccount.length >
-          100
-        ) {
-          return res.status(400).json({
-            success: false,
-            message:
-              "Person name is too long.",
-          });
-        }
-      }
-    }
-
-    const newTitle =
-      req.body.title !==
-      undefined
-        ? String(
-            req.body.title
-          ).trim()
-        : expense.title;
-
-    const newCategory =
-      req.body.category !==
-      undefined
-        ? cleanCategory(
-            req.body.category
-          )
-        : cleanCategory(
-            expense.category
-          );
-
-    const newDate =
-      req.body.date !==
-      undefined
-        ? req.body.date
-        : expense.date;
-
-    const newNotes =
-      req.body.notes !==
-      undefined
-        ? String(
-            req.body.notes
-          ).trim()
-        : expense.notes;
-
-    if (
-      newType !== "Transfer" &&
-      !newTitle
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Please enter a transaction title.",
-      });
-    }
-
-    if (
-      newType !== "Transfer" &&
-      !newCategory
-    ) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "Please enter a category.",
-      });
-    }
-
-    try {
-      await reverseTransaction(
-        expense,
-        req.user.id
-      );
-    } catch (reverseError) {
-      return res.status(400).json({
-        success: false,
-        message:
-          reverseError.message,
-      });
-    }
-
-    try {
-      await applyTransaction(
-        newType,
-        newAccountId,
-        newTransferMode,
-        newTransferAccount
-          ? newTransferAccount._id
-          : null,
-        newAmount,
-        req.user.id
-      );
-    } catch (accountError) {
-      try {
-        await applyTransaction(
-          oldType,
-          oldAccountId,
-          oldTransferMode,
-          oldTransferAccountId,
-          oldAmount,
-          req.user.id
-        );
-      } catch (rollbackError) {
-        console.error(
-          "Transaction rollback error:",
-          rollbackError
-        );
-      }
-
-      return res.status(400).json({
-        success: false,
-        message:
-          accountError.message,
-      });
-    }
-
-    expense.title =
-      newType === "Transfer"
-        ? ""
-        : newTitle;
-
-    expense.amount =
-      newAmount;
-
-    expense.category =
-      newType === "Transfer"
-        ? "Transfer"
-        : newCategory;
-
-    expense.type =
-      newType;
-
-    expense.date =
-      newDate;
-
-    expense.notes =
-      newNotes;
-
-    expense.account =
-      newAccountId;
-
-    expense.toAccount =
-      newType === "Transfer"
-        ? newToAccount
-        : "";
-
-    expense.transferMode =
-      newType === "Transfer"
-        ? newTransferMode
-        : null;
-
-    expense.transferAccount =
-      newType === "Transfer" &&
-      newTransferMode ===
-        "account"
-        ? newTransferAccount._id
-        : null;
-
-    try {
-      await expense.save();
-    } catch (saveError) {
-      try {
-        await reverseTransaction(
-          expense,
-          req.user.id
-        );
-      } catch {}
-
-      try {
-        await applyTransaction(
-          oldType,
-          oldAccountId,
-          oldTransferMode,
-          oldTransferAccountId,
-          oldAmount,
-          req.user.id
-        );
-      } catch {}
-
-      return res.status(500).json({
-        success: false,
-        message:
-          saveError.message,
-      });
-    }
-
-    if (
-      oldType === "Expense"
-    ) {
-      await recalculateBudget(
-        req.user.id,
-        oldDate
-      );
-    }
-
-    if (
-      newType === "Expense"
-    ) {
-      await recalculateBudget(
-        req.user.id,
-        newDate
-      );
-    }
+    // =====================================================
+    // UPDATE THROUGH TRANSACTION SERVICE
+    // =====================================================
 
     const updatedExpense =
-      await Expense.findById(
-        expense._id
-      )
-        .populate(
-          "account",
-          "name type balance"
-        )
-        .populate(
-          "transferAccount",
-          "name type balance"
-        );
+      await updateTransaction(
+        expense,
+        req.body,
+        req.user.id
+      );
 
     return res.status(200).json({
       success: true,
       message:
-        newType === "Transfer"
+        updatedExpense.type ===
+        "Transfer"
           ? "Transfer Updated Successfully"
           : "Transaction Updated Successfully",
-      expense:
-        updatedExpense,
+      expense: updatedExpense,
     });
   } catch (error) {
     console.error(
@@ -1467,12 +366,16 @@ exports.updateExpense = async (
       error
     );
 
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
   }
 };
+
+// =========================================================
+// DELETE TRANSACTION
+// =========================================================
 
 exports.deleteExpense = async (
   req,
@@ -1487,8 +390,7 @@ exports.deleteExpense = async (
     if (!expense) {
       return res.status(404).json({
         success: false,
-        message:
-          "Transaction not found",
+        message: "Transaction not found",
       });
     }
 
@@ -1498,37 +400,17 @@ exports.deleteExpense = async (
     ) {
       return res.status(401).json({
         success: false,
-        message:
-          "Not Authorized",
+        message: "Not Authorized",
       });
     }
 
-    const expenseDate =
-      expense.date;
+    const transactionType =
+      expense.type;
 
-    try {
-      await reverseTransaction(
-        expense,
-        req.user.id
-      );
-    } catch (reverseError) {
-      return res.status(400).json({
-        success: false,
-        message:
-          reverseError.message,
-      });
-    }
-
-    await expense.deleteOne();
-
-    if (
-      expense.type === "Expense"
-    ) {
-      await recalculateBudget(
-        req.user.id,
-        expenseDate
-      );
-    }
+    await deleteTransaction(
+      expense,
+      req.user.id
+    );
 
     return res.status(200).json({
       success: true,
@@ -1541,12 +423,16 @@ exports.deleteExpense = async (
       error
     );
 
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
       message: error.message,
     });
   }
 };
+
+// =========================================================
+// GET SUMMARY
+// =========================================================
 
 exports.getSummary = async (
   req,
@@ -1563,25 +449,19 @@ exports.getSummary = async (
     let transfers = 0;
 
     expenses.forEach((item) => {
-      if (
-        item.type === "Income"
-      ) {
+      if (item.type === "Income") {
         income += Number(
           item.amount || 0
         );
       }
 
-      if (
-        item.type === "Expense"
-      ) {
+      if (item.type === "Expense") {
         expense += Number(
           item.amount || 0
         );
       }
 
-      if (
-        item.type === "Transfer"
-      ) {
+      if (item.type === "Transfer") {
         transfers += Number(
           item.amount || 0
         );
@@ -1595,8 +475,7 @@ exports.getSummary = async (
       income > 0
         ? Number(
             (
-              (balance /
-                income) *
+              (balance / income) *
               100
             ).toFixed(1)
           )
@@ -1613,24 +492,20 @@ exports.getSummary = async (
         month: currentMonth,
       });
 
-    const budgetSummary =
-      budget
-        ? {
-            totalBudget:
-              budget.totalBudget ||
-              0,
-            totalSpent:
-              budget.totalSpent ||
-              0,
-            remainingBudget:
-              budget.remainingBudget ||
-              0,
-          }
-        : {
-            totalBudget: 0,
-            totalSpent: 0,
-            remainingBudget: 0,
-          };
+    const budgetSummary = budget
+      ? {
+          totalBudget:
+            budget.totalBudget || 0,
+          totalSpent:
+            budget.totalSpent || 0,
+          remainingBudget:
+            budget.remainingBudget || 0,
+        }
+      : {
+          totalBudget: 0,
+          totalSpent: 0,
+          remainingBudget: 0,
+        };
 
     const accounts =
       await Account.find({

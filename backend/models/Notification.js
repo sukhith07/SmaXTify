@@ -66,6 +66,30 @@ const notificationSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+
+    actionType: {
+      type: String,
+      enum: [
+        "none",
+        "admin-promotion",
+      ],
+      default: "none",
+    },
+
+    actionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    },
+
+    actionStatus: {
+      type: String,
+      enum: [
+        "pending",
+        "approved",
+        "rejected",
+      ],
+      default: "pending",
+    },
   },
   {
     timestamps: true,
@@ -87,6 +111,11 @@ notificationSchema.index(
     sparse: true,
   }
 );
+
+notificationSchema.index({
+  actionType: 1,
+  actionId: 1,
+});
 
 module.exports = mongoose.model(
   "Notification",

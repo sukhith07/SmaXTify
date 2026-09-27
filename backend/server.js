@@ -22,6 +22,10 @@ app.use(cors());
 
 app.use(express.json());
 
+// ===============================
+// ROUTES
+// ===============================
+
 const authRoutes =
   require("./routes/authRoutes");
 
@@ -57,6 +61,15 @@ const accountRoutes =
 
 const settingsRoutes =
   require("./routes/settingsRoutes");
+
+// Admin routes
+const adminRoutes =
+  require("./routes/adminRoutes");
+
+
+// ===============================
+// API ROUTES
+// ===============================
 
 app.use(
   "/api/auth",
@@ -118,11 +131,26 @@ app.use(
   settingsRoutes
 );
 
+app.use(
+  "/api/admin",
+  adminRoutes
+);
+
+
+// ===============================
+// ROOT ROUTE
+// ===============================
+
 app.get("/", (req, res) => {
   res.send(
     "🚀 SmaXTify Backend Running Successfully"
   );
 });
+
+
+// ===============================
+// 404 HANDLER
+// ===============================
 
 app.use((req, res) => {
   res.status(404).json({
@@ -130,6 +158,11 @@ app.use((req, res) => {
     message: "Route Not Found",
   });
 });
+
+
+// ===============================
+// START SERVER
+// ===============================
 
 const PORT =
   process.env.PORT || 5000;

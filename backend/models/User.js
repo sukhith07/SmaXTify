@@ -27,6 +27,20 @@ const userSchema = new mongoose.Schema({
     default: "local",
   },
 
+  // ============================
+  // USER ROLE
+  // ============================
+
+  role: {
+    type: String,
+    enum: [
+      "user",
+      "admin",
+      "superadmin",
+    ],
+    default: "user",
+  },
+
   googleId: {
     type: String,
     default: null,
@@ -36,6 +50,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+
+  // ============================
+  // PASSWORD RESET
+  // ============================
 
   resetOTP: {
     type: String,
@@ -47,14 +65,59 @@ const userSchema = new mongoose.Schema({
     default: null,
   },
 
+  // ============================
+  // USER SETTINGS
+  // ============================
+
   settings: {
+
+    // ----------------------------
+    // Appearance
+    // ----------------------------
+
     theme: {
       type: String,
-      enum: ["light", "dark", "system"],
+      enum: [
+        "light",
+        "dark",
+        "system",
+      ],
       default: "light",
     },
 
+    appearance: {
+
+      accentColor: {
+        type: String,
+        enum: [
+          "blue",
+          "purple",
+          "green",
+          "orange",
+          "rose",
+          "cyan",
+        ],
+        default: "blue",
+      },
+
+      animations: {
+        type: Boolean,
+        default: true,
+      },
+
+      compactMode: {
+        type: Boolean,
+        default: false,
+      },
+
+    },
+
+    // ----------------------------
+    // Notifications
+    // ----------------------------
+
     notifications: {
+
       push: {
         type: Boolean,
         default: true,
@@ -65,16 +128,16 @@ const userSchema = new mongoose.Schema({
         default: true,
       },
 
-      billReminders: {
-        type: Boolean,
-        default: true,
-      },
-
       financialAlerts: {
         type: Boolean,
         default: true,
       },
+
     },
+
+    // ----------------------------
+    // Currency & Region
+    // ----------------------------
 
     currency: {
       type: String,
@@ -87,7 +150,35 @@ const userSchema = new mongoose.Schema({
       default: "Asia/Kolkata",
       trim: true,
     },
+
+    // ----------------------------
+    // SmaXTify AI
+    // ----------------------------
+
+    ai: {
+
+      enabled: {
+        type: Boolean,
+        default: true,
+      },
+
+      confirmActions: {
+        type: Boolean,
+        default: true,
+      },
+
+      saveChatHistory: {
+        type: Boolean,
+        default: true,
+      },
+
+    },
+
   },
+
+  // ============================
+  // CREATED AT
+  // ============================
 
   createdAt: {
     type: Date,
@@ -96,4 +187,7 @@ const userSchema = new mongoose.Schema({
 
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model(
+  "User",
+  userSchema
+);
