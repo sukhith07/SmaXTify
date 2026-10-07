@@ -1,6 +1,7 @@
 const Expense = require("../models/Expense");
 const Budget = require("../models/Budget");
 const Account = require("../models/Account");
+const ReceiptScan = require("../models/ReceiptScan");
 
 const {
   cleanCategory,
@@ -13,10 +14,6 @@ const {
   updateTransaction,
   deleteTransaction,
 } = require("../services/transactionService");
-
-// =========================================================
-// ADD TRANSACTION
-// =========================================================
 
 exports.addExpense = async (req, res) => {
   try {
@@ -36,8 +33,7 @@ exports.addExpense = async (req, res) => {
     if (!amount || !type || !account) {
       return res.status(400).json({
         success: false,
-        message:
-          "Please fill all required fields and select an account.",
+        message: "Please fill all required fields and select an account.",
       });
     }
 
@@ -50,40 +46,28 @@ exports.addExpense = async (req, res) => {
 
     const transactionAmount = Number(amount);
 
-    if (
-      !Number.isFinite(transactionAmount) ||
-      transactionAmount <= 0
-    ) {
+    if (!Number.isFinite(transactionAmount) || transactionAmount <= 0) {
       return res.status(400).json({
         success: false,
         message: "Please enter a valid amount.",
       });
     }
 
-    if (
-      type !== "Transfer" &&
-      (!title || !String(title).trim())
-    ) {
+    if (type !== "Transfer" && (!title || !String(title).trim())) {
       return res.status(400).json({
         success: false,
         message: "Please enter a transaction title.",
       });
     }
 
-    if (
-      type !== "Transfer" &&
-      (!category || !String(category).trim())
-    ) {
+    if (type !== "Transfer" && (!category || !String(category).trim())) {
       return res.status(400).json({
         success: false,
         message: "Please enter a category.",
       });
     }
 
-    const selectedAccount = await getAccount(
-      account,
-      req.user.id
-    );
+    const selectedAccount = await getAccount(account, req.user.id);
 
     if (!selectedAccount) {
       return res.status(404).json({
@@ -96,39 +80,29 @@ exports.addExpense = async (req, res) => {
     let finalTransferAccount = null;
     let finalToAccount = "";
 
-    // =====================================================
-    // TRANSFER VALIDATION
-    // =====================================================
-
     if (type === "Transfer") {
       finalTransferMode =
-        transferMode === "account"
-          ? "account"
-          : "person";
+        transferMode === "account" ? "account" : "person";
 
       if (finalTransferMode === "account") {
-        const destinationId =
-          transferAccount || toAccount;
+        const destinationId = transferAccount || toAccount;
 
         if (!destinationId) {
           return res.status(400).json({
             success: false,
-            message:
-              "Please select the destination account.",
+            message: "Please select the destination account.",
           });
         }
 
-        finalTransferAccount =
-          await getAccount(
-            destinationId,
-            req.user.id
-          );
+        finalTransferAccount = await getAccount(
+          destinationId,
+          req.user.id
+        );
 
         if (!finalTransferAccount) {
           return res.status(404).json({
             success: false,
-            message:
-              "Destination account not found.",
+            message: "Destination account not found.",
           });
         }
 
@@ -138,58 +112,46 @@ exports.addExpense = async (req, res) => {
         ) {
           return res.status(400).json({
             success: false,
-            message:
-              "From Account and To Account cannot be the same.",
+            message: "From Account and To Account cannot be the same.",
           });
         }
 
-        finalToAccount =
-          finalTransferAccount.name;
+        finalToAccount = finalTransferAccount.name;
       } else {
         finalToAccount =
-          typeof toAccount === "string"
-            ? toAccount.trim()
-            : "";
+          typeof toAccount === "string" ? toAccount.trim() : "";
 
         if (!finalToAccount) {
           return res.status(400).json({
             success: false,
-            message:
-              "Please enter the person's name.",
+            message: "Please enter the person's name.",
           });
         }
 
         if (finalToAccount.length > 100) {
           return res.status(400).json({
             success: false,
-            message:
-              "Person name is too long.",
+            message: "Person name is too long.",
           });
         }
       }
     }
 
-    // =====================================================
-    // CREATE TRANSACTION THROUGH SERVICE
-    // =====================================================
-
-    const expense =
-      await createTransaction({
-        userId: req.user.id,
-        title,
-        amount: transactionAmount,
-        category,
-        type,
-        date,
-        notes,
-        account,
-        toAccount: finalToAccount,
-        transferAccount:
-          finalTransferAccount
-            ? finalTransferAccount._id
-            : null,
-        transferMode: finalTransferMode,
-      });
+    const expense = await createTransaction({
+      userId: req.user.id,
+      title,
+      amount: transactionAmount,
+      category,
+      type,
+      date,
+      notes,
+      account,
+      toAccount: finalToAccount,
+      transferAccount: finalTransferAccount
+        ? finalTransferAccount._id
+        : null,
+      transferMode: finalTransferMode,
+    });
 
     return res.status(201).json({
       success: true,
@@ -200,10 +162,7 @@ exports.addExpense = async (req, res) => {
       expense,
     });
   } catch (error) {
-    console.error(
-      "Add Expense Error:",
-      error
-    );
+    console.error("Add Expense Error:", error);
 
     return res.status(400).json({
       success: false,
@@ -212,28 +171,17 @@ exports.addExpense = async (req, res) => {
   }
 };
 
-// =========================================================
-// GET ALL TRANSACTIONS
-// =========================================================
-
 exports.getExpenses = async (req, res) => {
   try {
-    const expenses =
-      await Expense.find({
-        user: req.user.id,
-      })
-        .populate(
-          "account",
-          "name type balance"
-        )
-        .populate(
-          "transferAccount",
-          "name type balance"
-        )
-        .sort({
-          date: -1,
-          createdAt: -1,
-        });
+    const expenses = await Expense.find({
+      user: req.user.id,
+    })
+      .populate("account", "name type balance")
+      .populate("transferAccount", "name type balance")
+      .sort({
+        date: -1,
+        createdAt: -1,
+      });
 
     return res.status(200).json({
       success: true,
@@ -241,10 +189,7 @@ exports.getExpenses = async (req, res) => {
       expenses,
     });
   } catch (error) {
-    console.error(
-      "Get Expenses Error:",
-      error
-    );
+    console.error("Get Expenses Error:", error);
 
     return res.status(500).json({
       success: false,
@@ -253,27 +198,11 @@ exports.getExpenses = async (req, res) => {
   }
 };
 
-// =========================================================
-// GET TRANSACTION BY ID
-// =========================================================
-
-exports.getExpenseById = async (
-  req,
-  res
-) => {
+exports.getExpenseById = async (req, res) => {
   try {
-    const expense =
-      await Expense.findById(
-        req.params.id
-      )
-        .populate(
-          "account",
-          "name type balance"
-        )
-        .populate(
-          "transferAccount",
-          "name type balance"
-        );
+    const expense = await Expense.findById(req.params.id)
+      .populate("account", "name type balance")
+      .populate("transferAccount", "name type balance");
 
     if (!expense) {
       return res.status(404).json({
@@ -282,10 +211,7 @@ exports.getExpenseById = async (
       });
     }
 
-    if (
-      expense.user.toString() !==
-      req.user.id
-    ) {
+    if (expense.user.toString() !== req.user.id) {
       return res.status(401).json({
         success: false,
         message: "Not Authorized",
@@ -297,10 +223,7 @@ exports.getExpenseById = async (
       expense,
     });
   } catch (error) {
-    console.error(
-      "Get Expense Error:",
-      error
-    );
+    console.error("Get Expense Error:", error);
 
     return res.status(500).json({
       success: false,
@@ -309,19 +232,9 @@ exports.getExpenseById = async (
   }
 };
 
-// =========================================================
-// UPDATE TRANSACTION
-// =========================================================
-
-exports.updateExpense = async (
-  req,
-  res
-) => {
+exports.updateExpense = async (req, res) => {
   try {
-    const expense =
-      await Expense.findById(
-        req.params.id
-      );
+    const expense = await Expense.findById(req.params.id);
 
     if (!expense) {
       return res.status(404).json({
@@ -330,41 +243,41 @@ exports.updateExpense = async (
       });
     }
 
-    if (
-      expense.user.toString() !==
-      req.user.id
-    ) {
+    if (expense.user.toString() !== req.user.id) {
       return res.status(401).json({
         success: false,
         message: "Not Authorized",
       });
     }
 
-    // =====================================================
-    // UPDATE THROUGH TRANSACTION SERVICE
-    // =====================================================
+    const updatedExpense = await updateTransaction(
+      expense,
+      req.body,
+      req.user.id
+    );
 
-    const updatedExpense =
-      await updateTransaction(
-        expense,
-        req.body,
-        req.user.id
-      );
+    await ReceiptScan.updateMany(
+      {
+        user: req.user.id,
+        transaction: updatedExpense._id,
+      },
+      {
+        $set: {
+          total: Number(updatedExpense.amount),
+        },
+      }
+    );
 
     return res.status(200).json({
       success: true,
       message:
-        updatedExpense.type ===
-        "Transfer"
+        updatedExpense.type === "Transfer"
           ? "Transfer Updated Successfully"
           : "Transaction Updated Successfully",
       expense: updatedExpense,
     });
   } catch (error) {
-    console.error(
-      "Update Expense Error:",
-      error
-    );
+    console.error("Update Expense Error:", error);
 
     return res.status(400).json({
       success: false,
@@ -373,19 +286,9 @@ exports.updateExpense = async (
   }
 };
 
-// =========================================================
-// DELETE TRANSACTION
-// =========================================================
-
-exports.deleteExpense = async (
-  req,
-  res
-) => {
+exports.deleteExpense = async (req, res) => {
   try {
-    const expense =
-      await Expense.findById(
-        req.params.id
-      );
+    const expense = await Expense.findById(req.params.id);
 
     if (!expense) {
       return res.status(404).json({
@@ -394,34 +297,27 @@ exports.deleteExpense = async (
       });
     }
 
-    if (
-      expense.user.toString() !==
-      req.user.id
-    ) {
+    if (expense.user.toString() !== req.user.id) {
       return res.status(401).json({
         success: false,
         message: "Not Authorized",
       });
     }
 
-    const transactionType =
-      expense.type;
+    await deleteTransaction(expense, req.user.id);
 
-    await deleteTransaction(
-      expense,
-      req.user.id
-    );
+    await ReceiptScan.deleteMany({
+      user: req.user.id,
+      transaction: expense._id,
+    });
 
     return res.status(200).json({
       success: true,
       message:
-        "Transaction Deleted Successfully",
+        "Transaction and linked AI Scan receipt deleted successfully.",
     });
   } catch (error) {
-    console.error(
-      "Delete Expense Error:",
-      error
-    );
+    console.error("Delete Expense Error:", error);
 
     return res.status(400).json({
       success: false,
@@ -430,19 +326,11 @@ exports.deleteExpense = async (
   }
 };
 
-// =========================================================
-// GET SUMMARY
-// =========================================================
-
-exports.getSummary = async (
-  req,
-  res
-) => {
+exports.getSummary = async (req, res) => {
   try {
-    const expenses =
-      await Expense.find({
-        user: req.user.id,
-      });
+    const expenses = await Expense.find({
+      user: req.user.id,
+    });
 
     let income = 0;
     let expense = 0;
@@ -450,56 +338,37 @@ exports.getSummary = async (
 
     expenses.forEach((item) => {
       if (item.type === "Income") {
-        income += Number(
-          item.amount || 0
-        );
+        income += Number(item.amount || 0);
       }
 
       if (item.type === "Expense") {
-        expense += Number(
-          item.amount || 0
-        );
+        expense += Number(item.amount || 0);
       }
 
       if (item.type === "Transfer") {
-        transfers += Number(
-          item.amount || 0
-        );
+        transfers += Number(item.amount || 0);
       }
     });
 
-    const balance =
-      income - expense;
+    const balance = income - expense;
 
     const savings =
       income > 0
-        ? Number(
-            (
-              (balance / income) *
-              100
-            ).toFixed(1)
-          )
+        ? Number(((balance / income) * 100).toFixed(1))
         : 0;
 
-    const currentMonth =
-      new Date()
-        .toISOString()
-        .slice(0, 7);
+    const currentMonth = new Date().toISOString().slice(0, 7);
 
-    const budget =
-      await Budget.findOne({
-        user: req.user.id,
-        month: currentMonth,
-      });
+    const budget = await Budget.findOne({
+      user: req.user.id,
+      month: currentMonth,
+    });
 
     const budgetSummary = budget
       ? {
-          totalBudget:
-            budget.totalBudget || 0,
-          totalSpent:
-            budget.totalSpent || 0,
-          remainingBudget:
-            budget.remainingBudget || 0,
+          totalBudget: budget.totalBudget || 0,
+          totalSpent: budget.totalSpent || 0,
+          remainingBudget: budget.remainingBudget || 0,
         }
       : {
           totalBudget: 0,
@@ -507,20 +376,14 @@ exports.getSummary = async (
           remainingBudget: 0,
         };
 
-    const accounts =
-      await Account.find({
-        user: req.user.id,
-      });
+    const accounts = await Account.find({
+      user: req.user.id,
+    });
 
-    const totalAccountBalance =
-      accounts.reduce(
-        (sum, account) =>
-          sum +
-          Number(
-            account.balance || 0
-          ),
-        0
-      );
+    const totalAccountBalance = accounts.reduce(
+      (sum, account) => sum + Number(account.balance || 0),
+      0
+    );
 
     return res.status(200).json({
       success: true,
@@ -530,19 +393,14 @@ exports.getSummary = async (
         expense,
         transfers,
         savings,
-        totalTransactions:
-          expenses.length,
+        totalTransactions: expenses.length,
         totalAccountBalance,
-        accountCount:
-          accounts.length,
+        accountCount: accounts.length,
         ...budgetSummary,
       },
     });
   } catch (error) {
-    console.error(
-      "Summary Error:",
-      error
-    );
+    console.error("Summary Error:", error);
 
     return res.status(500).json({
       success: false,

@@ -104,15 +104,12 @@ const createPromotionResponseNotification =
     }
 
     /*
-     * Every promotion request gets its own notification.
+     * Each promotion request gets its own response
+     * notification key.
      *
-     * Example:
-     * Request A -> admin-promotion-response-REQUEST_A-USER
-     * Request B -> admin-promotion-response-REQUEST_B-USER
-     * Request C -> admin-promotion-response-REQUEST_C-USER
-     *
-     * This prevents multiple requests from being treated
-     * as the same notification.
+     * Request A -> unique notification
+     * Request B -> unique notification
+     * Request C -> unique notification
      */
     const reminderKey =
       `admin-promotion-response-${String(
@@ -472,9 +469,7 @@ exports.getAdminDashboard = async (
           userId,
           {
             totalIncome: 0,
-
             totalExpenses: 0,
-
             totalTransfers: 0,
           }
         );
@@ -525,9 +520,7 @@ exports.getAdminDashboard = async (
               )
             ) || {
               totalIncome: 0,
-
               totalExpenses: 0,
-
               totalTransfers: 0,
             };
 
@@ -549,7 +542,6 @@ exports.getAdminDashboard = async (
                   account.balance ||
                     0
                 ),
-
               0
             );
 
@@ -617,7 +609,6 @@ exports.getAdminDashboard = async (
             account.balance ||
               0
           ),
-
         0
       );
 
@@ -832,7 +823,6 @@ exports.getAdminAccounts =
                     account.balance ||
                       0
                   ),
-
                 0
               );
 
@@ -887,7 +877,6 @@ exports.getAdminAccounts =
               account.balance ||
                 0
             ),
-
           0
         );
 
@@ -1342,6 +1331,10 @@ exports.createPromotionRequest =
       const targetUserId =
         req.body?.targetUserId;
 
+      // -----------------------------------------------------
+      // ONLY ADMIN CAN CREATE REQUESTS
+      // -----------------------------------------------------
+
       if (
         requesterRole !==
         "admin"
@@ -1353,6 +1346,10 @@ exports.createPromotionRequest =
             "Only Admin can create a promotion request. Super Admin can promote users directly.",
         });
       }
+
+      // -----------------------------------------------------
+      // VALIDATE TARGET USER ID
+      // -----------------------------------------------------
 
       if (
         !targetUserId ||
@@ -1367,6 +1364,10 @@ exports.createPromotionRequest =
             "Valid target user ID is required",
         });
       }
+
+      // -----------------------------------------------------
+      // PREVENT SELF PROMOTION
+      // -----------------------------------------------------
 
       if (
         String(
@@ -1383,6 +1384,10 @@ exports.createPromotionRequest =
             "You cannot request promotion for yourself",
         });
       }
+
+      // -----------------------------------------------------
+      // LOAD REQUESTER + TARGET USER
+      // -----------------------------------------------------
 
       const [
         requester,
@@ -1419,6 +1424,10 @@ exports.createPromotionRequest =
         });
       }
 
+      // -----------------------------------------------------
+      // PROTECT SUPER ADMIN
+      // -----------------------------------------------------
+
       if (
         targetUser.role ===
         "superadmin"
@@ -1430,6 +1439,10 @@ exports.createPromotionRequest =
             "The Super Admin account cannot be promoted",
         });
       }
+
+      // -----------------------------------------------------
+      // USER MUST NOT ALREADY BE ADMIN
+      // -----------------------------------------------------
 
       if (
         targetUser.role ===
@@ -1443,35 +1456,68 @@ exports.createPromotionRequest =
         });
       }
 
+      /*
+       * =====================================================
+       * IMPORTANT:
+       *
+       * Multiple promotion requests are allowed at the
+       * same time.
+       *
+       * The duplicate check is ONLY for the target user.
+       *
+       * Therefore:
+       *
+       * Chetan   -> pending  ✅
+       * Shalini  -> pending  ✅
+       * Abhilash -> pending  ✅
+       *
+       * But:
+       *
+       * Chetan again -> blocked while Chetan is pending ❌
+       *
+       * We intentionally DO NOT check only requester/status.
+       * Otherwise one Admin could have only one pending
+       * request at a time.
+       * =====================================================
+       */
+
       const existingRequest =
         await AdminPromotionRequest.findOne({
           targetUser:
-            targetUserId,
+            targetUser._id,
 
           status:
             "pending",
-        });
+        }).lean();
 
       if (existingRequest) {
         return res.status(409).json({
           success: false,
 
           message:
-            "A promotion request for this user is already pending",
+            `A promotion request for ${targetUser.name || "this user"} is already pending`,
         });
       }
+
+      // -----------------------------------------------------
+      // CREATE A NEW REQUEST
+      // -----------------------------------------------------
 
       const promotionRequest =
         await AdminPromotionRequest.create({
           requester:
-            requesterId,
+            requester._id,
 
           targetUser:
-            targetUserId,
+            targetUser._id,
 
           status:
             "pending",
         });
+
+      // -----------------------------------------------------
+      // AUDIT LOG
+      // -----------------------------------------------------
 
       await AuditLog.create({
         actor:
@@ -1519,9 +1565,9 @@ exports.createPromotionRequest =
           ) || "",
       });
 
-      // ===================================================
-      // NOTIFY ALL SUPER ADMINS
-      // ===================================================
+      // -----------------------------------------------------
+      // FIND ALL SUPER ADMINS
+      // -----------------------------------------------------
 
       const superAdmins =
         await User.find({
@@ -1532,6 +1578,11 @@ exports.createPromotionRequest =
             "_id name email"
           )
           .lean();
+
+      // -----------------------------------------------------
+      // CREATE A SEPARATE NOTIFICATION FOR EACH
+      // SUPER ADMIN
+      // -----------------------------------------------------
 
       if (
         superAdmins.length >
@@ -1562,6 +1613,13 @@ exports.createPromotionRequest =
               sourceId:
                 promotionRequest._id,
 
+              /*
+               * IMPORTANT:
+               *
+               * Request ID is part of reminderKey.
+               * Therefore every request gets a separate
+               * notification.
+               */
               reminderKey:
                 `admin-promotion-request-${promotionRequest._id}-${superAdmin._id}`,
 
@@ -1587,11 +1645,15 @@ exports.createPromotionRequest =
         );
       }
 
+      // -----------------------------------------------------
+      // RESPONSE
+      // -----------------------------------------------------
+
       return res.status(201).json({
         success: true,
 
         message:
-          "Admin promotion request sent to Super Admin",
+          `Admin promotion request sent for ${targetUser.name || "this user"}`,
 
         request: {
           _id:
@@ -1623,6 +1685,23 @@ exports.createPromotionRequest =
         "Create Promotion Request Error:",
         error
       );
+
+      /*
+       * If multiple requests are submitted almost
+       * simultaneously and MongoDB reports a duplicate
+       * key error, return a clean conflict response.
+       */
+      if (
+        error?.code ===
+        11000
+      ) {
+        return res.status(409).json({
+          success: false,
+
+          message:
+            "A promotion request for this user is already pending",
+        });
+      }
 
       return res.status(500).json({
         success: false,
@@ -1794,9 +1873,9 @@ exports.approvePromotionRequest =
         });
       }
 
-      // ===================================================
-      // USER IS ALREADY ADMIN
-      // ===================================================
+      // -----------------------------------------------------
+      // TARGET ALREADY ADMIN
+      // -----------------------------------------------------
 
       if (
         targetUser.role ===
@@ -1900,9 +1979,9 @@ exports.approvePromotionRequest =
         });
       }
 
-      // ===================================================
+      // -----------------------------------------------------
       // PROMOTE USER
-      // ===================================================
+      // -----------------------------------------------------
 
       const previousRole =
         targetUser.role ||
@@ -1924,9 +2003,10 @@ exports.approvePromotionRequest =
 
       await promotionRequest.save();
 
-      // ===================================================
-      // UPDATE SUPER ADMIN NOTIFICATIONS ONLY
-      // ===================================================
+      // -----------------------------------------------------
+      // UPDATE ONLY THIS REQUEST'S SUPER ADMIN
+      // NOTIFICATION
+      // -----------------------------------------------------
 
       await Notification.updateMany(
         {
@@ -1996,9 +2076,9 @@ exports.approvePromotionRequest =
           ) || "",
       });
 
-      // ===================================================
+      // -----------------------------------------------------
       // NOTIFY REQUESTING ADMIN
-      // ===================================================
+      // -----------------------------------------------------
 
       await createPromotionResponseNotification(
         {
@@ -2144,9 +2224,9 @@ exports.rejectPromotionRequest =
 
       await promotionRequest.save();
 
-      // ===================================================
-      // UPDATE SUPER ADMIN NOTIFICATIONS ONLY
-      // ===================================================
+      // -----------------------------------------------------
+      // UPDATE ONLY THIS REQUEST'S NOTIFICATION
+      // -----------------------------------------------------
 
       await Notification.updateMany(
         {
@@ -2215,9 +2295,9 @@ exports.rejectPromotionRequest =
           ) || "",
       });
 
-      // ===================================================
+      // -----------------------------------------------------
       // NOTIFY REQUESTING ADMIN
-      // ===================================================
+      // -----------------------------------------------------
 
       await createPromotionResponseNotification(
         {

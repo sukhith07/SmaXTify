@@ -9,6 +9,9 @@ import {
   FaChevronRight,
   FaUserGear,
   FaCrown,
+  FaShieldHalved,
+  FaXmark,
+  FaCheck,
 } from "react-icons/fa6";
 
 import {
@@ -57,6 +60,12 @@ function AdminUsers() {
 
   const [currentUser, setCurrentUser] =
     useState(null);
+
+  const [confirmation, setConfirmation] =
+    useState(null);
+
+  const [promotionSubmitting, setPromotionSubmitting] =
+    useState(false);
 
   // =========================================================
   // LOAD CURRENT USER
@@ -282,61 +291,10 @@ function AdminUsers() {
   ]);
 
   // =========================================================
-  // REQUEST ADMIN PROMOTION
+  // OPEN ROLE CONFIRMATION
   // =========================================================
 
-  const createPromotionRequest =
-    async (user) => {
-      const token =
-        localStorage.getItem(
-          "token"
-        );
-
-      if (!token) {
-        throw new Error(
-          "Authentication token not found."
-        );
-      }
-
-      const response =
-        await fetch(
-          `${API_URL}/admin/promotion-requests`,
-          {
-            method: "POST",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-
-              Authorization:
-                `Bearer ${token}`,
-            },
-
-            body: JSON.stringify({
-              targetUserId:
-                user._id,
-            }),
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data?.message ||
-            "Failed to create promotion request."
-        );
-      }
-
-      return data;
-    };
-
-  // =========================================================
-  // ROLE CHANGE / PROMOTION REQUEST
-  // =========================================================
-
-  const handleRoleChange = async (
+  const openRoleConfirmation = (
     user
   ) => {
     if (!user?._id) {
@@ -346,9 +304,9 @@ function AdminUsers() {
     const targetRole =
       user.role || "user";
 
-    // =======================================================
+    // -------------------------------------------------------
     // SUPER ADMIN PROTECTION
-    // =======================================================
+    // -------------------------------------------------------
 
     if (
       targetRole ===
@@ -363,9 +321,9 @@ function AdminUsers() {
       return;
     }
 
-    // =======================================================
+    // -------------------------------------------------------
     // SELF PROTECTION
-    // =======================================================
+    // -------------------------------------------------------
 
     const currentUserId =
       currentUser?._id ||
@@ -408,34 +366,153 @@ function AdminUsers() {
       return;
     }
 
-    // =======================================================
-    // ADMIN REQUEST FLOW
-    // =======================================================
+    // -------------------------------------------------------
+    // OPEN CUSTOM MODAL
+    // -------------------------------------------------------
 
-    const currentUserRole =
-      currentUser?.role ||
-      "user";
+    const isPromotion =
+      targetRole === "user";
 
-    if (
-      currentUserRole ===
-        "admin" &&
-      targetRole ===
-        "user"
-    ) {
-      const confirmed =
-        window.confirm(
-          `Are you sure you want to request Admin approval to promote this user?\n\nUser: ${
-            user.name ||
-            "Unnamed User"
-          }\nEmail: ${
-            user.email ||
-            "—"
-          }\n\nThe user will remain a regular User until the Super Admin approves the request.`
-        );
+    setConfirmation({
+      user,
+      action:
+        isPromotion
+          ? "promote"
+          : "demote",
+    });
 
-      if (!confirmed) {
+    setError("");
+    setSuccessMessage("");
+  };
+
+  // =========================================================
+  // CLOSE CONFIRMATION
+  // =========================================================
+
+  const closeConfirmation = () => {
+    if (promotionSubmitting) {
+      return;
+    }
+
+    if (updatingUserId) {
+      return;
+    }
+
+    setConfirmation(null);
+  };
+
+  // =========================================================
+  // CONFIRM ROLE CHANGE
+  // =========================================================
+
+  const handleConfirmRoleChange =
+    async () => {
+      if (!confirmation?.user?._id) {
         return;
       }
+
+      const user =
+        confirmation.user;
+
+      const isPromotion =
+        confirmation.action ===
+        "promote";
+
+      const newRole =
+        isPromotion
+          ? "admin"
+          : "user";
+
+      // -------------------------------------------------------
+      // ADMIN PROMOTION REQUEST
+      // -------------------------------------------------------
+
+      if (
+        isPromotion &&
+        currentUser?.role ===
+          "admin"
+      ) {
+        try {
+          setPromotionSubmitting(
+            true
+          );
+
+          setError("");
+          setSuccessMessage("");
+
+          const token =
+            localStorage.getItem(
+              "token"
+            );
+
+          if (!token) {
+            throw new Error(
+              "Authentication token not found."
+            );
+          }
+
+          const response =
+            await fetch(
+              `${API_URL}/admin/promotion-requests`,
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json",
+
+                  Authorization:
+                    `Bearer ${token}`,
+                },
+
+                body: JSON.stringify({
+                  targetUserId:
+                    user._id,
+                }),
+              }
+            );
+
+          const data =
+            await response.json();
+
+          if (!response.ok) {
+            throw new Error(
+              data?.message ||
+                "Failed to send Admin promotion request."
+            );
+          }
+
+          setConfirmation(null);
+
+          setSuccessMessage(
+            data?.message ||
+              `Admin promotion request sent for ${
+                user.name ||
+                "this user"
+              }.`
+          );
+        } catch (err) {
+          console.error(
+            "Promotion Request Error:",
+            err
+          );
+
+          setError(
+            err?.message ||
+              "Failed to send Admin promotion request."
+          );
+        } finally {
+          setPromotionSubmitting(
+            false
+          );
+        }
+
+        return;
+      }
+
+      // -------------------------------------------------------
+      // DIRECT ROLE UPDATE
+      // -------------------------------------------------------
 
       try {
         setUpdatingUserId(
@@ -445,155 +522,93 @@ function AdminUsers() {
         setError("");
         setSuccessMessage("");
 
-        await createPromotionRequest(
-          user
+        const token =
+          localStorage.getItem(
+            "token"
+          );
+
+        if (!token) {
+          throw new Error(
+            "Authentication token not found."
+          );
+        }
+
+        const response =
+          await fetch(
+            `${API_URL}/admin/users/${user._id}/role`,
+            {
+              method: "PUT",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                Authorization:
+                  `Bearer ${token}`,
+              },
+
+              body: JSON.stringify({
+                role: newRole,
+              }),
+            }
+          );
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data?.message ||
+              "Failed to update user role."
+          );
+        }
+
+        setUsers(
+          (
+            previousUsers
+          ) =>
+            previousUsers.map(
+              (
+                currentUserItem
+              ) =>
+                currentUserItem._id ===
+                user._id
+                  ? {
+                      ...currentUserItem,
+                      role:
+                        newRole,
+                    }
+                  : currentUserItem
+            )
         );
 
+        setConfirmation(null);
+
         setSuccessMessage(
-          `Promotion request for ${
-            user.name ||
-            "this user"
-          } has been sent to the Super Admin.`
+          `${user.name || "User"} is now ${
+            newRole === "admin"
+              ? "an administrator"
+              : "a regular user"
+          }.`
         );
+
+        await loadCurrentUser();
       } catch (err) {
         console.error(
-          "Promotion Request Error:",
+          "Admin Role Update Error:",
           err
         );
 
         setError(
           err?.message ||
-            "Failed to create promotion request."
+            "Failed to update user role."
         );
       } finally {
         setUpdatingUserId(
           null
         );
       }
-
-      return;
-    }
-
-    // =======================================================
-    // SUPER ADMIN DIRECT PROMOTION
-    // OR ADMIN DEMOTION
-    // =======================================================
-
-    const newRole =
-      targetRole === "admin"
-        ? "user"
-        : "admin";
-
-    const actionText =
-      newRole === "admin"
-        ? "make this user an administrator"
-        : "remove administrator access from this user";
-
-    const confirmed =
-      window.confirm(
-        `Are you sure you want to ${actionText}?\n\nUser: ${
-          user.name ||
-          "Unnamed User"
-        }\nEmail: ${
-          user.email ||
-          "—"
-        }`
-      );
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      setUpdatingUserId(
-        user._id
-      );
-
-      setError("");
-      setSuccessMessage("");
-
-      const token =
-        localStorage.getItem(
-          "token"
-        );
-
-      if (!token) {
-        throw new Error(
-          "Authentication token not found."
-        );
-      }
-
-      const response =
-        await fetch(
-          `${API_URL}/admin/users/${user._id}/role`,
-          {
-            method: "PUT",
-
-            headers: {
-              "Content-Type":
-                "application/json",
-
-              Authorization:
-                `Bearer ${token}`,
-            },
-
-            body: JSON.stringify({
-              role: newRole,
-            }),
-          }
-        );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data?.message ||
-            "Failed to update user role."
-        );
-      }
-
-      setUsers(
-        (previousUsers) =>
-          previousUsers.map(
-            (currentUser) =>
-              currentUser._id ===
-              user._id
-                ? {
-                    ...currentUser,
-
-                    role:
-                      newRole,
-                  }
-                : currentUser
-          )
-      );
-
-      setSuccessMessage(
-        `${user.name || "User"} is now ${
-          newRole === "admin"
-            ? "an administrator"
-            : "a regular user"
-        }.`
-      );
-
-      await loadCurrentUser();
-    } catch (err) {
-      console.error(
-        "Admin Role Update Error:",
-        err
-      );
-
-      setError(
-        err?.message ||
-          "Failed to update user role."
-      );
-    } finally {
-      setUpdatingUserId(
-        null
-      );
-    }
-  };
+    };
 
   // =========================================================
   // SEARCH
@@ -615,15 +630,16 @@ function AdminUsers() {
     );
   };
 
-  const handleClearSearch = () => {
-    setSearchInput("");
-    setSearch("");
+  const handleClearSearch =
+    () => {
+      setSearchInput("");
+      setSearch("");
 
-    fetchUsers(
-      1,
-      ""
-    );
-  };
+      fetchUsers(
+        1,
+        ""
+      );
+    };
 
   // =========================================================
   // REFRESH
@@ -739,6 +755,10 @@ function AdminUsers() {
     return "User";
   };
 
+  const isCurrentUserSuperAdmin =
+    currentUser?.role ===
+    "superadmin";
+
   // =========================================================
   // LOADING
   // =========================================================
@@ -746,13 +766,17 @@ function AdminUsers() {
   if (loading) {
     return (
       <div className="admin-page">
+
         <div className="admin-page-loading">
+
           <div className="admin-loading-spinner" />
 
           <span>
             Loading users...
           </span>
+
         </div>
+
       </div>
     );
   }
@@ -769,7 +793,9 @@ function AdminUsers() {
       ===================================================== */}
 
       <div className="admin-page-header">
+
         <div>
+
           <span className="admin-page-eyebrow">
             USER MANAGEMENT
           </span>
@@ -781,6 +807,7 @@ function AdminUsers() {
           <p>
             View and manage SmaXTify users.
           </p>
+
         </div>
 
         <button
@@ -797,6 +824,7 @@ function AdminUsers() {
         >
           <FaRotate />
         </button>
+
       </div>
 
       {/* =====================================================
@@ -805,9 +833,23 @@ function AdminUsers() {
 
       {successMessage && (
         <div className="admin-users-success">
+
+          <FaCheck />
+
           <span>
             {successMessage}
           </span>
+
+          <button
+            type="button"
+            onClick={() =>
+              setSuccessMessage("")
+            }
+            aria-label="Dismiss message"
+          >
+            <FaXmark />
+          </button>
+
         </div>
       )}
 
@@ -832,6 +874,9 @@ function AdminUsers() {
             ) ||
             error.includes(
               "administrator"
+            ) ||
+            error.includes(
+              "promotion"
             )
               ? "Role Update Failed"
               : "Unable to load users"}
@@ -856,6 +901,7 @@ function AdminUsers() {
 
             Try Again
           </button>
+
         </div>
       ) : (
         <div className="admin-users-card">
@@ -867,6 +913,7 @@ function AdminUsers() {
           <div className="admin-users-toolbar">
 
             <div className="admin-users-count">
+
               <strong>
                 {
                   pagination.totalUsers
@@ -879,6 +926,7 @@ function AdminUsers() {
                   ? "User"
                   : "Users"}
               </span>
+
             </div>
 
             <div className="admin-users-actions">
@@ -889,6 +937,7 @@ function AdminUsers() {
                   handleSearch
                 }
               >
+
                 <FaMagnifyingGlass />
 
                 <input
@@ -920,6 +969,7 @@ function AdminUsers() {
                     ×
                   </button>
                 )}
+
               </form>
 
               <button
@@ -942,6 +992,7 @@ function AdminUsers() {
               </button>
 
             </div>
+
           </div>
 
           {/* =================================================
@@ -953,7 +1004,9 @@ function AdminUsers() {
             <table className="admin-table">
 
               <thead>
+
                 <tr>
+
                   <th>
                     User
                   </th>
@@ -973,7 +1026,9 @@ function AdminUsers() {
                   <th>
                     Joined
                   </th>
+
                 </tr>
+
               </thead>
 
               <tbody>
@@ -981,10 +1036,12 @@ function AdminUsers() {
                 {users.length ===
                 0 ? (
                   <tr>
+
                     <td
                       colSpan="5"
                       className="admin-empty-state"
                     >
+
                       <FaUsers />
 
                       <strong>
@@ -996,7 +1053,9 @@ function AdminUsers() {
                           ? "Try a different search."
                           : "There are no registered users yet."}
                       </span>
+
                     </td>
+
                   </tr>
                 ) : (
                   users.map(
@@ -1045,10 +1104,6 @@ function AdminUsers() {
                             targetUserEmail
                         );
 
-                      const isCurrentAdmin =
-                        currentUser?.role ===
-                        "admin";
-
                       return (
                         <tr
                           key={
@@ -1059,6 +1114,7 @@ function AdminUsers() {
                           {/* USER */}
 
                           <td>
+
                             <div className="admin-table-user">
 
                               <div className="admin-table-avatar">
@@ -1085,6 +1141,7 @@ function AdminUsers() {
                               </strong>
 
                             </div>
+
                           </td>
 
                           {/* EMAIL */}
@@ -1097,17 +1154,22 @@ function AdminUsers() {
                           {/* PROVIDER */}
 
                           <td>
+
                             <span className="admin-provider-badge">
+
                               {user.provider ===
                               "google"
                                 ? "Google"
                                 : "Local"}
+
                             </span>
+
                           </td>
 
                           {/* ROLE */}
 
                           <td>
+
                             <div className="admin-role-control">
 
                               <span
@@ -1134,8 +1196,6 @@ function AdminUsers() {
 
                               </span>
 
-                              {/* SUPER ADMIN */}
-
                               {isSuperAdmin ? (
                                 <span
                                   className="admin-role-protected"
@@ -1153,9 +1213,13 @@ function AdminUsers() {
                               ) : (
                                 <button
                                   type="button"
-                                  className="admin-role-edit-button"
+                                  className={`admin-role-action-button ${
+                                    isAdmin
+                                      ? "demote"
+                                      : "promote"
+                                  }`}
                                   onClick={() =>
-                                    handleRoleChange(
+                                    openRoleConfirmation(
                                       user
                                     )
                                   }
@@ -1163,33 +1227,42 @@ function AdminUsers() {
                                     isUpdating
                                   }
                                   title={
-                                    isCurrentAdmin &&
-                                    !isAdmin
-                                      ? "Request Admin approval"
-                                      : isAdmin
+                                    isAdmin
                                       ? "Remove admin access"
-                                      : "Make administrator"
+                                      : "Promote to administrator"
                                   }
                                   aria-label={
-                                    isCurrentAdmin &&
-                                    !isAdmin
-                                      ? "Request Admin approval"
-                                      : isAdmin
+                                    isAdmin
                                       ? "Remove admin access"
-                                      : "Make administrator"
+                                      : "Promote to administrator"
                                   }
                                 >
 
                                   {isUpdating ? (
                                     <span className="admin-role-spinner" />
+                                  ) : isAdmin ? (
+                                    <>
+                                      <FaUserGear />
+
+                                      <span>
+                                        Demote
+                                      </span>
+                                    </>
                                   ) : (
-                                    <FaUserGear />
+                                    <>
+                                      <FaShieldHalved />
+
+                                      <span>
+                                        Promote
+                                      </span>
+                                    </>
                                   )}
 
                                 </button>
                               )}
 
                             </div>
+
                           </td>
 
                           {/* JOINED */}
@@ -1207,7 +1280,9 @@ function AdminUsers() {
                 )}
 
               </tbody>
+
             </table>
+
           </div>
 
           {/* =================================================
@@ -1229,6 +1304,7 @@ function AdminUsers() {
                 {pagination.totalPages ||
                   1}
               </strong>
+
             </span>
 
             <div className="admin-pagination-buttons">
@@ -1262,6 +1338,190 @@ function AdminUsers() {
               </button>
 
             </div>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* =====================================================
+          PROFESSIONAL ROLE CONFIRMATION MODAL
+      ===================================================== */}
+
+      {confirmation && (
+        <div
+          className="admin-role-modal-overlay"
+          onClick={
+            closeConfirmation
+          }
+        >
+
+          <div
+            className="admin-role-modal"
+            onClick={(event) =>
+              event.stopPropagation()
+            }
+          >
+
+            <button
+              type="button"
+              className="admin-role-modal-close"
+              onClick={
+                closeConfirmation
+              }
+              disabled={
+                promotionSubmitting ||
+                Boolean(
+                  updatingUserId
+                )
+              }
+              aria-label="Close confirmation"
+            >
+              <FaXmark />
+            </button>
+
+            <div
+              className={`admin-role-modal-icon ${
+                confirmation.action ===
+                "promote"
+                  ? "promote"
+                  : "demote"
+              }`}
+            >
+              {confirmation.action ===
+              "promote" ? (
+                <FaShieldHalved />
+              ) : (
+                <FaUserGear />
+              )}
+            </div>
+
+            <div className="admin-role-modal-content">
+
+              <span className="admin-role-modal-eyebrow">
+                ADMINISTRATOR ACCESS
+              </span>
+
+              <h2>
+                {confirmation.action ===
+                "promote"
+                  ? isCurrentUserSuperAdmin
+                    ? "Promote User to Admin?"
+                    : "Request Admin Promotion?"
+                  : "Remove Admin Access?"}
+              </h2>
+
+              <p>
+                {confirmation.action ===
+                "promote"
+                  ? isCurrentUserSuperAdmin
+                    ? "This user will receive administrator access to the SmaXTify Control Center."
+                    : "This will send a promotion request to the Super Admin for approval. The user will remain a regular user until approved."
+                  : "This user will lose administrator access and return to the regular User role."}
+              </p>
+
+              <div className="admin-role-modal-user">
+
+                <div className="admin-role-modal-avatar">
+
+                  {confirmation.user?.photo ? (
+                    <img
+                      src={
+                        confirmation.user.photo
+                      }
+                      alt=""
+                    />
+                  ) : (
+                    getInitial(
+                      confirmation.user?.name
+                    )
+                  )}
+
+                </div>
+
+                <div>
+
+                  <strong>
+                    {confirmation.user?.name ||
+                      "Unnamed User"}
+                  </strong>
+
+                  <span>
+                    {confirmation.user?.email ||
+                      "—"}
+                  </span>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <div className="admin-role-modal-actions">
+
+              <button
+                type="button"
+                className="admin-role-modal-cancel"
+                onClick={
+                  closeConfirmation
+                }
+                disabled={
+                  promotionSubmitting ||
+                  Boolean(
+                    updatingUserId
+                  )
+                }
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className={`admin-role-modal-confirm ${
+                  confirmation.action ===
+                  "promote"
+                    ? "promote"
+                    : "demote"
+                }`}
+                onClick={
+                  handleConfirmRoleChange
+                }
+                disabled={
+                  promotionSubmitting ||
+                  Boolean(
+                    updatingUserId
+                  )
+                }
+              >
+
+                {promotionSubmitting ||
+                updatingUserId ? (
+                  <>
+                    <span className="admin-role-modal-spinner" />
+
+                    Processing...
+                  </>
+                ) : confirmation.action ===
+                  "promote" ? (
+                  <>
+                    <FaCheck />
+
+                    {isCurrentUserSuperAdmin
+                      ? "Promote User"
+                      : "Send Request"}
+                  </>
+                ) : (
+                  <>
+                    <FaUserGear />
+
+                    Remove Admin
+                  </>
+                )}
+
+              </button>
+
+            </div>
+
           </div>
 
         </div>

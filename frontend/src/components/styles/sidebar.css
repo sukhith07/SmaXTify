@@ -592,7 +592,34 @@
     flex-shrink: 0;
 }
 
+.sidebar-profile-avatar-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    padding: 0;
+    border: 0;
+    border-radius: 13px;
+    background: transparent;
+    cursor: pointer;
+}
 
+.sidebar-profile-avatar-button:hover {
+    filter: brightness(1.12);
+}
+
+.sidebar-profile-avatar-button:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 3px;
+}
+
+.user-avatar-image {
+    display: block;
+    object-fit: cover;
+    overflow: hidden;
+}
 /* =========================================================
    ADMIN PANEL
    ========================================================= */

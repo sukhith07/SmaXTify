@@ -1,8 +1,5 @@
-// =========================================================
-// SMAxTIFY AI CONTROLLER
-// =========================================================
-
 const { GoogleGenAI } = require("@google/genai");
+const cloudinary = require("cloudinary").v2;
 
 const Chat = require("../models/Chat");
 const Expense = require("../models/Expense");
@@ -17,22 +14,17 @@ const {
   actionNeedsConfirmation,
 } = require("../services/ai/aiActionValidator");
 
-
-// =========================================================
-// GEMINI CONFIGURATION
-// =========================================================
-
-const GEMINI_API_KEY =
-  process.env.GEMINI_API_KEY?.trim();
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim();
 
 const ai = new GoogleGenAI({
   apiKey: GEMINI_API_KEY,
 });
 
-
-// =========================================================
-// GEMINI MODELS
-// =========================================================
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const GEMINI_MODELS = [
   "gemini-3.5-flash",
@@ -51,268 +43,192 @@ const RETRYABLE_STATUS_CODES = [
   504,
 ];
 
+const getErrorStatus = (error) =>
+  error?.status ||
+  error?.error?.code ||
+  error?.code ||
+  error?.response?.status ||
+  error?.response?.data?.error?.code ||
+  null;
 
-// =========================================================
-// ERROR HELPERS
-// =========================================================
+const getNumericErrorStatus = (error) => {
+  const status = Number(getErrorStatus(error));
 
-const getErrorStatus = (
-  error
-) => {
-  return (
-    error?.status ||
-    error?.error?.code ||
-    error?.code ||
-    error?.response?.status ||
-    error?.response?.data?.error?.code ||
-    null
-  );
+  return Number.isFinite(status) ? status : null;
 };
 
+const isRetryableError = (error) =>
+  RETRYABLE_STATUS_CODES.includes(
+    getNumericErrorStatus(error)
+  );
 
-const getNumericErrorStatus = (
-  error
-) => {
-  const status =
-    getErrorStatus(error);
+const sleep = (milliseconds) =>
+  new Promise((resolve) =>
+    setTimeout(resolve, milliseconds)
+  );
 
-  const numericStatus =
-    Number(status);
+const generateGeminiContent = async ({
+  contents,
+  config = {},
+}) => {
+  if (!GEMINI_API_KEY) {
+    const error = new Error(
+      "Gemini API key is not configured."
+    );
 
-  if (
-    Number.isFinite(
-      numericStatus
-    )
-  ) {
-    return numericStatus;
+    error.status = 503;
+    error.code = "AI_KEY_MISSING";
+
+    throw error;
   }
 
-  return null;
-};
+  let lastError = null;
 
-
-const isRetryableError = (
-  error
-) => {
-  const status =
-    getNumericErrorStatus(
-      error
-    );
-
-  return (
-    status !== null &&
-    RETRYABLE_STATUS_CODES.includes(
-      status
-    )
-  );
-};
-
-
-const sleep = (
-  milliseconds
-) => {
-  return new Promise(
-    (resolve) =>
-      setTimeout(
-        resolve,
-        milliseconds
-      )
-  );
-};
-
-
-// =========================================================
-// GEMINI GENERATION WITH RETRY + FALLBACK
-// =========================================================
-
-const generateGeminiContent =
-  async ({
-    contents,
-    config = {},
-  }) => {
-    if (!GEMINI_API_KEY) {
-      const error =
-        new Error(
-          "Gemini API key is not configured."
+  for (const model of GEMINI_MODELS) {
+    for (
+      let attempt = 0;
+      attempt <= MAX_RETRIES_PER_MODEL;
+      attempt++
+    ) {
+      try {
+        console.log(
+          `Gemini request: ${model} | attempt ${attempt + 1}`
         );
 
-      error.status = 503;
+        const response =
+          await ai.models.generateContent({
+            model,
+            contents,
+            config,
+          });
 
-      error.code =
-        "AI_KEY_MISSING";
+        console.log(`Gemini success: ${model}`);
 
-      throw error;
-    }
+        return response;
+      } catch (error) {
+        lastError = error;
 
-    let lastError = null;
+        const status =
+          getNumericErrorStatus(error);
 
-    for (
-      let modelIndex = 0;
-      modelIndex <
-      GEMINI_MODELS.length;
-      modelIndex++
-    ) {
-      const model =
-        GEMINI_MODELS[
-          modelIndex
-        ];
+        console.error(
+          `Gemini error: ${model} | status: ${status} | attempt: ${
+            attempt + 1
+          } | message: ${error?.message || error}`
+        );
 
-      for (
-        let attempt = 0;
-        attempt <=
-        MAX_RETRIES_PER_MODEL;
-        attempt++
-      ) {
-        try {
-          console.log(
-            `Gemini request: ${model} | attempt ${
-              attempt + 1
-            }`
-          );
+        if (!isRetryableError(error)) {
+          throw error;
+        }
 
-          const response =
-            await ai.models.generateContent({
-              model,
-              contents,
-              config,
-            });
+        if (
+          attempt < MAX_RETRIES_PER_MODEL
+        ) {
+          const delay =
+            1000 * Math.pow(2, attempt) +
+            Math.floor(Math.random() * 500);
 
-          console.log(
-            `Gemini success: ${model}`
-          );
-
-          return response;
-        } catch (error) {
-          lastError =
-            error;
-
-          const status =
-            getNumericErrorStatus(
-              error
-            );
-
-          console.error(
-            `Gemini error: ${model} | status: ${status} | attempt: ${
-              attempt + 1
-            } | message: ${
-              error?.message ||
-              error
-            }`
-          );
-
-          if (
-            !isRetryableError(
-              error
-            )
-          ) {
-            throw error;
-          }
-
-          if (
-            attempt <
-            MAX_RETRIES_PER_MODEL
-          ) {
-            const baseDelay =
-              1000 *
-              Math.pow(
-                2,
-                attempt
-              );
-
-            const jitter =
-              Math.floor(
-                Math.random() *
-                  500
-              );
-
-            const delay =
-              baseDelay +
-              jitter;
-
-            console.log(
-              `Gemini temporary error. Retrying ${model} in ${delay}ms...`
-            );
-
-            await sleep(
-              delay
-            );
-
-            continue;
-          }
-
-          console.warn(
-            `Gemini model ${model} unavailable after retries.`
-          );
-
-          break;
+          await sleep(delay);
         }
       }
+    }
+  }
 
-      if (
-        modelIndex <
-        GEMINI_MODELS.length - 1
-      ) {
-        console.warn(
-          `Falling back from ${model} to ${
-            GEMINI_MODELS[
-              modelIndex + 1
-            ]
-          }`
-        );
-      }
+  throw (
+    lastError ||
+    new Error("All Gemini models failed.")
+  );
+};
+
+const uploadReceiptImage = (file, userId) =>
+  new Promise((resolve, reject) => {
+    if (
+      !process.env.CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY ||
+      !process.env.CLOUDINARY_API_SECRET
+    ) {
+      const error = new Error(
+        "Cloudinary is not configured."
+      );
+
+      error.code = "CLOUDINARY_CONFIG_MISSING";
+
+      return reject(error);
     }
 
-    throw (
-      lastError ||
-      new Error(
-        "All Gemini models failed."
-      )
-    );
-  };
+    const upload =
+      cloudinary.uploader.upload_stream(
+        {
+          folder: `smaxtify/receipts/${userId}`,
+          resource_type: "image",
+        },
+        (error, result) => {
+          if (error) {
+            return reject(error);
+          }
 
+          if (
+            !result?.secure_url ||
+            !result?.public_id
+          ) {
+            return reject(
+              new Error(
+                "Cloudinary did not return image details."
+              )
+            );
+          }
 
-// =========================================================
-// SEND AI ERROR
-// =========================================================
+          resolve({
+            imageUrl: result.secure_url,
+            imagePublicId: result.public_id,
+          });
+        }
+      );
+
+    upload.end(file.buffer);
+  });
 
 const sendAIError = (
   res,
   error,
   defaultMessage
 ) => {
-  const status =
-    getNumericErrorStatus(
-      error
-    );
+  const status = getNumericErrorStatus(error);
 
   console.error(
     "Gemini Error:",
-    error?.message ||
-      error
+    error?.message || error
   );
 
   if (
-    error?.code ===
-    "AI_KEY_MISSING"
+    error?.code === "AI_KEY_MISSING"
   ) {
     return res.status(503).json({
       success: false,
       message:
         "Gemini API key is not configured.",
-      code:
-        "AI_KEY_MISSING",
+      code: "AI_KEY_MISSING",
     });
   }
 
   if (
-    status === 400
+    error?.code ===
+    "CLOUDINARY_CONFIG_MISSING"
   ) {
+    return res.status(503).json({
+      success: false,
+      message:
+        "Cloudinary is not configured. Check your Cloudinary environment variables.",
+      code: "CLOUDINARY_CONFIG_MISSING",
+    });
+  }
+
+  if (status === 400) {
     return res.status(400).json({
       success: false,
       message:
         "Invalid request sent to Gemini AI.",
-      code:
-        "AI_BAD_REQUEST",
+      code: "AI_BAD_REQUEST",
     });
   }
 
@@ -324,88 +240,57 @@ const sendAIError = (
       success: false,
       message:
         "Gemini authentication failed. Check your GEMINI_API_KEY.",
-      code:
-        "AI_AUTH_ERROR",
+      code: "AI_AUTH_ERROR",
     });
   }
 
-  if (
-    status === 429
-  ) {
+  if (status === 429) {
     return res.status(429).json({
       success: false,
       message:
         "AI request limit reached. Please try again later.",
-      code:
-        "AI_RATE_LIMIT",
+      code: "AI_RATE_LIMIT",
     });
   }
 
-  if (
-    status === 404
-  ) {
+  if (status === 404) {
     return res.status(503).json({
       success: false,
       message:
         "The configured AI model is currently unavailable.",
-      code:
-        "AI_MODEL_UNAVAILABLE",
+      code: "AI_MODEL_UNAVAILABLE",
     });
   }
 
   if (
-    status === 408 ||
-    status === 500 ||
-    status === 502 ||
-    status === 503 ||
-    status === 504
+    [408, 500, 502, 503, 504].includes(
+      status
+    )
   ) {
     return res.status(503).json({
       success: false,
       message:
         "AI service is temporarily unavailable. Please try again shortly.",
-      code:
-        "AI_UNAVAILABLE",
+      code: "AI_UNAVAILABLE",
     });
   }
 
   return res.status(500).json({
     success: false,
-    message:
-      defaultMessage,
-    code:
-      "AI_ERROR",
+    message: defaultMessage,
+    code: "AI_ERROR",
   });
 };
 
-
-// =========================================================
-// CATEGORY NORMALIZER
-// =========================================================
-
-const normalizeCategory = (
-  category
-) => {
-  if (
-    typeof category !==
-    "string"
-  ) {
+const normalizeCategory = (category) => {
+  if (typeof category !== "string") {
     return "";
   }
 
   return category
-    .replace(
-      /^["'`]+|["'`]+$/g,
-      ""
-    )
-    .replace(
-      /[.!?]+$/g,
-      ""
-    )
-    .replace(
-      /\s+/g,
-      " "
-    )
+    .replace(/^["'`]+|["'`]+$/g, "")
+    .replace(/[.!?]+$/g, "")
+    .replace(/\s+/g, " ")
     .trim()
     .split(" ")
     .filter(Boolean)
@@ -417,306 +302,188 @@ const normalizeCategory = (
     .join(" ");
 };
 
-
-// =========================================================
-// SAFE JSON PARSER
-// =========================================================
-
-const parseAIJSON = (
-  text
-) => {
-  if (
-    typeof text !==
-    "string"
-  ) {
+const parseAIJSON = (text) => {
+  if (typeof text !== "string") {
     return null;
   }
 
-  const cleaned =
-    text
-      .trim()
-      .replace(
-        /^```json\s*/i,
-        ""
-      )
-      .replace(
-        /^```\s*/i,
-        ""
-      )
-      .replace(
-        /\s*```$/i,
-        ""
-      )
-      .trim();
+  const cleaned = text
+    .trim()
+    .replace(/^```json\s*/i, "")
+    .replace(/^```\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
 
   try {
-    return JSON.parse(
-      cleaned
-    );
+    return JSON.parse(cleaned);
   } catch {
     return null;
   }
 };
 
-
-// =========================================================
-// DETERMINISTIC CHART INTENT RESOLVER
-// =========================================================
-//
-// This runs BEFORE Gemini action selection.
-//
-// It prevents Gemini from responding with:
-//
-// "I don't currently have a feature to generate graphs."
-//
-// for supported visualization requests.
-//
-// =========================================================
-
-const getDeterministicChartAction = (
-  message
-) => {
+const normalizeReceiptAmount = (value) => {
   if (
-    typeof message !==
-    "string"
+    value === null ||
+    value === undefined ||
+    value === ""
   ) {
     return null;
   }
 
-  const normalized =
-    message
-      .toLowerCase()
-      .replace(
-        /[^\w\s&/-]/g,
-        " "
-      )
-      .replace(
-        /\s+/g,
-        " "
-      )
-      .trim();
+  if (typeof value === "number") {
+    return Number.isFinite(value) &&
+      value >= 0
+      ? value
+      : null;
+  }
 
-  if (!normalized) {
+  if (typeof value !== "string") {
     return null;
   }
 
-
-  // -------------------------------------------------------
-  // INCOME VS EXPENSE
-  // -------------------------------------------------------
-
-  const incomeVsExpensePatterns = [
-    /\bincome\s*(vs|versus|and)\s*(expense|expenses)\b/,
-    /\b(income|expenses?)\s*(comparison|compare)\b/,
-    /\bcompare\s+(my\s+)?(income|expenses?)\b/,
-    /\bcompare\s+(my\s+)?income\s+and\s+(my\s+)?expenses?\b/,
-    /\bincome\s+against\s+(my\s+)?expenses?\b/,
-    /\bincome\s+expense\s+(graph|chart)\b/,
-    /\b(income|expense)\s+comparison\s+(graph|chart)\b/,
-  ];
+  const cleaned = value
+    .trim()
+    .replace(
+      /^(₹|rs\.?|inr|usd|eur|gbp)\s*/i,
+      ""
+    )
+    .replace(/[₹$€£,\s]/g, "");
 
   if (
-    incomeVsExpensePatterns.some(
-      (pattern) =>
-        pattern.test(
-          normalized
-        )
-    )
+    !cleaned ||
+    !/^\d+(\.\d+)?$/.test(cleaned)
   ) {
-    return {
-      mode: "action",
-      action:
-        "get_income_vs_expense_chart",
-      arguments: {
-        months: extractChartMonths(
-          normalized
-        ),
-      },
-    };
+    return null;
   }
 
+  const amount = Number(cleaned);
 
-  // -------------------------------------------------------
-  // CATEGORY BREAKDOWN
-  // -------------------------------------------------------
-
-  const categoryPatterns = [
-    /\bspending\s+by\s+categor(y|ies)\b/,
-    /\bexpenses?\s+by\s+categor(y|ies)\b/,
-    /\bcategory\s+breakdown\b/,
-    /\bcategory[-\s]?wise\s+expenses?\b/,
-    /\bexpense\s+categor(y|ies)\s+(graph|chart)\b/,
-    /\bspending\s+categor(y|ies)\s+(graph|chart)\b/,
-    /\bwhere\s+am\s+i\s+spending\b/,
-    /\bshow\s+my\s+spending\s+categor(y|ies)\b/,
-  ];
-
-  if (
-    categoryPatterns.some(
-      (pattern) =>
-        pattern.test(
-          normalized
-        )
-    )
-  ) {
-    return {
-      mode: "action",
-      action:
-        "get_category_breakdown",
-      arguments: {
-        limit: 10,
-      },
-    };
-  }
-
-
-  // -------------------------------------------------------
-  // MONTHLY FINANCIAL CHART
-  // -------------------------------------------------------
-
-  const monthlyFinancialPatterns = [
-    /\bmonthly\s+financial\s+(graph|chart|overview)\b/,
-    /\bmonthly\s+(income|expense|expenses?)\s+(and|vs)\s+(expense|expenses?|income)\b/,
-    /\bmonthly\s+money\s+trend\b/,
-    /\bfinancial\s+trend\b/,
-    /\bmonthly\s+financial\s+trend\b/,
-    /\bmonthly\s+financial\s+overview\b/,
-  ];
-
-  if (
-    monthlyFinancialPatterns.some(
-      (pattern) =>
-        pattern.test(
-          normalized
-        )
-    )
-  ) {
-    return {
-      mode: "action",
-      action:
-        "get_monthly_financial_chart",
-      arguments: {
-        months: extractChartMonths(
-          normalized
-        ),
-      },
-    };
-  }
-
-
-  // -------------------------------------------------------
-  // EXPENSE CHART
-  // -------------------------------------------------------
-
-  const expensePatterns = [
-    /\bexpense\s+graph\b/,
-    /\bexpenses?\s+graph\b/,
-    /\bexpense\s+chart\b/,
-    /\bexpenses?\s+chart\b/,
-    /\bexpense\s+trend\b/,
-    /\bexpenses?\s+trend\b/,
-    /\bexpenses?\s+over\s+time\b/,
-    /\bshow\s+(my\s+)?expenses?\s+graph\b/,
-    /\bshow\s+(my\s+)?expenses?\s+chart\b/,
-    /\bvisuali[sz]e\s+(my\s+)?expenses?\b/,
-    /\bmonthly\s+expense\s+(graph|chart)\b/,
-    /\bmonthly\s+expenses?\s+(graph|chart)\b/,
-  ];
-
-  if (
-    expensePatterns.some(
-      (pattern) =>
-        pattern.test(
-          normalized
-        )
-    )
-  ) {
-    return {
-      mode: "action",
-      action:
-        "get_expense_chart",
-      arguments: {
-        months: extractChartMonths(
-          normalized
-        ),
-      },
-    };
-  }
-
-
-  // -------------------------------------------------------
-  // INCOME CHART
-  // -------------------------------------------------------
-
-  const incomePatterns = [
-    /\bincome\s+graph\b/,
-    /\bincome\s+chart\b/,
-    /\bincome\s+trend\b/,
-    /\bincome\s+over\s+time\b/,
-    /\bshow\s+(my\s+)?income\s+graph\b/,
-    /\bshow\s+(my\s+)?income\s+chart\b/,
-    /\bvisuali[sz]e\s+(my\s+)?income\b/,
-    /\bdisplay\s+(my\s+)?income\s+(graph|chart)\b/,
-    /\bmonthly\s+income\s+(graph|chart)\b/,
-  ];
-
-  if (
-    incomePatterns.some(
-      (pattern) =>
-        pattern.test(
-          normalized
-        )
-    )
-  ) {
-    return {
-      mode: "action",
-      action:
-        "get_income_chart",
-      arguments: {
-        months: extractChartMonths(
-          normalized
-        ),
-      },
-    };
-  }
-
-
-  return null;
+  return Number.isFinite(amount) &&
+    amount >= 0
+    ? amount
+    : null;
 };
 
-
-// =========================================================
-// EXTRACT CHART MONTHS
-// =========================================================
-
-const extractChartMonths = (
-  message
-) => {
+const normalizeReceiptDate = (value) => {
   if (
-    typeof message !==
-    "string"
+    typeof value !== "string" ||
+    !value.trim()
   ) {
+    return null;
+  }
+
+  const date = value.trim();
+
+  const dayFirstMatch = date.match(
+    /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/
+  );
+
+  if (dayFirstMatch) {
+    const day = Number(
+      dayFirstMatch[1]
+    );
+
+    const month = Number(
+      dayFirstMatch[2]
+    );
+
+    const year = Number(
+      dayFirstMatch[3]
+    );
+
+    const parsed = new Date(
+      Date.UTC(
+        year,
+        month - 1,
+        day
+      )
+    );
+
+    if (
+      parsed.getUTCFullYear() !== year ||
+      parsed.getUTCMonth() !== month - 1 ||
+      parsed.getUTCDate() !== day
+    ) {
+      return null;
+    }
+
+    return `${year}-${String(month).padStart(
+      2,
+      "0"
+    )}-${String(day).padStart(
+      2,
+      "0"
+    )}`;
+  }
+
+  const yearFirstMatch = date.match(
+    /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/
+  );
+
+  if (yearFirstMatch) {
+    const year = Number(
+      yearFirstMatch[1]
+    );
+
+    const month = Number(
+      yearFirstMatch[2]
+    );
+
+    const day = Number(
+      yearFirstMatch[3]
+    );
+
+    const parsed = new Date(
+      Date.UTC(
+        year,
+        month - 1,
+        day
+      )
+    );
+
+    if (
+      parsed.getUTCFullYear() !== year ||
+      parsed.getUTCMonth() !== month - 1 ||
+      parsed.getUTCDate() !== day
+    ) {
+      return null;
+    }
+
+    return `${year}-${String(month).padStart(
+      2,
+      "0"
+    )}-${String(day).padStart(
+      2,
+      "0"
+    )}`;
+  }
+
+  const parsed = new Date(date);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed.toISOString().slice(0, 10);
+};
+
+const extractChartMonths = (message) => {
+  if (typeof message !== "string") {
     return 12;
   }
 
   const normalized =
     message.toLowerCase();
 
-  const match =
-    normalized.match(
-      /\b(?:last|past|previous)\s+(\d{1,2})\s+months?\b/
-    );
+  const match = normalized.match(
+    /\b(?:last|past|previous)\s+(\d{1,2})\s+months?\b/
+  );
 
   if (match) {
-    const months =
-      Number(
-        match[1]
-      );
+    const months = Number(match[1]);
 
     if (
-      Number.isInteger(
-        months
-      ) &&
+      Number.isInteger(months) &&
       months >= 1 &&
       months <= 24
     ) {
@@ -724,627 +491,444 @@ const extractChartMonths = (
     }
   }
 
-  if (
-    /\bthis\s+year\b/.test(
-      normalized
-    )
-  ) {
-    const currentMonth =
-      new Date().getMonth() + 1;
-
+  if (/\bthis\s+year\b/.test(normalized)) {
     return Math.min(
-      currentMonth,
+      new Date().getMonth() + 1,
       24
     );
-  }
-
-  if (
-    /\blast\s+year\b/.test(
-      normalized
-    )
-  ) {
-    return 12;
   }
 
   return 12;
 };
 
+const getDeterministicChartAction = (
+  message
+) => {
+  if (typeof message !== "string") {
+    return null;
+  }
 
-// =========================================================
-// GET USER AI CONTEXT
-// =========================================================
+  const normalized = message
+    .toLowerCase()
+    .replace(/[^\w\s&/-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-const getUserAIContext =
-  async (userId) => {
-    const [
-      accounts,
-      recentTransactions,
-    ] = await Promise.all([
-      Account.find({
-        user: userId,
+  if (!normalized) {
+    return null;
+  }
+
+  const months =
+    extractChartMonths(normalized);
+
+  const patterns = [
+    {
+      action:
+        "get_income_vs_expense_chart",
+
+      patterns: [
+        /\bincome\s*(vs|versus|and)\s*(expense|expenses)\b/,
+        /\b(income|expenses?)\s*(comparison|compare)\b/,
+        /\bcompare\s+(my\s+)?(income|expenses?)\b/,
+        /\bincome\s+against\s+(my\s+)?expenses?\b/,
+        /\bincome\s+expense\s+(graph|chart)\b/,
+      ],
+
+      arguments: {
+        months,
+      },
+    },
+
+    {
+      action:
+        "get_category_breakdown",
+
+      patterns: [
+        /\bspending\s+by\s+categor(y|ies)\b/,
+        /\bexpenses?\s+by\s+categor(y|ies)\b/,
+        /\bcategory\s+breakdown\b/,
+        /\bcategory[-\s]?wise\s+expenses?\b/,
+        /\bwhere\s+am\s+i\s+spending\b/,
+        /\bshow\s+my\s+spending\s+categor(y|ies)\b/,
+      ],
+
+      arguments: {
+        limit: 10,
+      },
+    },
+
+    {
+      action:
+        "get_monthly_financial_chart",
+
+      patterns: [
+        /\bmonthly\s+financial\s+(graph|chart|overview)\b/,
+        /\bmonthly\s+(income|expense|expenses?)\s+(and|vs)\s+(expense|expenses?|income)\b/,
+        /\bmonthly\s+money\s+trend\b/,
+        /\bfinancial\s+trend\b/,
+        /\bmonthly\s+financial\s+trend\b/,
+      ],
+
+      arguments: {
+        months,
+      },
+    },
+
+    {
+      action: "get_expense_chart",
+
+      patterns: [
+        /\bexpense\s+graph\b/,
+        /\bexpenses?\s+graph\b/,
+        /\bexpense\s+chart\b/,
+        /\bexpenses?\s+chart\b/,
+        /\bexpense\s+trend\b/,
+        /\bexpenses?\s+trend\b/,
+        /\bexpenses?\s+over\s+time\b/,
+        /\bvisuali[sz]e\s+(my\s+)?expenses?\b/,
+        /\bmonthly\s+expense\s+(graph|chart)\b/,
+      ],
+
+      arguments: {
+        months,
+      },
+    },
+
+    {
+      action: "get_income_chart",
+
+      patterns: [
+        /\bincome\s+graph\b/,
+        /\bincome\s+chart\b/,
+        /\bincome\s+trend\b/,
+        /\bincome\s+over\s+time\b/,
+        /\bvisuali[sz]e\s+(my\s+)?income\b/,
+        /\bmonthly\s+income\s+(graph|chart)\b/,
+      ],
+
+      arguments: {
+        months,
+      },
+    },
+  ];
+
+  for (const item of patterns) {
+    if (
+      item.patterns.some((pattern) =>
+        pattern.test(normalized)
+      )
+    ) {
+      return {
+        mode: "action",
+        action: item.action,
+        arguments: item.arguments,
+      };
+    }
+  }
+
+  return null;
+};
+
+const getUserAIContext = async (
+  userId
+) => {
+  const [
+    accounts,
+    recentTransactions,
+  ] = await Promise.all([
+    Account.find({
+      user: userId,
+    })
+      .select("_id name type balance")
+      .sort({
+        createdAt: 1,
       })
-        .select(
-          "_id name type balance"
-        )
-        .sort({
-          createdAt: 1,
-        })
-        .lean(),
+      .lean(),
 
-      Expense.find({
-        user: userId,
+    Expense.find({
+      user: userId,
+    })
+      .select(
+        "_id title amount category type date account toAccount transferAccount transferMode"
+      )
+      .populate(
+        "account",
+        "name type"
+      )
+      .populate(
+        "transferAccount",
+        "name type"
+      )
+      .sort({
+        date: -1,
+        createdAt: -1,
       })
-        .select(
-          "_id title amount category type date account toAccount transferAccount transferMode"
-        )
-        .populate(
-          "account",
-          "name type"
-        )
-        .populate(
-          "transferAccount",
-          "name type"
-        )
-        .sort({
-          date: -1,
-          createdAt: -1,
+      .limit(20)
+      .lean(),
+  ]);
+
+  return {
+    accounts: accounts.map(
+      (account) => ({
+        id: account._id.toString(),
+        name: account.name,
+        type: account.type,
+        balance: Number(
+          account.balance || 0
+        ),
+      })
+    ),
+
+    recentTransactions:
+      recentTransactions.map(
+        (transaction) => ({
+          id: transaction._id.toString(),
+          title:
+            transaction.title || "",
+          amount: Number(
+            transaction.amount || 0
+          ),
+          category:
+            transaction.category || "Other",
+          type: transaction.type,
+          date: transaction.date,
+
+          account:
+            transaction.account
+              ? {
+                  id: transaction.account._id?.toString(),
+                  name: transaction.account.name,
+                  type: transaction.account.type,
+                }
+              : null,
+
+          toAccount:
+            transaction.toAccount || "",
+
+          transferAccount:
+            transaction.transferAccount
+              ? {
+                  id: transaction.transferAccount._id?.toString(),
+                  name: transaction.transferAccount.name,
+                  type: transaction.transferAccount.type,
+                }
+              : null,
+
+          transferMode:
+            transaction.transferMode ||
+            null,
         })
-        .limit(20)
-        .lean(),
-    ]);
-
-    return {
-      accounts:
-        accounts.map(
-          (account) => ({
-            id:
-              account._id.toString(),
-
-            name:
-              account.name,
-
-            type:
-              account.type,
-
-            balance:
-              Number(
-                account.balance || 0
-              ),
-          })
-        ),
-
-      recentTransactions:
-        recentTransactions.map(
-          (transaction) => ({
-            id:
-              transaction._id.toString(),
-
-            title:
-              transaction.title || "",
-
-            amount:
-              Number(
-                transaction.amount || 0
-              ),
-
-            category:
-              transaction.category ||
-              "Other",
-
-            type:
-              transaction.type,
-
-            date:
-              transaction.date,
-
-            account:
-              transaction.account
-                ? {
-                    id:
-                      transaction
-                        .account
-                        ._id?.toString(),
-
-                    name:
-                      transaction
-                        .account
-                        .name,
-
-                    type:
-                      transaction
-                        .account
-                        .type,
-                  }
-                : null,
-
-            toAccount:
-              transaction.toAccount ||
-              "",
-
-            transferAccount:
-              transaction
-                .transferAccount
-                ? {
-                    id:
-                      transaction
-                        .transferAccount
-                        ._id?.toString(),
-
-                    name:
-                      transaction
-                        .transferAccount
-                        .name,
-
-                    type:
-                      transaction
-                        .transferAccount
-                        .type,
-                  }
-                : null,
-
-            transferMode:
-              transaction.transferMode ||
-              null,
-          })
-        ),
-    };
+      ),
   };
+};
 
+const generateAIActionDecision = async ({
+  message,
+  chat,
+  userContext,
+}) => {
+  let conversationHistory = "";
 
-// =========================================================
-// AI ACTION DECISION
-// =========================================================
+  chat.messages
+    .slice(-20)
+    .forEach((msg) => {
+      conversationHistory += `${msg.role.toUpperCase()}: ${msg.text}\n`;
+    });
 
-const generateAIActionDecision =
-  async ({
-    message,
-    chat,
-    userContext,
-  }) => {
-    let conversationHistory = "";
+  const prompt = `
+You are SmaXTify.AI, the intelligent assistant inside the SmaXTify personal finance application.
 
-    chat.messages
-      .slice(-20)
-      .forEach((msg) => {
-        conversationHistory +=
-          `${msg.role.toUpperCase()}: ${msg.text}\n`;
-      });
+Determine whether the user's request is normal conversation or a supported application action.
 
-    const prompt = `
-You are SmaXTify.AI.
+Security rules:
 
-You are the intelligent assistant inside a personal finance
-application called SmaXTify.
-
-Your job is to understand the user's request and determine
-whether the request is:
-
-1. A normal conversational question
-2. A supported SmaXTify application action
-
-IMPORTANT SECURITY RULES:
-
-- Never invent database IDs.
-- Never invent account IDs.
-- Never invent transaction IDs.
-- Use IDs only from the provided SmaXTify context.
-- Never request unrestricted database access.
-- Never create arbitrary MongoDB queries.
+- Never invent database IDs, account IDs, or transaction IDs.
+- Use IDs only from the supplied context.
+- Never create arbitrary database queries.
 - Never execute actions yourself.
-- Return only one supported action when an action is clearly requested.
-- If the request is unclear, use normal chat mode and ask a clarification question.
-- Do not claim an action was completed unless the backend confirms execution.
-- Read-only chart and report actions are safe data retrieval operations.
-- Never modify data when the user only asks to view, analyze, summarize, or visualize data.
-
-SUPPORTED ACTIONS:
-
-TRANSACTIONS:
-create_transaction
-update_transaction
-delete_transaction
-
-ACCOUNTS:
-get_accounts
-
-FINANCIAL SUMMARY:
-get_financial_summary
-
-BUDGET:
-get_budget
-save_budget
-delete_budget
-
-SAVINGS GOALS:
-get_goals
-create_goal
-add_goal_savings
-update_goal
-delete_goal
-
-SUBSCRIPTIONS:
-get_subscriptions
-create_subscription
-update_subscription
-delete_subscription
-
-NAVIGATION:
-navigate
-
-CHARTS AND VISUALIZATIONS:
-get_income_chart
-get_expense_chart
-get_income_vs_expense_chart
-get_category_breakdown
-get_monthly_financial_chart
-
-REPORT DATA:
-get_report_data
-
-
-=========================================================
-VISUALIZATION PRIORITY
-=========================================================
-
-If the user requests a graph, chart, visualization, trend,
-breakdown, comparison, or financial graph, ALWAYS choose
-the appropriate visualization action.
-
-Never respond that SmaXTify cannot generate graphs.
-
-Examples:
-
-"Show my income graph"
--> get_income_chart
-
-"Show my expense graph"
--> get_expense_chart
-
-"Compare income and expenses"
--> get_income_vs_expense_chart
-
-"Show my spending by category"
--> get_category_breakdown
-
-"Show my monthly financial overview"
--> get_monthly_financial_chart
-
-
-=========================================================
-CHART ACTION SELECTION
-=========================================================
-
-get_income_chart:
-
-Use for:
-
-- income graph
-- income chart
-- income trend
-- income over time
-- show income
-- visualize income
-- monthly income graph
-
-
-get_expense_chart:
-
-Use for:
-
-- expense graph
-- expense chart
-- expense trend
-- expenses over time
-- show expenses graph
-- visualize expenses
-- monthly expense graph
-
-
-get_income_vs_expense_chart:
-
-Use for:
-
-- income vs expense
-- income versus expense
-- income and expense comparison
-- compare income and expenses
-- income against expenses
-
-
-get_category_breakdown:
-
-Use for:
-
-- spending by category
-- expenses by category
-- category breakdown
-- category-wise expenses
-- expense category chart
-- where am I spending money
-
-
-get_monthly_financial_chart:
-
-Use for:
-
-- monthly financial graph
-- monthly financial chart
-- monthly financial overview
-- financial trend
-- monthly money trend
-
-
-get_report_data:
-
-Use for:
-
-- detailed report data
-- transaction report
-- transaction data
-- detailed financial report
-
-Do NOT use get_report_data for graph/chart requests.
-
-
-=========================================================
-CHART PERIOD
-=========================================================
-
-Default:
-12 months
-
-"last 6 months":
-months = 6
-
-"last 3 months":
-months = 3
-
-"last 12 months":
-months = 12
-
-"last year":
-months = 12
-
-Never invent dates.
-
-
-=========================================================
-TRANSACTION CREATION
-=========================================================
-
-Required information normally includes:
-
-- type
-- amount
-- account
-
-For Expense:
-
-- title
-- category
-
-For Income:
-
-- title
-- category
-
-For Transfer:
-
-- transferMode
-- destination account OR person's name
-
-If required information is missing, ask for clarification.
-
-
-=========================================================
-ACCOUNT SELECTION
-=========================================================
-
-Match account descriptions against the provided account list.
-
-Never invent account IDs.
-
-
-=========================================================
-TRANSACTION MODIFICATION
-=========================================================
-
-Use only transaction IDs from the provided context.
-
-If multiple transactions could match, ask for clarification.
-
-
-=========================================================
-READ-ONLY ACTIONS
-=========================================================
-
-get_accounts
-get_financial_summary
-get_income_chart
-get_expense_chart
-get_income_vs_expense_chart
-get_category_breakdown
-get_monthly_financial_chart
-get_report_data
-
-
-=========================================================
-CONVERSATION HISTORY
-=========================================================
+- Return only one supported action when clearly requested.
+- If unclear, use chat mode and ask a clarification question.
+- Do not claim an action was completed unless the backend confirms it.
+- Never modify data when the user only asks to view, analyze, summarize, or visualize it.
+
+Supported actions:
+
+Transactions: create_transaction, update_transaction, delete_transaction
+Accounts: get_accounts
+Financial summary: get_financial_summary
+Budget: get_budget, save_budget, delete_budget
+Savings goals: get_goals, create_goal, add_goal_savings, update_goal, delete_goal
+Subscriptions: get_subscriptions, create_subscription, update_subscription, delete_subscription
+Navigation: navigate
+Charts: get_income_chart, get_expense_chart, get_income_vs_expense_chart, get_category_breakdown, get_monthly_financial_chart
+Reports: get_report_data
+
+Visualization rules:
+
+- Graph, chart, visualization, trend, breakdown, comparison, or financial graph requests must use the appropriate chart action.
+- Income graph -> get_income_chart.
+- Expense graph -> get_expense_chart.
+- Income versus expenses -> get_income_vs_expense_chart.
+- Spending by category -> get_category_breakdown.
+- Monthly financial overview -> get_monthly_financial_chart.
+- Never say SmaXTify cannot generate graphs.
+- Default chart period is 12 months.
+- For "last 6 months", use months 6. For "last 3 months", use months 3.
+- Never invent dates.
+
+Transaction creation:
+
+- Required information normally includes type, amount, and account.
+- Expense and Income also require title and category.
+- Transfer requires transferMode and a destination account or person's name.
+- Ask for missing required information.
+
+Account selection:
+
+- Match account descriptions against the supplied account list.
+- Never invent account IDs.
+
+Modification:
+
+- Use only transaction IDs from the supplied context.
+- Ask for clarification if multiple transactions match.
+
+Read-only actions:
+
+get_accounts, get_financial_summary, get_income_chart, get_expense_chart,
+get_income_vs_expense_chart, get_category_breakdown,
+get_monthly_financial_chart, get_report_data.
+
+Conversation history:
 
 ${conversationHistory}
 
-
-=========================================================
-CURRENT USER MESSAGE
-=========================================================
+Current user message:
 
 ${message}
 
+User SmaXTify context:
 
-=========================================================
-USER SMAxTIFY CONTEXT
-=========================================================
+${JSON.stringify(userContext, null, 2)}
 
-${JSON.stringify(
-  userContext,
-  null,
-  2
-)}
+Return only valid JSON.
 
+Normal chat:
 
-=========================================================
-RETURN ONLY VALID JSON
-=========================================================
+{"mode":"chat","reply":"Your response"}
 
-NORMAL CHAT:
+Action:
 
-{
-  "mode": "chat",
-  "reply": "Your response"
-}
+{"mode":"action","action":"get_income_chart","arguments":{"months":12}}
 
-ACTION:
-
-{
-  "mode": "action",
-  "action": "get_income_chart",
-  "arguments": {
-    "months": 12
-  }
-}
-
-Do not include markdown.
-Do not include code fences.
-Do not include explanations outside JSON.
+Do not include markdown or explanations outside JSON.
 `;
 
-    const response =
-      await generateGeminiContent({
-        contents:
-          prompt,
+  const response =
+    await generateGeminiContent({
+      contents: prompt,
 
-        config: {
-          temperature: 0.2,
+      config: {
+        temperature: 0.2,
 
-          responseMimeType:
-            "application/json",
+        responseMimeType:
+          "application/json",
 
-          responseSchema: {
-            type: "object",
+        responseSchema: {
+          type: "object",
 
-            properties: {
-              mode: {
-                type: "string",
-              },
-
-              reply: {
-                type: "string",
-              },
-
-              action: {
-                type: "string",
-              },
-
-              arguments: {
-                type: "object",
-              },
+          properties: {
+            mode: {
+              type: "string",
             },
 
-            required: [
-              "mode",
-            ],
+            reply: {
+              type: "string",
+            },
+
+            action: {
+              type: "string",
+            },
+
+            arguments: {
+              type: "object",
+            },
           },
+
+          required: ["mode"],
         },
-      });
+      },
+    });
 
-    const parsed =
-      parseAIJSON(
-        response.text || ""
-      );
+  const parsed = parseAIJSON(
+    response.text || ""
+  );
 
-    if (!parsed) {
-      throw new Error(
-        "AI returned an invalid structured response."
-      );
-    }
+  if (!parsed) {
+    throw new Error(
+      "AI returned an invalid structured response."
+    );
+  }
 
-    return parsed;
-  };
+  return parsed;
+};
 
-
-// =========================================================
-// GENERATE CHAT TITLE
-// =========================================================
-
-const generateChatTitle =
-  async (prompt) => {
-    try {
-      const titlePrompt = `
+const generateChatTitle = async (
+  prompt
+) => {
+  try {
+    const titlePrompt = `
 Generate a short chat title.
 
-Rules:
-- Maximum 5 words
-- Do not use quotes
-- Do not use punctuation
-- Return ONLY the title
+Maximum 5 words.
+
+Do not use quotes or punctuation.
+
+Return only the title.
 
 Conversation:
 
 ${prompt}
 `;
 
-      const response =
-        await generateGeminiContent({
-          contents:
-            titlePrompt,
+    const response =
+      await generateGeminiContent({
+        contents: titlePrompt,
 
-          config: {
-            temperature: 0.2,
-          },
-        });
+        config: {
+          temperature: 0.2,
+        },
+      });
 
-      return (
-        response.text
-          ?.trim()
-          .replace(
-            /^["']|["']$/g,
-            ""
-          )
-          .replace(
-            /[.!?]+$/g,
-            ""
-          ) ||
-        "New Chat"
-      );
-    } catch (error) {
-      console.error(
-        "AI Title Error:",
-        error?.message ||
-          error
-      );
+    return (
+      response.text
+        ?.trim()
+        .replace(/^["']|["']$/g, "")
+        .replace(/[.!?]+$/g, "") ||
+      "New Chat"
+    );
+  } catch (error) {
+    console.error(
+      "AI Title Error:",
+      error?.message || error
+    );
 
-      return "New Chat";
-    }
-  };
-
-
-// =========================================================
-// SAVE CHAT ACTION MESSAGES
-// =========================================================
+    return "New Chat";
+  }
+};
 
 const saveActionMessages = async ({
   chat,
   userMessage,
   assistantMessage,
 }) => {
-  await chat.messages.push({
+  chat.messages.push({
     role: "user",
     text: userMessage,
     time: new Date(),
   });
 
-  await chat.messages.push({
+  chat.messages.push({
     role: "assistant",
     text: assistantMessage,
     time: new Date(),
@@ -1353,546 +937,375 @@ const saveActionMessages = async ({
   await chat.save();
 };
 
+const getConfirmationDescription = (
+  action
+) => {
+  const descriptions = {
+    update_transaction:
+      "update that transaction",
 
-// =========================================================
-// CHAT WITH GEMINI
-// =========================================================
+    delete_transaction:
+      "delete that transaction",
 
-exports.chatWithGemini =
-  async (req, res) => {
-    try {
-      const {
-        message,
-        chatId,
-        confirmed = false,
-      } = req.body;
+    update_account:
+      "update that account",
 
-      // ---------------------------------------------------
-      // VALIDATE REQUEST
-      // ---------------------------------------------------
+    delete_account:
+      "delete that account",
 
-      if (
-        !chatId ||
-        !message ||
-        !String(message).trim()
-      ) {
+    save_budget:
+      "save these budget changes",
+
+    delete_budget:
+      "delete that budget",
+
+    add_goal_savings:
+      "add that amount to your savings goal",
+
+    update_goal:
+      "update that savings goal",
+
+    delete_goal:
+      "delete that savings goal",
+
+    update_subscription:
+      "update that subscription",
+
+    delete_subscription:
+      "delete that subscription",
+  };
+
+  return (
+    descriptions[action] ||
+    "perform this action"
+  );
+};
+
+exports.chatWithGemini = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      message,
+      chatId,
+      confirmed = false,
+    } = req.body;
+
+    if (
+      !chatId ||
+      !message ||
+      !String(message).trim()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "chatId and message are required.",
+      });
+    }
+
+    const chat = await Chat.findOne({
+      _id: chatId,
+      user: req.user.id,
+    });
+
+    if (!chat) {
+      return res.status(404).json({
+        success: false,
+        message: "Chat not found.",
+      });
+    }
+
+    const cleanMessage =
+      String(message).trim();
+
+    const userContext =
+      await getUserAIContext(
+        req.user.id
+      );
+
+    let decision =
+      getDeterministicChartAction(
+        cleanMessage
+      );
+
+    if (decision) {
+      console.log(
+        `Deterministic chart action selected: ${decision.action}`
+      );
+    } else {
+      decision =
+        await generateAIActionDecision({
+          message: cleanMessage,
+          chat,
+          userContext,
+        });
+    }
+
+    if (decision.mode === "action") {
+      const action = decision.action;
+      const args =
+        decision.arguments || {};
+
+      const validation =
+        validateAction({
+          action,
+          args,
+        });
+
+      if (!validation.valid) {
         return res.status(400).json({
           success: false,
           message:
-            "chatId and message are required.",
+            validation.errors.join(" "),
+          code: "INVALID_AI_ACTION",
         });
       }
 
-      // ---------------------------------------------------
-      // FIND CHAT BELONGING TO CURRENT USER
-      // ---------------------------------------------------
-
-      const chat =
-        await Chat.findOne({
-          _id: chatId,
-          user: req.user.id,
-        });
-
-      if (!chat) {
-        return res.status(404).json({
-          success: false,
-          message:
-            "Chat not found.",
-        });
-      }
-
-      const cleanMessage =
-        String(
-          message
-        ).trim();
-
-      // ---------------------------------------------------
-      // GET USER FINANCIAL CONTEXT
-      // ---------------------------------------------------
-
-      const userContext =
-        await getUserAIContext(
-          req.user.id
+      const needsConfirmation =
+        actionNeedsConfirmation(
+          action
         );
-
-      // ===================================================
-      // DETERMINISTIC CHART ROUTING
-      // ===================================================
-      //
-      // This happens BEFORE Gemini.
-      //
-      // Therefore:
-      //
-      // "show income graph"
-      //
-      // cannot become normal chat.
-      //
-      // ===================================================
-
-      let decision =
-        getDeterministicChartAction(
-          cleanMessage
-        );
-
-      if (decision) {
-        console.log(
-          `Deterministic chart action selected: ${decision.action}`
-        );
-      } else {
-        // -------------------------------------------------
-        // NORMAL GEMINI ACTION DECISION
-        // -------------------------------------------------
-
-        decision =
-          await generateAIActionDecision({
-            message:
-              cleanMessage,
-
-            chat,
-
-            userContext,
-          });
-      }
-
-      // ===================================================
-      // ACTION MODE
-      // ===================================================
 
       if (
-        decision.mode ===
-        "action"
+        needsConfirmation &&
+        confirmed !== true
       ) {
-        const action =
-          decision.action;
-
-        const args =
-          decision.arguments ||
-          {};
-
-        // -------------------------------------------------
-        // VALIDATE ACTION
-        // -------------------------------------------------
-
-        const validation =
-          validateAction({
-            action,
-            args,
-          });
-
-        if (
-          !validation.valid
-        ) {
-          return res.status(400).json({
-            success: false,
-            message:
-              validation.errors.join(
-                " "
-              ),
-            code:
-              "INVALID_AI_ACTION",
-          });
-        }
-
-        // -------------------------------------------------
-        // CHECK CONFIRMATION
-        // -------------------------------------------------
-
-        const needsConfirmation =
-          actionNeedsConfirmation(
+        const confirmationMessage =
+          `I can ${getConfirmationDescription(
             action
-          );
+          )}. Please confirm if you want me to continue.`;
 
-        if (
-          needsConfirmation &&
-          confirmed !== true
-        ) {
-          const confirmationMessage =
-            `I can ${getConfirmationDescription(
-              action
-            )}. Please confirm if you want me to continue.`;
-
-          await chat.messages.push({
-            role: "assistant",
-            text:
-              confirmationMessage,
-            time: new Date(),
-          });
-
-          await chat.save();
-
-          return res.status(200).json({
-            success: true,
-
-            reply:
-              confirmationMessage,
-
-            action: {
-              name:
-                validation
-                  .actionDefinition
-                  .name,
-
-              arguments:
-                args,
-
-              requiresConfirmation:
-                true,
-
-              confirmed:
-                false,
-            },
-
-            executed:
-              false,
-          });
-        }
-
-        // -------------------------------------------------
-        // EXECUTE ACTION
-        // -------------------------------------------------
-
-        console.log(
-          `Executing AI action: ${action}`
-        );
-
-        const actionResult =
-          await executeAIAction({
-            userId:
-              req.user.id,
-
-            action,
-
-            args,
-          });
-
-        if (
-          !actionResult.success
-        ) {
-          return res.status(400).json({
-            success: false,
-
-            reply:
-              actionResult.message,
-
-            action: {
-              name:
-                action,
-
-              arguments:
-                args,
-            },
-
-            executed:
-              false,
-
-            code:
-              actionResult.code,
-          });
-        }
-
-        // -------------------------------------------------
-        // ACTION RESULT
-        // -------------------------------------------------
-
-        const actionReply =
-          actionResult.message ||
-          "Action completed successfully.";
-
-        await saveActionMessages({
-          chat,
-          userMessage:
-            cleanMessage,
-          assistantMessage:
-            actionReply,
+        chat.messages.push({
+          role: "assistant",
+          text: confirmationMessage,
+          time: new Date(),
         });
+
+        await chat.save();
 
         return res.status(200).json({
           success: true,
-
-          reply:
-            actionReply,
+          reply: confirmationMessage,
 
           action: {
             name:
-              validation
-                .actionDefinition
-                .name,
-
-            arguments:
-              args,
-
-            requiresConfirmation:
-              needsConfirmation,
-
-            confirmed:
-              needsConfirmation
-                ? true
-                : false,
+              validation.actionDefinition.name,
+            arguments: args,
+            requiresConfirmation: true,
+            confirmed: false,
           },
 
-          executed:
-            true,
-
-          result:
-            actionResult.data,
+          executed: false,
         });
       }
 
-      // ===================================================
-      // NORMAL CHAT MODE
-      // ===================================================
+      console.log(
+        `Executing AI action: ${action}`
+      );
 
-      const reply =
-        typeof decision.reply ===
-          "string" &&
-        decision.reply.trim()
-          ? decision.reply.trim()
-          : "Sorry, I couldn't generate a response.";
+      const actionResult =
+        await executeAIAction({
+          userId: req.user.id,
+          action,
+          args,
+        });
 
-      // ---------------------------------------------------
-      // SAVE USER MESSAGE
-      // ---------------------------------------------------
+      if (!actionResult.success) {
+        return res.status(400).json({
+          success: false,
+          reply: actionResult.message,
 
-      await chat.messages.push({
-        role: "user",
-        text:
-          cleanMessage,
-        time: new Date(),
-      });
+          action: {
+            name: action,
+            arguments: args,
+          },
 
-      // ---------------------------------------------------
-      // SAVE ASSISTANT RESPONSE
-      // ---------------------------------------------------
-
-      await chat.messages.push({
-        role: "assistant",
-        text:
-          reply,
-        time: new Date(),
-      });
-
-      // ---------------------------------------------------
-      // GENERATE CHAT TITLE
-      // ---------------------------------------------------
-
-      let generatedTitle =
-        null;
-
-      if (
-        chat.title ===
-        "New Chat"
-      ) {
-        const titlePrompt = `
-USER:
-${cleanMessage}
-
-ASSISTANT:
-${reply}
-`;
-
-        generatedTitle =
-          await generateChatTitle(
-            titlePrompt
-          );
-
-        chat.title =
-          generatedTitle ||
-          "New Chat";
+          executed: false,
+          code: actionResult.code,
+        });
       }
 
-      await chat.save();
+      const actionReply =
+        actionResult.message ||
+        "Action completed successfully.";
+
+      await saveActionMessages({
+        chat,
+        userMessage: cleanMessage,
+        assistantMessage: actionReply,
+      });
 
       return res.status(200).json({
         success: true,
+        reply: actionReply,
 
-        reply,
+        action: {
+          name:
+            validation.actionDefinition.name,
+          arguments: args,
+          requiresConfirmation:
+            needsConfirmation,
+          confirmed:
+            needsConfirmation
+              ? true
+              : false,
+        },
 
-        title:
-          generatedTitle,
-
-        action: null,
-
-        executed:
-          false,
+        executed: true,
+        result: actionResult.data,
       });
-    } catch (error) {
-      return sendAIError(
-        res,
-        error,
-        "Failed to generate AI response."
+    }
+
+    const reply =
+      typeof decision.reply ===
+        "string" &&
+      decision.reply.trim()
+        ? decision.reply.trim()
+        : "Sorry, I couldn't generate a response.";
+
+    chat.messages.push({
+      role: "user",
+      text: cleanMessage,
+      time: new Date(),
+    });
+
+    chat.messages.push({
+      role: "assistant",
+      text: reply,
+      time: new Date(),
+    });
+
+    let generatedTitle = null;
+
+    if (chat.title === "New Chat") {
+      generatedTitle =
+        await generateChatTitle(`
+USER:
+
+${cleanMessage}
+
+ASSISTANT:
+
+${reply}
+`);
+
+      chat.title =
+        generatedTitle || "New Chat";
+    }
+
+    await chat.save();
+
+    return res.status(200).json({
+      success: true,
+      reply,
+      title: generatedTitle,
+      action: null,
+      executed: false,
+    });
+  } catch (error) {
+    return sendAIError(
+      res,
+      error,
+      "Failed to generate AI response."
+    );
+  }
+};
+
+exports.generateReportInsights = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      income = 0,
+      expense = 0,
+      balance = 0,
+      savings = 0,
+      totalTransactions = 0,
+      transactions = [],
+    } = req.body;
+
+    if (!Array.isArray(transactions)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Invalid transaction data.",
+      });
+    }
+
+    const transactionData =
+      transactions.map(
+        (transaction) => ({
+          title:
+            transaction.title ||
+            "Untitled",
+
+          category:
+            transaction.category ||
+            "Other",
+
+          amount:
+            Number(transaction.amount) ||
+            0,
+
+          type:
+            transaction.type ||
+            "Expense",
+
+          date:
+            transaction.date || null,
+        })
       );
-    }
-  };
 
-
-// =========================================================
-// CONFIRMATION DESCRIPTION
-// =========================================================
-
-const getConfirmationDescription =
-  (action) => {
-    switch (action) {
-      case "update_transaction":
-        return "update that transaction";
-
-      case "delete_transaction":
-        return "delete that transaction";
-
-      case "update_account":
-        return "update that account";
-
-      case "delete_account":
-        return "delete that account";
-
-      case "save_budget":
-        return "save these budget changes";
-
-      case "delete_budget":
-        return "delete that budget";
-
-      case "add_goal_savings":
-        return "add that amount to your savings goal";
-
-      case "update_goal":
-        return "update that savings goal";
-
-      case "delete_goal":
-        return "delete that savings goal";
-
-      case "update_subscription":
-        return "update that subscription";
-
-      case "delete_subscription":
-        return "delete that subscription";
-
-      default:
-        return "perform this action";
-    }
-  };
-
-
-// =========================================================
-// REPORT INSIGHTS
-// =========================================================
-
-exports.generateReportInsights =
-  async (req, res) => {
-    try {
-      const {
-        income = 0,
-        expense = 0,
-        balance = 0,
-        savings = 0,
-        totalTransactions = 0,
-        transactions = [],
-      } = req.body;
-
-      if (
-        !Array.isArray(
-          transactions
-        )
-      ) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Invalid transaction data.",
-        });
-      }
-
-      const transactionData =
-        transactions.map(
-          (transaction) => ({
-            title:
-              transaction.title ||
-              "Untitled",
-
-            category:
-              transaction.category ||
-              "Other",
-
-            amount:
-              Number(
-                transaction.amount
-              ) || 0,
-
-            type:
-              transaction.type ||
-              "Expense",
-
-            date:
-              transaction.date ||
-              null,
-          })
-        );
-
-      const prompt = `
+    const prompt = `
 You are SmaXTify.AI, a professional personal finance analyst.
 
-Analyze the user's financial report data and provide useful,
-practical financial insights.
+Analyze the supplied financial report and provide exactly 4 useful, practical insights.
 
-IMPORTANT RULES:
+Rules:
 
-1. Use ONLY the financial data provided.
-2. Never invent transactions.
-3. Never invent amounts.
-4. Never invent dates.
-5. Never invent categories.
-6. Be concise and easy to understand.
-7. Focus on spending, income, savings and financial patterns.
-8. Do not give investment, tax or legal advice.
-9. Do not use markdown tables.
-10. Return exactly 4 insights.
-11. Do not mention that you are an AI model.
+- Use only the supplied data.
+- Never invent transactions, amounts, dates, or categories.
+- Be concise and easy to understand.
+- Focus on spending, income, savings, and financial patterns.
+- Do not give investment, tax, or legal advice.
+- Do not use markdown tables.
+- Do not mention that you are an AI model.
 
-Allowed type values:
+Allowed type values: spending, income, savings, warning.
 
-spending
-income
-savings
-warning
+Allowed priority values: positive, neutral, warning, critical.
 
-Allowed priority values:
+Financial summary:
 
-positive
-neutral
-warning
-critical
+Income: ₹${Number(
+      income
+    ).toLocaleString("en-IN")}
 
-FINANCIAL SUMMARY
+Expenses: ₹${Number(
+      expense
+    ).toLocaleString("en-IN")}
 
-Income:
-₹${Number(
-        income
-      ).toLocaleString("en-IN")}
+Balance: ₹${Number(
+      balance
+    ).toLocaleString("en-IN")}
 
-Expenses:
-₹${Number(
-        expense
-      ).toLocaleString("en-IN")}
+Savings Rate: ${Number(savings)}%
 
-Balance:
-₹${Number(
-        balance
-      ).toLocaleString("en-IN")}
+Total Transactions: ${Number(
+      totalTransactions
+    )}
 
-Savings Rate:
-${Number(savings)}%
-
-Total Transactions:
-${Number(
-        totalTransactions
-      )}
-
-TRANSACTIONS:
+Transactions:
 
 ${JSON.stringify(
-        transactionData,
-        null,
-        2
-      )}
+  transactionData,
+  null,
+  2
+)}
 
-RETURN ONLY VALID JSON:
+Return only JSON:
 
 {
   "insights": [
@@ -1906,635 +1319,603 @@ RETURN ONLY VALID JSON:
 }
 `;
 
-      const response =
-        await generateGeminiContent({
-          contents:
-            prompt,
+    const response =
+      await generateGeminiContent({
+        contents: prompt,
 
-          config: {
-            responseMimeType:
-              "application/json",
+        config: {
+          responseMimeType:
+            "application/json",
 
-            responseSchema: {
-              type: "object",
+          responseSchema: {
+            type: "object",
 
-              properties: {
-                insights: {
-                  type: "array",
+            properties: {
+              insights: {
+                type: "array",
 
-                  items: {
-                    type: "object",
+                items: {
+                  type: "object",
 
-                    properties: {
-                      type: {
-                        type: "string",
-                      },
-
-                      title: {
-                        type: "string",
-                      },
-
-                      message: {
-                        type: "string",
-                      },
-
-                      priority: {
-                        type: "string",
-                      },
+                  properties: {
+                    type: {
+                      type: "string",
                     },
 
-                    required: [
-                      "type",
-                      "title",
-                      "message",
-                      "priority",
-                    ],
+                    title: {
+                      type: "string",
+                    },
+
+                    message: {
+                      type: "string",
+                    },
+
+                    priority: {
+                      type: "string",
+                    },
                   },
+
+                  required: [
+                    "type",
+                    "title",
+                    "message",
+                    "priority",
+                  ],
                 },
               },
-
-              required: [
-                "insights",
-              ],
             },
+
+            required: ["insights"],
           },
-        });
-
-      const rawText =
-        response.text || "";
-
-      const parsed =
-        parseAIJSON(
-          rawText
-        );
-
-      if (
-        !parsed ||
-        !Array.isArray(
-          parsed.insights
-        )
-      ) {
-        console.error(
-          "AI Insights Invalid Response:",
-          rawText
-        );
-
-        return res.status(500).json({
-          success: false,
-          message:
-            "AI returned an invalid insight format.",
-          code:
-            "AI_INVALID_RESPONSE",
-        });
-      }
-
-      return res.status(200).json({
-        success: true,
-
-        insights:
-          parsed.insights.slice(
-            0,
-            4
-          ),
+        },
       });
-    } catch (error) {
-      return sendAIError(
-        res,
-        error,
-        "Failed to generate financial insights."
+
+    const rawText =
+      response.text || "";
+
+    const parsed =
+      parseAIJSON(rawText);
+
+    if (
+      !parsed ||
+      !Array.isArray(parsed.insights)
+    ) {
+      console.error(
+        "AI Insights Invalid Response:",
+        rawText
       );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "AI returned an invalid insight format.",
+        code: "AI_INVALID_RESPONSE",
+      });
     }
-  };
 
+    return res.status(200).json({
+      success: true,
+      insights:
+        parsed.insights.slice(0, 4),
+    });
+  } catch (error) {
+    return sendAIError(
+      res,
+      error,
+      "Failed to generate financial insights."
+    );
+  }
+};
 
-// =========================================================
-// TRANSACTION CATEGORIZATION
-// =========================================================
+exports.categorizeTransaction = async (
+  req,
+  res
+) => {
+  try {
+    const {
+      title,
+      type,
+    } = req.body;
 
-exports.categorizeTransaction =
-  async (req, res) => {
-    try {
-      const {
-        title,
-        type,
-      } = req.body;
+    if (
+      !title ||
+      !String(title).trim()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Transaction title is required.",
+        code: "TITLE_REQUIRED",
+      });
+    }
 
-      // ---------------------------------------------------
-      // VALIDATE TITLE
-      // ---------------------------------------------------
+    if (
+      type !== "Income" &&
+      type !== "Expense"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Transaction type must be Income or Expense.",
+        code:
+          "INVALID_TRANSACTION_TYPE",
+      });
+    }
 
-      if (
-        !title ||
-        !String(title).trim()
-      ) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Transaction title is required.",
-          code:
-            "TITLE_REQUIRED",
-        });
+    if (!GEMINI_API_KEY) {
+      return res.status(503).json({
+        success: false,
+        message:
+          "Gemini API key is not configured.",
+        code: "AI_KEY_MISSING",
+      });
+    }
+
+    const cleanTitle =
+      String(title).trim();
+
+    const prompt = `
+You are SmaXTify.AI's personal finance transaction categorization engine.
+
+Analyze the complete transaction title and return exactly one accurate financial category.
+
+Transaction title: "${cleanTitle}"
+
+Transaction type: "${type}"
+
+Rules:
+
+- Use your language understanding, not a fixed keyword list.
+- Understand products, brands, services, medicines, food, bills, subscriptions, education, clothing, household items, and financial transactions.
+- Understand Indian and international products and services.
+- Use the transaction type to resolve ambiguity.
+- Create a sensible category if needed.
+- Maximum 3 words, Title Case, no punctuation.
+- Never return an empty category.
+- Use Other only when there is genuinely insufficient information.
+- Return only valid JSON.
+
+Category guidance:
+
+Food, cake, juice -> Food or Food & Beverages.
+
+Vegetables, fruits, groceries, dairy, spices -> Groceries.
+
+Medicines, doctors, hospitals, pharmacies, tests -> Healthcare.
+
+Stationery, notebooks, pens, office supplies -> Stationery.
+
+Books and educational materials -> Education.
+
+Skincare, cosmetics, grooming, hygiene -> Personal Care.
+
+Clothing, footwear, fashion accessories -> Shopping.
+
+Phones, laptops, chargers, electronics -> Electronics.
+
+Cars, motorcycles, bicycles -> Vehicle.
+
+Petrol, diesel, CNG, vehicle fuel -> Fuel.
+
+Uber, Ola, Rapido, taxi, bus, metro -> Transport.
+
+Electricity payments -> Electricity.
+
+Water payments -> Water Bill.
+
+Cooking gas -> Gas Bill.
+
+Internet, Wi-Fi, broadband -> Internet.
+
+Mobile recharge -> Mobile Recharge.
+
+Rent -> Rent.
+
+Insurance -> Insurance.
+
+Movies, cinema, concerts, games -> Entertainment.
+
+Netflix, Spotify, recurring digital services -> Subscription.
+
+Flights, trains, holidays, trips -> Travel.
+
+Hotels, resorts, lodging -> Accommodation.
+
+Gym, sports, fitness, yoga -> Fitness & Sports.
+
+Pet expenses -> Pet Care.
+
+Loans and EMI -> Loan & EMI.
+
+Taxes -> Taxes.
+
+Donations and charity -> Donation.
+
+Bank fees -> Bank Charges.
+
+Salary and employment income -> Salary.
+
+Freelance income -> Freelance.
+
+Business income -> Business.
+
+Investment returns -> Investment.
+
+Bank interest -> Interest.
+
+Bonuses -> Bonus.
+
+Rental income -> Rental Income.
+
+Refunds and cashback -> Refund.
+
+Context examples:
+
+- "book" with Expense -> Education.
+- "hotel booking" -> Accommodation.
+- "flight booking" -> Travel.
+- "job" with Income -> Salary.
+- "apple" -> Groceries.
+- "Apple iPhone" -> Electronics.
+- "phone recharge" -> Mobile Recharge.
+- "car petrol" -> Fuel.
+- "car insurance" -> Insurance.
+- "shampoo" -> Personal Care.
+- "salary" with Income -> Salary.
+
+Return only:
+
+{"category":"Category Name"}
+`;
+
+    const response =
+      await generateGeminiContent({
+        contents: prompt,
+
+        config: {
+          temperature: 0.2,
+
+          responseMimeType:
+            "application/json",
+
+          responseSchema: {
+            type: "object",
+
+            properties: {
+              category: {
+                type: "string",
+              },
+            },
+
+            required: ["category"],
+          },
+        },
+      });
+
+    const rawText =
+      response.text || "";
+
+    const parsed =
+      parseAIJSON(rawText);
+
+    let category = "";
+
+    if (
+      parsed &&
+      typeof parsed.category ===
+        "string"
+    ) {
+      category =
+        parsed.category.trim();
+    } else {
+      const match = rawText.match(
+        /"category"\s*:\s*"([^"]+)"/i
+      );
+
+      if (match) {
+        category =
+          match[1].trim();
       }
-
-      // ---------------------------------------------------
-      // VALIDATE TYPE
-      // ---------------------------------------------------
-
-      if (
-        type !== "Income" &&
-        type !== "Expense"
-      ) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Transaction type must be Income or Expense.",
-          code:
-            "INVALID_TRANSACTION_TYPE",
-        });
-      }
-
-      // ---------------------------------------------------
-      // API KEY
-      // ---------------------------------------------------
-
-      if (!GEMINI_API_KEY) {
-        return res.status(503).json({
-          success: false,
-          message:
-            "Gemini API key is not configured.",
-          code:
-            "AI_KEY_MISSING",
-        });
-      }
-
-      const cleanTitle =
-        String(
-          title
-        ).trim();
-
-      // ---------------------------------------------------
-      // CATEGORY PROMPT
-      // ---------------------------------------------------
-
-      const prompt = `
-You are SmaXTify.AI's advanced personal finance transaction categorization engine.
-
-Your task is to understand ANY transaction title provided by the user and determine the most accurate financial category using your own language understanding and world knowledge.
-
-You are NOT restricted to a predefined keyword list.
-
-You MUST analyze the meaning of the complete transaction.
-
-TRANSACTION TITLE:
-"${cleanTitle}"
-
-TRANSACTION TYPE:
-"${type}"
-
-CORE REQUIREMENTS:
-
-1. ALWAYS return exactly ONE category.
-2. NEVER return an empty category.
-3. Use your own AI understanding of the transaction.
-4. Do NOT depend on a predefined keyword list.
-5. Understand individual products, services, brands, medicines, foods, vegetables, fruits, vehicles, electronics, bills, subscriptions, education items, personal-care products, clothing, household items and financial transactions.
-6. Understand singular and plural words.
-7. Understand spelling variations.
-8. Understand common abbreviations.
-9. Understand brand names.
-10. Understand product names.
-11. Understand medicine names.
-12. Understand Indian products and services.
-13. Understand common international products and services.
-14. Understand context from the complete transaction title.
-15. Use the transaction type to resolve ambiguity.
-16. Create a sensible new category when an existing common category does not accurately describe the transaction.
-17. Never force an unrelated category.
-18. Use a maximum of 3 words for the category.
-19. Use Title Case.
-20. Do not include punctuation in the category.
-21. Do not explain the answer.
-22. Return ONLY valid JSON.
-23. Use "Other" ONLY when the transaction genuinely provides no meaningful information for classification.
-
-FINANCIAL UNDERSTANDING:
-
-Food and beverages should normally be classified under categories such as:
-
-Food
-Food & Beverages
-Groceries
-Dining
-
-Vegetables, fruits, grains, pulses, dairy products, spices and household grocery products should normally be classified as:
-
-Groceries
-
-Medicines, medical products, medical services, doctors, hospitals, pharmacies, medical tests and healthcare products should normally be classified as:
-
-Healthcare
-
-Stationery, school supplies, office supplies, writing materials, notebooks and study supplies should normally be classified as:
-
-Stationery
-
-Books and educational materials should normally be classified as:
-
-Education
-
-Skincare, cosmetics, grooming, hygiene, beauty and personal-care products should normally be classified as:
-
-Personal Care
-
-Clothing, footwear, fashion accessories and shopping purchases should normally be classified as:
-
-Shopping
-
-Phones, smartphones, laptops, computers, tablets, chargers, headphones, cameras and electronic devices should normally be classified as:
-
-Electronics
-
-Cars, motorcycles, bikes, scooters, bicycles and vehicle purchases should normally be classified as:
-
-Vehicle
-
-Petrol, diesel, CNG, LPG and vehicle fuel should normally be classified as:
-
-Fuel
-
-Uber, Ola, Rapido, taxis, auto-rickshaws, buses, metro and transportation fares should normally be classified as:
-
-Transport
-
-Electricity payments should normally be classified as:
-
-Electricity
-
-Water payments should normally be classified as:
-
-Water Bill
-
-Cooking gas and gas-cylinder payments should normally be classified as:
-
-Gas Bill
-
-Internet, Wi-Fi, broadband and fiber connections should normally be classified as:
-
-Internet
-
-Mobile recharge and mobile network bills should normally be classified as:
-
-Mobile Recharge
-
-Rent payments should normally be classified as:
-
-Rent
-
-Insurance payments should normally be classified as:
-
-Insurance
-
-Movies, cinema, concerts, games and entertainment activities should normally be classified as:
-
-Entertainment
-
-Netflix, Spotify and similar recurring digital services should normally be classified as:
-
-Subscription
-
-Flights, train journeys, holidays and trips should normally be classified as:
-
-Travel
-
-Hotels, resorts, Airbnb and lodging should normally be classified as:
-
-Accommodation
-
-Gym, sports, fitness, yoga and related activities should normally be classified as:
-
-Fitness & Sports
-
-Pet-related expenses should normally be classified as:
-
-Pet Care
-
-Loans and EMI payments should normally be classified as:
-
-Loan & EMI
-
-Taxes should normally be classified as:
-
-Taxes
-
-Donations and charity should normally be classified as:
-
-Donation
-
-Bank fees and financial charges should normally be classified as:
-
-Bank Charges
-
-Salary and employment income should normally be classified as:
-
-Salary
-
-Freelance income should normally be classified as:
-
-Freelance
-
-Business income should normally be classified as:
-
-Business
-
-Investment returns should normally be classified as:
-
-Investment
-
-Bank interest should normally be classified as:
-
-Interest
-
-Bonuses should normally be classified as:
-
-Bonus
-
-Rental income should normally be classified as:
-
-Rental Income
-
-Refunds and cashback should normally be classified as:
-
-Refund
-
-CONTEXT UNDERSTANDING:
-
-If the title is:
-
-"book"
-
-and type is:
-
-"Expense"
-
-choose:
-
-Education
-
-If the title is:
-
-"hotel booking"
-
-choose:
-
-Accommodation
-
-If the title is:
-
-"flight booking"
-
-choose:
-
-Travel
-
-If the title is:
-
-"job"
-
-and type is:
-
-"Income"
-
-choose:
-
-Salary
-
-If the title is:
-
-"job application fee"
-
-and type is:
-
-"Expense"
-
-choose the category appropriate to the application expense.
-
-If the title is:
-
-"apple"
-
-choose:
-
-Groceries
-
-If the title is:
-
-"Apple iPhone"
-
-choose:
-
-Electronics
-
-If the title is:
-
-"phone"
-
-choose:
-
-Electronics
-
-If the title is:
-
-"phone recharge"
-
-choose:
-
-Mobile Recharge
-
-If the title is:
-
-"car"
-
-choose:
-
-Vehicle
-
-If the title is:
-
-"car petrol"
-
-choose:
-
-Fuel
-
-If the title is:
-
-"car insurance"
-
-choose:
-
-Insurance
-
-If the title is:
-
-"cake"
-
-choose:
-
-Food
-
-If the title is:
-
-"juice"
-
-choose:
-
-Food & Beverages
-
-If the title is:
-
-"capsule"
-
-and the context indicates medicine, choose:
-
-Healthcare
-
-If the title is:
-
-"pen"
-
-choose:
-
-Stationery
-
-If the title is:
-
-"shampoo"
-
-choose:
-
-Personal Care
-
-If the title is:
-
-"salary"
-
-and type is:
-
-"Income"
-
-choose:
-
-Salary
-
-IMPORTANT AI BEHAVIOR:
-
-Do not memorize only the examples above.
-
-The examples are demonstrations of reasoning.
-
-For a completely new word that is NOT listed above, use your general AI knowledge.
-
-Do not use a hard-coded keyword lookup system.
-
-Do not return "Other" simply because the exact word was not included above.
-
-Use "Other" only when there is genuinely insufficient information.
-
-RETURN ONLY THIS JSON FORMAT:
+    }
+
+    category =
+      normalizeCategory(category);
+
+    if (!category) {
+      return res.status(500).json({
+        success: false,
+        message:
+          "AI did not return a valid category. Please enter the category manually.",
+        code:
+          "AI_INVALID_CATEGORY",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      category,
+      source: "ai",
+    });
+  } catch (error) {
+    return sendAIError(
+      res,
+      error,
+      "Failed to detect transaction category. You can enter the category manually."
+    );
+  }
+};
+
+exports.scanReceipt = async (
+  req,
+  res
+) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Please upload a receipt image.",
+        code:
+          "RECEIPT_IMAGE_REQUIRED",
+      });
+    }
+
+    const allowedMimeTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/webp",
+      "image/heic",
+      "image/heif",
+    ];
+
+    if (
+      !allowedMimeTypes.includes(
+        req.file.mimetype
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Unsupported image format. Please upload a JPG, PNG, or WebP image.",
+        code:
+          "UNSUPPORTED_IMAGE_FORMAT",
+      });
+    }
+
+    if (!GEMINI_API_KEY) {
+      return res.status(503).json({
+        success: false,
+        message:
+          "Gemini API key is not configured.",
+        code: "AI_KEY_MISSING",
+      });
+    }
+
+    const prompt = `
+You are SmaXTify.AI, a receipt information extraction assistant.
+
+Analyze the uploaded image and extract only information clearly visible.
+
+Rules:
+
+- Do not invent missing information.
+- Use null for unavailable amounts or dates.
+- Amounts must be JSON numbers, not strings.
+- Remove currency symbols and commas from amounts.
+- Return the total amount payable, not subtotal, when both are visible.
+- Extract tax separately when shown.
+- Do not calculate or guess missing amounts.
+- Preserve the receipt currency where identifiable.
+- Return item names and visible quantities and prices.
+- If the image is not a receipt, set isReceipt to false.
+- For dates, use YYYY-MM-DD format whenever possible.
+- If the date is unclear, return null.
+- Return only valid JSON with these fields:
+  isReceipt, merchant, date, currency, subtotal, tax, total, items.
+- Each item must contain name, quantity, and price.
+
+Example:
 
 {
-  "category": "Category Name"
+  "isReceipt": true,
+  "merchant": "Example Store",
+  "date": "2025-01-28",
+  "currency": "INR",
+  "subtotal": 100,
+  "tax": 5,
+  "total": 105,
+  "items": [
+    {
+      "name": "Example Item",
+      "quantity": 1,
+      "price": 100
+    }
+  ]
 }
 `;
 
-      // ---------------------------------------------------
-      // GEMINI CATEGORY REQUEST
-      // ---------------------------------------------------
+    const response =
+      await generateGeminiContent({
+        contents: [
+          {
+            role: "user",
 
-      const response =
-        await generateGeminiContent({
-          contents:
-            prompt,
-
-          config: {
-            temperature: 0.2,
-
-            responseMimeType:
-              "application/json",
-
-            responseSchema: {
-              type: "object",
-
-              properties: {
-                category: {
-                  type: "string",
-                },
+            parts: [
+              {
+                text: prompt,
               },
 
-              required: [
-                "category",
-              ],
-            },
+              {
+                inlineData: {
+                  mimeType:
+                    req.file.mimetype,
+
+                  data:
+                    req.file.buffer.toString(
+                      "base64"
+                    ),
+                },
+              },
+            ],
           },
-        });
+        ],
 
-      const rawText =
-        response.text || "";
+        config: {
+          temperature: 0.1,
 
-      const parsed =
-        parseAIJSON(
-          rawText
-        );
-
-      let category = "";
-
-      if (
-        parsed &&
-        typeof parsed.category ===
-          "string"
-      ) {
-        category =
-          parsed.category.trim();
-      } else {
-        const match =
-          rawText.match(
-            /"category"\s*:\s*"([^"]+)"/i
-          );
-
-        if (match) {
-          category =
-            match[1].trim();
-        }
-      }
-
-      category =
-        normalizeCategory(
-          category
-        );
-
-      if (!category) {
-        return res.status(500).json({
-          success: false,
-          message:
-            "AI did not return a valid category. Please enter the category manually.",
-          code:
-            "AI_INVALID_CATEGORY",
-        });
-      }
-
-      return res.status(200).json({
-        success: true,
-
-        category,
-
-        source:
-          "ai",
+          responseMimeType:
+            "application/json",
+        },
       });
-    } catch (error) {
-      return sendAIError(
-        res,
-        error,
-        "Failed to detect transaction category. You can enter the category manually."
+
+    const rawText =
+      response.text || "";
+
+    const extracted =
+      parseAIJSON(rawText);
+
+    if (
+      !extracted ||
+      typeof extracted.isReceipt !==
+        "boolean" ||
+      !Array.isArray(
+        extracted.items
+      )
+    ) {
+      console.error(
+        "Invalid receipt response:",
+        rawText
       );
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "AI returned an invalid receipt format. Please try another image.",
+        code:
+          "AI_INVALID_RECEIPT_RESPONSE",
+      });
     }
-  };
+
+    if (!extracted.isReceipt) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "The uploaded image does not appear to be a receipt.",
+        code: "NOT_A_RECEIPT",
+      });
+    }
+
+    const subtotal =
+      normalizeReceiptAmount(
+        extracted.subtotal
+      );
+
+    const tax =
+      normalizeReceiptAmount(
+        extracted.tax
+      );
+
+    const total =
+      normalizeReceiptAmount(
+        extracted.total
+      );
+
+    const items =
+      extracted.items.map((item) => ({
+        name:
+          typeof item?.name === "string"
+            ? item.name.trim()
+            : "",
+
+        quantity:
+          normalizeReceiptAmount(
+            item?.quantity
+          ),
+
+        price:
+          normalizeReceiptAmount(
+            item?.price
+          ),
+      }));
+
+    const receiptDate =
+      normalizeReceiptDate(
+        extracted.date
+      );
+
+    let cloudinaryImage;
+
+    try {
+      cloudinaryImage =
+        await uploadReceiptImage(
+          req.file,
+          req.user.id
+        );
+    } catch (uploadError) {
+      console.error(
+        "Receipt image upload error:",
+        uploadError?.message ||
+          uploadError
+      );
+
+      return res.status(502).json({
+        success: false,
+
+        message:
+          uploadError?.code ===
+          "CLOUDINARY_CONFIG_MISSING"
+            ? "Cloudinary is not configured. Check your environment variables."
+            : "Receipt was scanned, but its image could not be uploaded. Please try again.",
+
+        code:
+          uploadError?.code ===
+          "CLOUDINARY_CONFIG_MISSING"
+            ? "CLOUDINARY_CONFIG_MISSING"
+            : "RECEIPT_IMAGE_UPLOAD_FAILED",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+
+      message:
+        "Receipt scanned successfully. Please review the extracted details.",
+
+      receipt: {
+        merchant:
+          typeof extracted.merchant ===
+          "string"
+            ? extracted.merchant.trim()
+            : null,
+
+        date: receiptDate,
+
+        currency:
+          typeof extracted.currency ===
+          "string"
+            ? extracted.currency.trim()
+            : "INR",
+
+        subtotal,
+
+        tax,
+
+        total,
+
+        items,
+
+        imageUrl:
+          cloudinaryImage.imageUrl,
+
+        imagePublicId:
+          cloudinaryImage.imagePublicId,
+      },
+    });
+  } catch (error) {
+    return sendAIError(
+      res,
+      error,
+      "Failed to scan receipt. Please try again."
+    );
+  }
+};

@@ -51,6 +51,7 @@ import CurrencyConverter from "./pages/CurrencyConverter";
 import SubscriptionTracker from "./pages/SubscriptionTracker";
 import BillReminders from "./pages/BillReminders";
 import Settings from "./pages/Settings";
+import AIScan from "./pages/AIScan";
 
 // =========================================================
 // ADMIN PANEL
@@ -441,6 +442,24 @@ function App() {
               element={
                 token ? (
                   <Settings />
+                ) : (
+                  <Navigate
+                    to="/login"
+                    replace
+                  />
+                )
+              }
+            />
+
+            {/* =================================================
+                AI RECEIPT SCAN
+            ================================================= */}
+
+            <Route
+              path="/ai-scan"
+              element={
+                token ? (
+                  <AIScan />
                 ) : (
                   <Navigate
                     to="/login"

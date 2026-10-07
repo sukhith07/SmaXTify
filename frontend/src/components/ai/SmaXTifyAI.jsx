@@ -37,7 +37,6 @@ import ChatInput from "./ChatInput";
 
 import ".././styles/smaxtifyAI.css";
 
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -50,13 +49,7 @@ ChartJS.register(
   Filler
 );
 
-
-/* =========================================================
-   AI CHART
-   ========================================================= */
-
 function AIChart({ chart }) {
-
   if (
     !chart ||
     !Array.isArray(chart.labels) ||
@@ -65,334 +58,193 @@ function AIChart({ chart }) {
     return null;
   }
 
-
-  const chartType =
-    chart.chartType || "line";
-
+  const chartType = chart.chartType || "line";
 
   const chartData = {
     labels: chart.labels,
-
-    datasets: chart.datasets.map(
-      (dataset) => ({
-        ...dataset,
-
-        borderWidth: 2,
-
-        tension: 0.35,
-
-        pointRadius:
-          chartType === "line"
-            ? 3
-            : undefined,
-      })
-    ),
+    datasets: chart.datasets.map((dataset) => ({
+      ...dataset,
+      borderWidth: 2,
+      tension: 0.35,
+      pointRadius:
+        chartType === "line" ? 3 : undefined,
+    })),
   };
-
 
   const options = {
     responsive: true,
-
     maintainAspectRatio: false,
-
     interaction: {
       mode: "index",
       intersect: false,
     },
-
     plugins: {
-
       legend: {
         display: true,
         position: "top",
       },
-
       tooltip: {
-
         enabled: true,
-
         callbacks: {
-
           label: (context) => {
-
-            const value =
-              Number(context.raw || 0);
+            const value = Number(context.raw || 0);
 
             return ` ${
               context.dataset?.label || ""
-            }: ₹${value.toLocaleString(
-              "en-IN",
-              {
-                maximumFractionDigits: 2,
-              }
-            )}`;
-
+            }: ₹${value.toLocaleString("en-IN", {
+              maximumFractionDigits: 2,
+            })}`;
           },
-
         },
-
       },
-
     },
-
     scales:
       chartType === "doughnut"
         ? undefined
         : {
-
             x: {
               ticks: {
                 maxRotation: 45,
                 minRotation: 0,
               },
             },
-
             y: {
-
               beginAtZero: true,
-
               ticks: {
-
                 callback: (value) =>
-                  `₹${Number(
-                    value
-                  ).toLocaleString(
-                    "en-IN"
-                  )}`,
-
+                  `₹${Number(value).toLocaleString("en-IN")}`,
               },
-
             },
-
           },
-
   };
-
 
   return (
     <div className="smaxtify-ai-chart-card">
-
-      {chart.title && (
-        <h3>
-          {chart.title}
-        </h3>
-      )}
-
+      {chart.title && <h3>{chart.title}</h3>}
 
       <div className="smaxtify-ai-chart-container">
-
         {chartType === "line" && (
-          <Line
-            data={chartData}
-            options={options}
-          />
+          <Line data={chartData} options={options} />
         )}
-
 
         {chartType === "bar" && (
-          <Bar
-            data={chartData}
-            options={options}
-          />
+          <Bar data={chartData} options={options} />
         )}
-
 
         {chartType === "doughnut" && (
-          <Doughnut
-            data={chartData}
-            options={options}
-          />
+          <Doughnut data={chartData} options={options} />
         )}
-
       </div>
-
 
       <div className="smaxtify-chart-summary">
-
-        {typeof chart.totalIncome ===
-          "number" && (
-
+        {typeof chart.totalIncome === "number" && (
           <span>
             Total income:{" "}
-
             <strong>
               ₹
-              {chart.totalIncome.toLocaleString(
-                "en-IN"
-              )}
+              {chart.totalIncome.toLocaleString("en-IN")}
             </strong>
           </span>
-
         )}
 
-
-        {typeof chart.totalExpense ===
-          "number" && (
-
+        {typeof chart.totalExpense === "number" && (
           <span>
             Total expenses:{" "}
-
             <strong>
               ₹
-              {chart.totalExpense.toLocaleString(
-                "en-IN"
-              )}
+              {chart.totalExpense.toLocaleString("en-IN")}
             </strong>
           </span>
-
         )}
 
-
-        {typeof chart.netBalance ===
-          "number" && (
-
+        {typeof chart.netBalance === "number" && (
           <span>
             Net balance:{" "}
-
             <strong>
               ₹
-              {chart.netBalance.toLocaleString(
-                "en-IN"
-              )}
+              {chart.netBalance.toLocaleString("en-IN")}
             </strong>
           </span>
-
         )}
-
       </div>
-
     </div>
   );
 }
 
-
-/* =========================================================
-   MAIN COMPONENT
-   ========================================================= */
-
 export default function SmaXTifyAI() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [greetingVisible, setGreetingVisible] = useState(true);
+  const [chats, setChats] = useState([]);
+  const [currentChatId, setCurrentChatId] = useState(null);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [initializing, setInitializing] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
+  const [currentChart, setCurrentChart] = useState(null);
+  const [userName, setUserName] = useState("");
 
-  const [isOpen, setIsOpen] =
-    useState(false);
-
-
-  /*
-   * IMPORTANT
-   * Sidebar starts CLOSED every time AI opens.
-   */
-  const [isSidebarOpen, setIsSidebarOpen] =
-    useState(false);
-
-
-  const [chats, setChats] =
-    useState([]);
-
-
-  const [currentChatId, setCurrentChatId] =
-    useState(null);
-
-
-  const [input, setInput] =
-    useState("");
-
-
-  const [loading, setLoading] =
-    useState(false);
-
-
-  const [initializing, setInitializing] =
-    useState(false);
-
-
-  const [pendingAction, setPendingAction] =
-    useState(null);
-
-
-  const [currentChart, setCurrentChart] =
-    useState(null);
-
-
-  const bottomRef =
-    useRef(null);
-
-
-  const scrollEndRef =
-    useRef(null);
-
+  const bottomRef = useRef(null);
+  const scrollEndRef = useRef(null);
 
   const currentChat =
-    chats.find(
-      (chat) =>
-        chat._id === currentChatId
-    ) || null;
-
-
-  /* =======================================================
-     OPEN AI
-     ALWAYS CLOSE RECENT CHAT SIDEBAR
-     ======================================================= */
-
-  const openAI = () => {
-
-    setIsSidebarOpen(false);
-
-    setIsOpen(true);
-
-  };
-
-
-  /* =======================================================
-     CLOSE AI
-     ======================================================= */
-
-  const closeAI = () => {
-
-    setIsOpen(false);
-
-    setIsSidebarOpen(false);
-
-  };
-
-
-  /* =======================================================
-     AUTO SCROLL
-     ======================================================= */
+    chats.find((chat) => chat._id === currentChatId) || null;
 
   useEffect(() => {
+    let isMounted = true;
 
+    const loadCurrentUser = async () => {
+      try {
+        const response = await API.get("/auth/me");
+        const user = response.data?.user || response.data;
+
+        if (isMounted) {
+          setUserName(
+            user?.name?.trim()?.split(/\s+/)[0] || ""
+          );
+        }
+      } catch (error) {
+        console.error("Load AI Greeting User Error:", error);
+      }
+    };
+
+    loadCurrentUser();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const openAI = () => {
+    setIsSidebarOpen(false);
+    setIsOpen(true);
+  };
+
+  const closeAI = () => {
+    setIsOpen(false);
+    setIsSidebarOpen(false);
+  };
+
+  useEffect(() => {
     if (!isOpen) {
       return;
     }
 
+    const timer = setTimeout(() => {
+      if (scrollEndRef.current) {
+        scrollEndRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+        });
+      } else if (bottomRef.current) {
+        bottomRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "end",
+        });
+      }
+    }, 80);
 
-    const timer =
-      setTimeout(() => {
-
-        if (scrollEndRef.current) {
-
-          scrollEndRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-          });
-
-        } else if (
-          bottomRef.current
-        ) {
-
-          bottomRef.current.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-          });
-
-        }
-
-      }, 80);
-
-
-    return () => {
-      clearTimeout(timer);
-    };
-
+    return () => clearTimeout(timer);
   }, [
     currentChat?.messages,
     loading,
@@ -400,750 +252,376 @@ export default function SmaXTifyAI() {
     isOpen,
   ]);
 
-
-  /* =======================================================
-     LOAD CHATS
-     ======================================================= */
-
   useEffect(() => {
-
-    if (
-      !isOpen ||
-      chats.length > 0
-    ) {
+    if (!isOpen || chats.length > 0) {
       return;
     }
 
+    const loadChats = async () => {
+      try {
+        setInitializing(true);
 
-    const loadChats =
-      async () => {
+        const response = await API.get("/chats");
+        const data =
+          response.data?.chats ||
+          response.data ||
+          [];
 
-        try {
+        if (Array.isArray(data) && data.length > 0) {
+          setChats(data);
+          setCurrentChatId(data[0]._id);
+        } else {
+          const createResponse = await API.post("/chats");
+          const chat =
+            createResponse.data?.chat ||
+            createResponse.data;
 
-          setInitializing(true);
-
-
-          const response =
-            await API.get(
-              "/chats"
-            );
-
-
-          const data =
-            response.data?.chats ||
-            response.data ||
-            [];
-
-
-          if (
-            Array.isArray(data) &&
-            data.length > 0
-          ) {
-
-            setChats(data);
-
-            setCurrentChatId(
-              data[0]._id
-            );
-
-          } else {
-
-            const response =
-              await API.post(
-                "/chats"
-              );
-
-
-            const chat =
-              response.data?.chat ||
-              response.data;
-
-
-            if (chat?._id) {
-
-              setChats([
-                chat,
-              ]);
-
-              setCurrentChatId(
-                chat._id
-              );
-
-            }
-
+          if (chat?._id) {
+            setChats([chat]);
+            setCurrentChatId(chat._id);
           }
-
-        } catch (error) {
-
-          console.error(
-            "Load Chats Error:",
-            error
-          );
-
-        } finally {
-
-          setInitializing(false);
-
         }
-
-      };
-
+      } catch (error) {
+        console.error("Load Chats Error:", error);
+      } finally {
+        setInitializing(false);
+      }
+    };
 
     loadChats();
+  }, [isOpen, chats.length]);
 
-  }, [
-    isOpen,
-    chats.length,
-  ]);
+  const createNewChat = async () => {
+    try {
+      const response = await API.post("/chats");
+      const chat =
+        response.data?.chat ||
+        response.data;
 
-
-  /* =======================================================
-     CREATE CHAT
-     ======================================================= */
-
-  const createNewChat =
-    async () => {
-
-      try {
-
-        const response =
-          await API.post(
-            "/chats"
-          );
-
-
-        const chat =
-          response.data?.chat ||
-          response.data;
-
-
-        if (!chat?._id) {
-
-          throw new Error(
-            "Invalid chat response."
-          );
-
-        }
-
-
-        setChats(
-          (previous) => [
-            chat,
-            ...previous,
-          ]
-        );
-
-
-        setCurrentChatId(
-          chat._id
-        );
-
-
-        setInput("");
-
-        setPendingAction(null);
-
-        setCurrentChart(null);
-
-      } catch (error) {
-
-        console.error(
-          "Create Chat Error:",
-          error
-        );
-
+      if (!chat?._id) {
+        throw new Error("Invalid chat response.");
       }
 
-    };
-
-
-  /* =======================================================
-     SELECT CHAT
-     ======================================================= */
+      setChats((previous) => [chat, ...previous]);
+      setCurrentChatId(chat._id);
+      setInput("");
+      setPendingAction(null);
+      setCurrentChart(null);
+    } catch (error) {
+      console.error("Create Chat Error:", error);
+    }
+  };
 
   const selectChat = (id) => {
-
     setCurrentChatId(id);
-
     setInput("");
-
     setPendingAction(null);
-
     setCurrentChart(null);
-
-    /*
-     * Close sidebar after selecting chat.
-     */
     setIsSidebarOpen(false);
-
   };
 
+  const deleteChat = async (id) => {
+    if (chats.length === 1) {
+      return;
+    }
 
-  /* =======================================================
-     DELETE CHAT
-     ======================================================= */
+    try {
+      await API.delete(`/chats/${id}`);
 
-  const deleteChat =
-    async (id) => {
+      const updatedChats = chats.filter(
+        (chat) => chat._id !== id
+      );
 
-      if (chats.length === 1) {
-        return;
+      setChats(updatedChats);
+
+      if (currentChatId === id) {
+        setCurrentChatId(updatedChats[0]?._id || null);
+        setCurrentChart(null);
       }
 
-
-      try {
-
-        await API.delete(
-          `/chats/${id}`
-        );
-
-
-        const updatedChats =
-          chats.filter(
-            (chat) =>
-              chat._id !== id
-          );
-
-
-        setChats(
-          updatedChats
-        );
-
-
-        if (
-          currentChatId === id
-        ) {
-
-          setCurrentChatId(
-            updatedChats[0]?._id ||
-            null
-          );
-
-          setCurrentChart(null);
-
-        }
-
-
-        setPendingAction(null);
-
-      } catch (error) {
-
-        console.error(
-          "Delete Chat Error:",
-          error
-        );
-
-      }
-
-    };
-
-
-  /* =======================================================
-     CLEAR CHAT
-     ======================================================= */
+      setPendingAction(null);
+    } catch (error) {
+      console.error("Delete Chat Error:", error);
+    }
+  };
 
   const clearChat = () => {
-
-    setChats(
-      (previous) =>
-        previous.map(
-          (chat) =>
-            chat._id === currentChatId
-              ? {
-                  ...chat,
-                  messages: [],
-                }
-              : chat
-        )
+    setChats((previous) =>
+      previous.map((chat) =>
+        chat._id === currentChatId
+          ? {
+              ...chat,
+              messages: [],
+            }
+          : chat
+      )
     );
-
 
     setPendingAction(null);
-
     setCurrentChart(null);
-
   };
 
-
-  /* =======================================================
-     ADD MESSAGE
-     ======================================================= */
-
-  const addLocalMessage = (
-    chatId,
-    message
-  ) => {
-
-    setChats(
-      (previous) =>
-        previous.map(
-          (chat) =>
-            chat._id === chatId
-              ? {
-                  ...chat,
-
-                  messages: [
-                    ...(chat.messages || []),
-                    message,
-                  ],
-                }
-              : chat
-        )
+  const addLocalMessage = (chatId, message) => {
+    setChats((previous) =>
+      previous.map((chat) =>
+        chat._id === chatId
+          ? {
+              ...chat,
+              messages: [
+                ...(chat.messages || []),
+                message,
+              ],
+            }
+          : chat
+      )
     );
-
   };
 
-
-  /* =======================================================
-     UPDATE TITLE
-     ======================================================= */
-
-  const updateLocalTitle = (
-    chatId,
-    title
-  ) => {
-
+  const updateLocalTitle = (chatId, title) => {
     if (!title) {
       return;
     }
 
-
-    setChats(
-      (previous) =>
-        previous.map(
-          (chat) =>
-            chat._id === chatId
-              ? {
-                  ...chat,
-                  title,
-                }
-              : chat
-        )
+    setChats((previous) =>
+      previous.map((chat) =>
+        chat._id === chatId
+          ? {
+              ...chat,
+              title,
+            }
+          : chat
+      )
     );
-
   };
 
+  const sendMessage = async (confirmation = false) => {
+    if (!currentChatId) {
+      return;
+    }
 
-  /* =======================================================
-     SEND MESSAGE
-     ======================================================= */
+    const question = input.trim();
 
-  const sendMessage =
-    async (
-      confirmation = false
-    ) => {
+    if (!confirmation && !question) {
+      return;
+    }
 
-      if (!currentChatId) {
-        return;
-      }
+    if (loading) {
+      return;
+    }
 
+    const messageToSend = confirmation
+      ? pendingAction?.originalMessage
+      : question;
 
-      const question =
-        input.trim();
+    if (!messageToSend) {
+      return;
+    }
 
+    if (!confirmation) {
+      setCurrentChart(null);
+
+      addLocalMessage(currentChatId, {
+        role: "user",
+        text: question,
+        time: new Date(),
+      });
+
+      setInput("");
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await API.post("/ai/chat", {
+        chatId: currentChatId,
+        message: messageToSend,
+        confirmed: confirmation,
+      });
+
+      const data = response.data;
 
       if (
-        !confirmation &&
-        !question
+        data.action?.requiresConfirmation &&
+        data.executed === false
       ) {
-        return;
-      }
-
-
-      if (loading) {
-        return;
-      }
-
-
-      const messageToSend =
-        confirmation
-          ? pendingAction?.originalMessage
-          : question;
-
-
-      if (!messageToSend) {
-        return;
-      }
-
-
-      if (!confirmation) {
-
-        setCurrentChart(null);
-
-
-        addLocalMessage(
-          currentChatId,
-          {
-            role: "user",
-            text: question,
-            time: new Date(),
-          }
-        );
-
-
-        setInput("");
-
-      }
-
-
-      setLoading(true);
-
-
-      try {
-
-        const response =
-          await API.post(
-            "/ai/chat",
-            {
-              chatId:
-                currentChatId,
-
-              message:
-                messageToSend,
-
-              confirmed:
-                confirmation,
-            }
-          );
-
-
-        const data =
-          response.data;
-
-
-        if (
-          data.action
-            ?.requiresConfirmation &&
-          data.executed === false
-        ) {
-
-          setPendingAction({
-
-            action:
-              data.action,
-
-            originalMessage:
-              messageToSend,
-
-            confirmationText:
-              data.reply,
-
-          });
-
-
-          addLocalMessage(
-            currentChatId,
-            {
-              role: "assistant",
-
-              text:
-                data.reply ||
-                "Please confirm this action.",
-
-              time: new Date(),
-
-            }
-          );
-
-
-          return;
-
-        }
-
-
-        if (
-          data.executed === true
-        ) {
-
-          setPendingAction(null);
-
-
-          const actionName =
-            data.action?.name;
-
-
-          const chartActions = [
-
-            "get_income_chart",
-
-            "get_expense_chart",
-
-            "get_income_vs_expense_chart",
-
-            "get_category_breakdown",
-
-            "get_monthly_financial_chart",
-
-          ];
-
-
-          if (
-            chartActions.includes(
-              actionName
-            ) &&
-            data.result
-          ) {
-
-            setCurrentChart(
-              data.result
-            );
-
-          }
-
-
-          addLocalMessage(
-            currentChatId,
-            {
-              role: "assistant",
-
-              text:
-                data.reply ||
-                "Action completed successfully.",
-
-              time: new Date(),
-
-            }
-          );
-
-
-          return;
-
-        }
-
-
-        addLocalMessage(
-          currentChatId,
-          {
-            role: "assistant",
-
-            text:
-              data.reply ||
-              "Sorry, I couldn't generate a response.",
-
-            time: new Date(),
-
-          }
-        );
-
-
-        if (data.title) {
-
-          updateLocalTitle(
-            currentChatId,
-            data.title
-          );
-
-        }
-
-      } catch (error) {
-
-        console.error(
-          "SmaXTify.AI Error:",
-          error
-        );
-
-
-        addLocalMessage(
-          currentChatId,
-          {
-            role: "assistant",
-
-            text:
-              error.response?.data?.message
-                ? `❌ ${error.response.data.message}`
-                : "❌ Unable to contact SmaXTify.AI.",
-
-            time: new Date(),
-
-          }
-        );
-
-      } finally {
-
-        setLoading(false);
-
-      }
-
-    };
-
-
-  /* =======================================================
-     CONFIRM
-     ======================================================= */
-
-  const confirmAction =
-    async () => {
-
-      if (!pendingAction) {
-        return;
-      }
-
-
-      await sendMessage(true);
-
-    };
-
-
-  /* =======================================================
-     CANCEL
-     ======================================================= */
-
-  const cancelAction =
-    () => {
-
-      setPendingAction(null);
-
-
-      addLocalMessage(
-        currentChatId,
-        {
+        setPendingAction({
+          action: data.action,
+          originalMessage: messageToSend,
+          confirmationText: data.reply,
+        });
+
+        addLocalMessage(currentChatId, {
           role: "assistant",
-
           text:
-            "Action cancelled.",
-
+            data.reply ||
+            "Please confirm this action.",
           time: new Date(),
+        });
 
+        return;
+      }
+
+      if (data.executed === true) {
+        setPendingAction(null);
+
+        const actionName = data.action?.name;
+
+        const chartActions = [
+          "get_income_chart",
+          "get_expense_chart",
+          "get_income_vs_expense_chart",
+          "get_category_breakdown",
+          "get_monthly_financial_chart",
+        ];
+
+        if (
+          chartActions.includes(actionName) &&
+          data.result
+        ) {
+          setCurrentChart(data.result);
         }
-      );
 
-    };
+        addLocalMessage(currentChatId, {
+          role: "assistant",
+          text:
+            data.reply ||
+            "Action completed successfully.",
+          time: new Date(),
+        });
 
+        return;
+      }
 
-  /* =======================================================
-     KEYBOARD
-     ======================================================= */
+      addLocalMessage(currentChatId, {
+        role: "assistant",
+        text:
+          data.reply ||
+          "Sorry, I couldn't generate a response.",
+        time: new Date(),
+      });
 
-  const handleKeyDown = (
-    event
-  ) => {
+      if (data.title) {
+        updateLocalTitle(currentChatId, data.title);
+      }
+    } catch (error) {
+      console.error("SmaXTify.AI Error:", error);
 
+      addLocalMessage(currentChatId, {
+        role: "assistant",
+        text: error.response?.data?.message
+          ? `❌ ${error.response.data.message}`
+          : "❌ Unable to contact SmaXTify.AI.",
+        time: new Date(),
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmAction = async () => {
+    if (!pendingAction) {
+      return;
+    }
+
+    await sendMessage(true);
+  };
+
+  const cancelAction = () => {
+    setPendingAction(null);
+
+    addLocalMessage(currentChatId, {
+      role: "assistant",
+      text: "Action cancelled.",
+      time: new Date(),
+    });
+  };
+
+  const handleKeyDown = (event) => {
     if (
       event.key === "Enter" &&
       !event.shiftKey
     ) {
-
       event.preventDefault();
-
       sendMessage();
-
     }
-
   };
-
-
-  /* =======================================================
-     RENDER
-     ======================================================= */
 
   return (
     <>
-
-      {/* =================================================
-          AI FAB
-          ================================================= */}
-
+      
       {!isOpen && (
+        <>
+          {greetingVisible && (
+            <div
+              className="smaxtify-ai-greeting"
+              role="status"
+              aria-live="polite"
+            >
+              <div className="smaxtify-ai-greeting-content">
+                <div className="smaxtify-ai-greeting-title">
+                  Hello, {userName || "there"}!{" "}
+                  <span className="smaxtify-ai-greeting-emoji">
+                    👋
+                  </span>
+                </div>
 
-        <button
-          type="button"
-          className="smaxtify-ai-fab"
-          onClick={openAI}
-          aria-label="Open SmaXTify AI"
-        >
-          🤖
-        </button>
+                <div className="smaxtify-ai-greeting-brand">
+                  I'm SmaXTify.AI
+                </div>
 
+                <div className="smaxtify-ai-greeting-question">
+                  What's on your mind..?
+                </div>
+              </div>
+
+              <button
+                type="button"
+                className="smaxtify-ai-greeting-close"
+                onClick={() => setGreetingVisible(false)}
+                aria-label="Close greeting message"
+                title="Close message"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          )}
+
+          <button
+            type="button"
+            className="smaxtify-ai-fab"
+            onClick={openAI}
+            aria-label="Open SmaXTify AI"
+          >
+            🤖
+          </button>
+        </>
       )}
 
-
-      {/* =================================================
-          AI WINDOW
-          ================================================= */}
-
       {isOpen && (
-
         <div className="smaxtify-ai-overlay">
-
           <div className="smaxtify-ai-window">
-
-
-            {/* HEADER */}
-
-            <ChatHeader
-              clearChat={
-                clearChat
-              }
-            />
-
-
-            {/* MAIN */}
+            <ChatHeader clearChat={clearChat} />
 
             <div className="smaxtify-layout">
-
-
-              {/* =========================================
-                  AI SIDEBAR
-                  ========================================= */}
-
               <ChatSidebar
-
-                chats={
-                  chats
-                }
-
-                currentChatId={
-                  currentChatId
-                }
-
-                createNewChat={
-                  createNewChat
-                }
-
-                selectChat={
-                  selectChat
-                }
-
-                deleteChat={
-                  deleteChat
-                }
-
-                isOpen={
-                  isSidebarOpen
-                }
-
+                chats={chats}
+                currentChatId={currentChatId}
+                createNewChat={createNewChat}
+                selectChat={selectChat}
+                deleteChat={deleteChat}
+                isOpen={isSidebarOpen}
                 onToggleSidebar={() =>
-                  setIsSidebarOpen(
-                    (previous) =>
-                      !previous
-                  )
+                  setIsSidebarOpen((previous) => !previous)
                 }
-
               />
 
-
-              {/* =========================================
-                  CHAT
-                  ========================================= */}
-
               <div className="smaxtify-container">
-
-
-                {/* CHAT TOOLBAR */}
-
                 <div className="smaxtify-chat-toolbar">
-
-
-                  {/* MENU BUTTON */}
-
                   <button
                     type="button"
                     className="smaxtify-sidebar-toggle"
                     onClick={() =>
-                      setIsSidebarOpen(
-                        (previous) =>
-                          !previous
-                      )
+                      setIsSidebarOpen((previous) => !previous)
                     }
                     title={
                       isSidebarOpen
@@ -1156,30 +634,19 @@ export default function SmaXTifyAI() {
                         : "Open Recent Chats"
                     }
                   >
-
                     <Menu size={19} />
-
                   </button>
 
-
                   <div className="smaxtify-toolbar-info">
-
                     <span className="smaxtify-toolbar-title">
-
                       {currentChat?.title ||
                         "SmaXTify AI Personal Finance"}
-
                     </span>
-
 
                     <span className="smaxtify-toolbar-status">
                       SMAXTIFY.AI
                     </span>
-
                   </div>
-
-
-                  {/* CLOSE AI */}
 
                   <button
                     type="button"
@@ -1188,178 +655,95 @@ export default function SmaXTifyAI() {
                     title="Close SmaXTify AI"
                     aria-label="Close SmaXTify AI"
                   >
-
                     <X size={18} />
-
                   </button>
-
                 </div>
 
-
-                {/* =======================================
-                    CONTENT
-                    ======================================= */}
-
                 {initializing ? (
-
                   <div className="smaxtify-loading">
-
                     <div className="smaxtify-loading-icon">
                       ✨
                     </div>
-
-                    <p>
-                      Loading SmaXTify.AI...
-                    </p>
-
+                    <p>Loading SmaXTify.AI...</p>
                   </div>
-
                 ) : currentChat ? (
-
                   <>
-
                     <div className="smaxtify-scroll-area">
-
                       <ChatMessages
-                        messages={
-                          currentChat.messages ||
-                          []
-                        }
-                        loading={
-                          loading
-                        }
-                        bottomRef={
-                          bottomRef
-                        }
+                        messages={currentChat.messages || []}
+                        loading={loading}
+                        bottomRef={bottomRef}
                       />
-
 
                       {currentChart && (
-
-                        <AIChart
-                          chart={
-                            currentChart
-                          }
-                        />
-
+                        <AIChart chart={currentChart} />
                       )}
 
-
                       <div
-                        ref={
-                          scrollEndRef
-                        }
+                        ref={scrollEndRef}
                         className="smaxtify-scroll-anchor"
                       />
-
                     </div>
 
-
-                    {/* INPUT */}
-
                     <div className="smaxtify-bottom-area">
-
                       <ChatInput
-                        input={
-                          input
-                        }
-                        setInput={
-                          setInput
-                        }
-                        sendMessage={() =>
-                          sendMessage(false)
-                        }
-                        handleKeyDown={
-                          handleKeyDown
-                        }
-                        loading={
-                          loading
-                        }
+                        input={input}
+                        setInput={setInput}
+                        sendMessage={() => sendMessage(false)}
+                        handleKeyDown={handleKeyDown}
+                        loading={loading}
                       />
 
-
                       {pendingAction && (
-
                         <div className="smaxtify-ai-confirmation">
-
                           <div>
-
-                            <strong>
-                              Confirm action
-                            </strong>
-
+                            <strong>Confirm action</strong>
                             <p>
                               {pendingAction.confirmationText ||
                                 "Do you want to continue?"}
                             </p>
-
                           </div>
 
-
                           <div className="smaxtify-ai-confirmation-actions">
-
                             <button
                               type="button"
-                              onClick={
-                                confirmAction
-                              }
-                              disabled={
-                                loading
-                              }
+                              onClick={confirmAction}
+                              disabled={loading}
                             >
                               Confirm
                             </button>
 
-
                             <button
                               type="button"
-                              onClick={
-                                cancelAction
-                              }
-                              disabled={
-                                loading
-                              }
+                              onClick={cancelAction}
+                              disabled={loading}
                             >
                               Cancel
                             </button>
-
                           </div>
-
                         </div>
-
                       )}
-
                     </div>
-
                   </>
-
                 ) : (
-
                   <div className="smaxtify-empty-state">
-
                     <h2>
-                      SmaXTify.AI
+                      Hello, {userName || "there"}! 👋
                     </h2>
-
                     <p>
-                      Select a chat or create
-                      a new conversation.
+                      Welcome to SmaXTify.AI. How can I help you
+                      manage your finances today?
                     </p>
-
+                    <p>
+                      Select a chat or create a new conversation.
+                    </p>
                   </div>
-
                 )}
-
               </div>
-
             </div>
-
           </div>
-
         </div>
-
       )}
-
     </>
   );
 }
