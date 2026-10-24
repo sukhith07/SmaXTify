@@ -1,4 +1,3 @@
-
 import {
   FaHome,
   FaWallet,
@@ -16,17 +15,25 @@ import {
   FaReceipt,
 } from "react-icons/fa";
 
-import { useState, useEffect } from "react";
-
 import {
-  useNavigate,
-  useLocation,
-} from "react-router-dom";
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useCallback,
+} from "react";
+
+import { useNavigate, useLocation } from "react-router-dom";
 
 import LogoutConfirmModal from "../LogoutConfirmModal";
 import "./../styles/sidebar.css";
 
 const API_URL = "http://localhost:5000/api";
+const SIDEBAR_SCROLL_KEY = "smaxtify-sidebar-scroll-position";
+const SIDEBAR_COLLAPSED_KEY = "smaxtify-sidebar-collapsed";
+
+const SIDEBAR_EXPANDED_WIDTH = "276px";
+const SIDEBAR_COLLAPSED_WIDTH = "88px";
 
 function getStoredUser() {
   try {
@@ -65,10 +72,20 @@ function getUserPhoto(user) {
   return photo;
 }
 
+function getSavedScrollPosition() {
+  const savedPosition = Number(
+    sessionStorage.getItem(SIDEBAR_SCROLL_KEY) || 0
+  );
+
+  return Number.isFinite(savedPosition) && savedPosition >= 0
+    ? savedPosition
+    : 0;
+}
+
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(() => {
     const savedState = sessionStorage.getItem(
-      "smaxtify-sidebar-collapsed"
+      SIDEBAR_COLLAPSED_KEY
     );
 
     return savedState === null ? false : savedState === "true";
@@ -80,11 +97,60 @@ function Sidebar() {
   const [currentUser, setCurrentUser] = useState(getStoredUser);
   const [photoFailed, setPhotoFailed] = useState(false);
 
+  const sidebarMenuRef = useRef(null);
+  const scrollFrameRef = useRef(null);
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const userName = getUserName(currentUser);
   const userPhoto = getUserPhoto(currentUser);
+
+  const saveScrollPosition = useCallback((position) => {
+    const safePosition = Math.max(0, Number(position) || 0);
+
+    sessionStorage.setItem(
+      SIDEBAR_SCROLL_KEY,
+      String(safePosition)
+    );
+  }, []);
+
+  const cancelPendingRestore = useCallback(() => {
+    if (scrollFrameRef.current !== null) {
+      cancelAnimationFrame(scrollFrameRef.current);
+      scrollFrameRef.current = null;
+    }
+  }, []);
+
+  const restoreScrollPosition = useCallback(
+    (element) => {
+      if (!element) return;
+
+      cancelPendingRestore();
+
+      element.scrollTop = getSavedScrollPosition();
+
+      scrollFrameRef.current = requestAnimationFrame(() => {
+        if (element.isConnected) {
+          element.scrollTop = getSavedScrollPosition();
+        }
+
+        scrollFrameRef.current = null;
+      });
+    },
+    [cancelPendingRestore]
+  );
+
+  const setSidebarMenuRef = useCallback(
+    (element) => {
+      sidebarMenuRef.current = element;
+
+      if (element) {
+        restoreScrollPosition(element);
+      }
+    },
+    [restoreScrollPosition]
+  );
 
   useEffect(() => {
     setPhotoFailed(false);
@@ -233,9 +299,13 @@ function Sidebar() {
   ];
 
   useEffect(() => {
+    const sidebarWidth = collapsed
+      ? SIDEBAR_COLLAPSED_WIDTH
+      : SIDEBAR_EXPANDED_WIDTH;
+
     document.documentElement.style.setProperty(
       "--smaxtify-sidebar-width",
-      collapsed ? "88px" : "276px"
+      sidebarWidth
     );
 
     document.body.classList.toggle(
@@ -271,12 +341,44 @@ function Sidebar() {
     };
   }, [mobileOpen]);
 
+  useEffect(() => {
+    const menu = sidebarMenuRef.current;
+
+    if (!menu) return;
+
+    const handleScroll = () => {
+      saveScrollPosition(menu.scrollTop);
+    };
+
+    menu.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      menu.removeEventListener("scroll", handleScroll);
+    };
+  }, [saveScrollPosition]);
+
+  useLayoutEffect(() => {
+    restoreScrollPosition(sidebarMenuRef.current);
+  }, [location.pathname, restoreScrollPosition]);
+
+  useEffect(() => {
+    return () => {
+      cancelPendingRestore();
+
+      if (sidebarMenuRef.current) {
+        saveScrollPosition(sidebarMenuRef.current.scrollTop);
+      }
+    };
+  }, [cancelPendingRestore, saveScrollPosition]);
+
   const toggleSidebar = () => {
     setCollapsed((previous) => {
       const nextState = !previous;
 
       sessionStorage.setItem(
-        "smaxtify-sidebar-collapsed",
+        SIDEBAR_COLLAPSED_KEY,
         String(nextState)
       );
 
@@ -285,8 +387,15 @@ function Sidebar() {
   };
 
   const handleNavigation = (path) => {
-    navigate(path);
+    if (sidebarMenuRef.current) {
+      saveScrollPosition(sidebarMenuRef.current.scrollTop);
+    }
+
     setMobileOpen(false);
+
+    if (location.pathname !== path) {
+      navigate(path);
+    }
   };
 
   const closeMobileSidebar = () => {
@@ -296,11 +405,9 @@ function Sidebar() {
   const isAdminPage = location.pathname.startsWith("/admin");
 
   const handleAdminPanel = () => {
-    if (!isAdmin) {
-      return;
+    if (isAdmin) {
+      handleNavigation("/admin");
     }
-
-    handleNavigation("/admin");
   };
 
   const handleProfile = () => {
@@ -310,14 +417,22 @@ function Sidebar() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    sessionStorage.removeItem("smaxtify-sidebar-collapsed");
+
+    sessionStorage.removeItem(SIDEBAR_COLLAPSED_KEY);
+    sessionStorage.removeItem(SIDEBAR_SCROLL_KEY);
+
+    cancelPendingRestore();
+
+    if (sidebarMenuRef.current) {
+      sidebarMenuRef.current.scrollTop = 0;
+    }
 
     setShowLogoutModal(false);
     setMobileOpen(false);
+    setIsAdmin(false);
+    setCurrentUser({});
 
-    navigate("/", {
-      replace: true,
-    });
+    navigate("/", { replace: true });
   };
 
   return (
@@ -340,11 +455,13 @@ function Sidebar() {
       )}
 
       <aside
-        className={`
-          sidebar
-          ${collapsed ? "collapsed" : ""}
-          ${mobileOpen ? "mobile-open" : ""}
-        `}
+        className={[
+          "sidebar",
+          collapsed ? "collapsed" : "",
+          mobileOpen ? "mobile-open" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
       >
         <div className="sidebar-top">
           {!collapsed && (
@@ -410,8 +527,14 @@ function Sidebar() {
           )}
         </div>
 
-        <nav className="sidebar-navigation">
-          <ul className="sidebar-menu">
+        <nav
+          className="sidebar-navigation"
+          aria-label="Main navigation"
+        >
+          <ul
+            className="sidebar-menu"
+            ref={setSidebarMenuRef}
+          >
             {menuItems.map((item) => (
               <li
                 key={item.path}
@@ -439,10 +562,9 @@ function Sidebar() {
           {isAdmin && (
             <button
               type="button"
-              className={`
-                admin-panel-btn
-                ${isAdminPage ? "active" : ""}
-              `}
+              className={`admin-panel-btn ${
+                isAdminPage ? "active" : ""
+              }`}
               onClick={handleAdminPanel}
               title={collapsed ? "Admin Panel" : undefined}
             >

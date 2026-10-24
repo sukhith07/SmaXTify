@@ -1,41 +1,52 @@
-.navbar {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 1000;
+/* =========================================================
+   SMAXTIFY - GLOBAL FIXED NAVBAR
+   Shared across all authenticated modules
+   ========================================================= */
 
-  width: 100%;
-  min-height: 108px;
-  padding: 18px 30px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-
-  box-sizing: border-box;
-
-  background: rgba(255, 255, 255, 0.82) !important;
-
-  border: 0 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.9) !important;
-
-  border-radius: 0 0 32px 32px !important;
-
-  box-shadow:
-    0 12px 30px rgba(31, 41, 55, 0.08),
-    0 2px 8px rgba(59, 130, 246, 0.04);
-
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-
-  overflow: visible;
+:root {
+    --smaxtify-navbar-height: 108px;
 }
 
-.dashboard:has(.sidebar.collapsed) .navbar {
-    width: calc(100%  -9px);
+.navbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: var(--smaxtify-sidebar-width, 276px);
+    right: 0;
+    z-index: 1100;
+
+    width: auto;
+    min-width: 0;
+    min-height: var(--smaxtify-navbar-height);
+    padding: 18px 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+
+    box-sizing: border-box;
+
+    background: rgba(255, 255, 255, 0.94) !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.9) !important;
+    border-radius: 0 0 32px 32px !important;
+
+    box-shadow:
+        0 12px 30px rgba(31, 41, 55, 0.08),
+        0 2px 8px rgba(59, 130, 246, 0.04);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    overflow: visible;
+
+    transition:
+        left var(--smaxtify-sidebar-transition, 320ms)
+        var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
 .navbar-left {
+    flex: 1 1 auto;
     min-width: 0;
 }
 
@@ -61,11 +72,16 @@
     justify-content: flex-end;
     gap: 12px;
     margin-left: auto;
+    flex-shrink: 0;
 }
+
 .navbar-glass-btn {
-  position: relative;
-}
-.navbar-glass-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 50px;
+
     width: 50px;
     height: 50px;
     padding: 0;
@@ -73,20 +89,13 @@
     border: 1px solid rgba(249, 250, 253, 0.9);
     border-radius: 16px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    position: relative;
-
     cursor: pointer;
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.95),
-            rgba(248, 250, 252, 0.7)
-        );
+    background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.98),
+        rgba(248, 250, 252, 0.85)
+    );
 
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
@@ -107,7 +116,6 @@
 
 .navbar-glass-btn:hover {
     transform: translateY(-2px);
-
     box-shadow:
         0 12px 30px rgba(15, 23, 42, 0.14),
         inset 0 1px 1px rgba(255, 255, 255, 1);
@@ -130,35 +138,29 @@
 }
 
 .notification-dot {
-  position: absolute;
+    position: absolute;
+    top: -4px;
+    right: -4px;
 
-  top: -4px;
-  right: -4px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
 
-  min-width: 17px;
-  height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  padding: 0 4px;
+    border-radius: 20px;
+    background: #ef4444;
+    color: #ffffff;
+    border: 2px solid #ffffff;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    font-size: 7px;
+    font-weight: 800;
+    line-height: 1;
 
-  border-radius: 20px;
-
-  background: #ef4444;
-  color: #ffffff;
-
-  border: 2px solid #ffffff;
-
-  font-size: 7px;
-  font-weight: 800;
-
-  line-height: 1;
-
-  box-sizing: border-box;
-
-  pointer-events: none;
+    box-sizing: border-box;
+    pointer-events: none;
 }
 
 .navbar-glass-btn:focus-visible {
@@ -166,14 +168,18 @@
     outline-offset: 3px;
 }
 
+/* =========================================================
+   LAPTOP
+   ========================================================= */
+
 @media (max-width: 1366px) and (min-width: 1101px) {
-    .navbar {
-        width: calc(100% - 255px);
-        padding: 15px 24px;
+    :root {
+        --smaxtify-navbar-height: 98px;
     }
 
-    .dashboard:has(.sidebar.collapsed) .navbar {
-        width: calc(100% - 90px);
+    .navbar {
+        min-height: var(--smaxtify-navbar-height);
+        padding: 15px 24px;
     }
 
     .navbar-left h1 {
@@ -181,10 +187,18 @@
     }
 }
 
+/* =========================================================
+   TABLET AND MOBILE SIDEBAR OVERLAY
+   ========================================================= */
+
 @media (max-width: 1100px) {
-    .navbar,
-    .dashboard:has(.sidebar.collapsed) .navbar {
-        width: 100%;
+    :root {
+        --smaxtify-navbar-height: 88px;
+    }
+
+    .navbar {
+        left: 0;
+        min-height: var(--smaxtify-navbar-height);
         padding: 15px 22px;
     }
 
@@ -194,10 +208,12 @@
 }
 
 @media (max-width: 900px) {
-    .navbar,
-    .dashboard:has(.sidebar.collapsed) .navbar {
-        width: 100%;
-        min-height: 78px;
+    :root {
+        --smaxtify-navbar-height: 78px;
+    }
+
+    .navbar {
+        min-height: var(--smaxtify-navbar-height);
         padding: 14px 20px;
     }
 
@@ -210,6 +226,7 @@
     }
 
     .navbar-glass-btn {
+        flex-basis: 45px;
         width: 45px;
         height: 45px;
         border-radius: 14px;
@@ -220,16 +237,24 @@
     }
 }
 
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
 @media (max-width: 768px) {
-    .navbar,
-    .dashboard:has(.sidebar.collapsed) .navbar {
-        width: 100%;
-        min-height: 70px;
+    :root {
+        --smaxtify-navbar-height: 70px;
+    }
+
+    .navbar {
+        min-height: var(--smaxtify-navbar-height);
         padding: 11px 14px;
+        gap: 10px;
+        border-radius: 0 0 20px 20px !important;
     }
 
     .navbar-left {
-        flex: 1;
+        flex: 1 1 auto;
         min-width: 0;
     }
 
@@ -247,10 +272,10 @@
 
     .navbar-actions {
         gap: 7px;
-        flex-shrink: 0;
     }
 
     .navbar-glass-btn {
+        flex-basis: 40px;
         width: 40px;
         height: 40px;
         border-radius: 12px;
@@ -261,21 +286,20 @@
     }
 
     .notification-dot {
-        top: 7px;
-        right: 7px;
-        width: 6px;
-        height: 6px;
+        top: -3px;
+        right: -3px;
     }
 }
 
 @media (max-width: 420px) {
-    .navbar,
-    .dashboard:has(.sidebar.collapsed) .navbar {
+    .navbar {
         padding: 10px;
+        gap: 7px;
     }
 
     .navbar-left h1 {
         font-size: 16px;
+        letter-spacing: -0.4px;
     }
 
     .navbar-left p {
@@ -287,6 +311,7 @@
     }
 
     .navbar-glass-btn {
+        flex-basis: 36px;
         width: 36px;
         height: 36px;
         border-radius: 11px;
@@ -294,5 +319,12 @@
 
     .navbar-glass-btn svg {
         font-size: 13px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .navbar,
+    .navbar-glass-btn {
+        transition: none;
     }
 }

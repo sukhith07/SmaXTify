@@ -1,40 +1,244 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:"Inter",Arial,sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+:root {
+  --smaxtify-sidebar-expanded-width: 276px;
+  --smaxtify-sidebar-collapsed-width: 88px;
+  --smaxtify-sidebar-width: 276px;
+  --smaxtify-sidebar-transition: 320ms;
+  --smaxtify-sidebar-easing: cubic-bezier(0.22, 1, 0.36, 1);
+  --smaxtify-navbar-height: 108px;
 }
 
 html,
 body,
-#root{
-
-    width:100%;
-
-    min-height:100%;
-
-    margin:0;
-
-    padding:0;
-
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-body{
-
-    overflow-x:hidden;
-
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
 }
 
-button{
-
-    cursor:pointer;
-
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-input{
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
 
-    outline:none;
+button {
+  cursor: pointer;
+}
 
-    
+input {
+  outline: none;
+}
 
+/* =========================================================
+   SHARED APPLICATION PAGE LAYOUT
+   ========================================================= */
+
+.app-page-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+}
+
+.app-route-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================================================
+   FIXED NAVBAR CONTENT OFFSET
+   Navbar is fixed to the viewport, so reserve its space
+   before the page's main content.
+   ========================================================= */
+
+.app-route-content .dashboard-content,
+.app-route-content .accounts-content,
+.app-route-content .budget-content,
+.app-route-content .goals-content,
+.app-route-content .reports-content,
+.app-route-content .currency-content,
+.app-route-content .subscriptions-content,
+.app-route-content .settings-content,
+.app-route-content .aiscan-content {
+  padding-top: var(--smaxtify-navbar-height, 108px);
+}
+
+/* =========================================================
+   GLOBAL FOOTER
+   ========================================================= */
+
+.app-page-shell > .global-footer {
+  position: relative;
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  margin-top: auto;
+  margin-left: 0;
+  padding-left: 0;
+  box-sizing: border-box;
+  transition:
+    padding-left var(--smaxtify-sidebar-transition, 320ms)
+      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+.app-page-shell:has(.dashboard) > .global-footer,
+.app-page-shell:has(.aiscan-page) > .global-footer,
+.app-page-shell:has(.accounts-page) > .global-footer,
+.app-page-shell:has(.budget-page) > .global-footer,
+.app-page-shell:has(.goals-page) > .global-footer,
+.app-page-shell:has(.reports-page) > .global-footer,
+.app-page-shell:has(.currency-page) > .global-footer,
+.app-page-shell:has(.subscriptions-page) > .global-footer,
+.app-page-shell:has(.settings-page) > .global-footer {
+  padding-left: var(--smaxtify-sidebar-width, 276px);
+}
+
+/* =========================================================
+   DASHBOARD CONTENT
+   ========================================================= */
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - var(--smaxtify-sidebar-width, 276px));
+  margin-left: var(--smaxtify-sidebar-width, 276px);
+  transition:
+    width var(--smaxtify-sidebar-transition, 320ms)
+      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    margin-left var(--smaxtify-sidebar-transition, 320ms)
+      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* =========================================================
+   AI SCAN CONTENT
+   ========================================================= */
+
+.aiscan-content {
+  width: calc(100% - var(--smaxtify-sidebar-width, 276px));
+  margin-left: var(--smaxtify-sidebar-width, 276px);
+  transition:
+    width var(--smaxtify-sidebar-transition, 320ms)
+      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    margin-left var(--smaxtify-sidebar-transition, 320ms)
+      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+/* =========================================================
+   ADMIN PAGES
+   ========================================================= */
+
+.app-page-shell--admin {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* =========================================================
+   MEDIA AND FORM ELEMENTS
+   ========================================================= */
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+:focus-visible {
+  scroll-margin-block: 16px;
+}
+
+/* =========================================================
+   TABLET AND MOBILE
+   ========================================================= */
+
+@media (max-width: 1366px) and (min-width: 1101px) {
+  :root {
+    --smaxtify-navbar-height: 98px;
+  }
+}
+
+@media (max-width: 1100px) {
+  :root {
+    --smaxtify-navbar-height: 88px;
+  }
+
+  .app-page-shell > .global-footer {
+    padding-left: 0;
+  }
+
+  .dashboard-content,
+  .aiscan-content {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  :root {
+    --smaxtify-navbar-height: 78px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --smaxtify-navbar-height: 70px;
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .app-page-shell > .global-footer,
+  .dashboard-content,
+  .aiscan-content {
+    transition: none;
+  }
 }
