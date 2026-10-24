@@ -1,3 +1,4 @@
+
 const Expense = require("../models/Expense");
 const Budget = require("../models/Budget");
 const Account = require("../models/Account");
@@ -288,33 +289,48 @@ exports.updateExpense = async (req, res) => {
 
 exports.deleteExpense = async (req, res) => {
   try {
-    const expense = await Expense.findById(req.params.id);
+    const expense = await Expense.findOne({
+      _id: req.params.id,
+      user: req.user.id,
+    });
 
     if (!expense) {
-      return res.status(404).json({
+      const existingExpense = await Expense.exists({
+        _id: req.params.id,
+      });
+
+      return res.status(existingExpense ? 401 : 404).json({
         success: false,
-        message: "Transaction not found",
+        message: existingExpense
+          ? "Not Authorized"
+          : "Transaction not found",
       });
     }
 
-    if (expense.user.toString() !== req.user.id) {
-      return res.status(401).json({
-        success: false,
-        message: "Not Authorized",
-      });
-    }
+    const transactionId = expense._id;
+
+    const linkedReceipts = await ReceiptScan.find({
+      user: req.user.id,
+      transaction: transactionId,
+    }).select("_id");
 
     await deleteTransaction(expense, req.user.id);
 
-    await ReceiptScan.deleteMany({
-      user: req.user.id,
-      transaction: expense._id,
-    });
+    if (linkedReceipts.length > 0) {
+      await ReceiptScan.deleteMany({
+        user: req.user.id,
+        transaction: transactionId,
+      });
+    }
 
     return res.status(200).json({
       success: true,
       message:
         "Transaction and linked AI Scan receipt deleted successfully.",
+      deletedTransactionId: transactionId,
+      deletedReceiptIds: linkedReceipts.map((receipt) =>
+        receipt._id.toString()
+      ),
     });
   } catch (error) {
     console.error("Delete Expense Error:", error);

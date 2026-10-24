@@ -1,14 +1,13 @@
+
 const { GoogleGenAI } = require("@google/genai");
 const cloudinary = require("cloudinary").v2;
 
 const Chat = require("../models/Chat");
 const Expense = require("../models/Expense");
 const Account = require("../models/Account");
+const ReceiptScan = require("../models/ReceiptScan");
 
-const {
-  executeAIAction,
-} = require("../services/ai/aiActionExecutor");
-
+const { executeAIAction } = require("../services/ai/aiActionExecutor");
 const {
   validateAction,
   actionNeedsConfirmation,
@@ -16,15 +15,7 @@ const {
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim();
 
-const ai = new GoogleGenAI({
-  apiKey: GEMINI_API_KEY,
-});
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 const GEMINI_MODELS = [
   "gemini-3.5-flash",
@@ -32,16 +23,13 @@ const GEMINI_MODELS = [
   "gemini-3.1-flash-lite",
 ];
 
-const MAX_RETRIES_PER_MODEL = 1;
+const RETRYABLE_STATUS_CODES = [408, 429, 500, 502, 503, 504];
 
-const RETRYABLE_STATUS_CODES = [
-  408,
-  429,
-  500,
-  502,
-  503,
-  504,
-];
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const getErrorStatus = (error) =>
   error?.status ||
@@ -53,172 +41,64 @@ const getErrorStatus = (error) =>
 
 const getNumericErrorStatus = (error) => {
   const status = Number(getErrorStatus(error));
-
   return Number.isFinite(status) ? status : null;
 };
 
-const isRetryableError = (error) =>
-  RETRYABLE_STATUS_CODES.includes(
-    getNumericErrorStatus(error)
-  );
-
 const sleep = (milliseconds) =>
-  new Promise((resolve) =>
-    setTimeout(resolve, milliseconds)
-  );
+  new Promise((resolve) => setTimeout(resolve, milliseconds));
 
-const generateGeminiContent = async ({
-  contents,
-  config = {},
-}) => {
+const generateGeminiContent = async ({ contents, config = {} }) => {
   if (!GEMINI_API_KEY) {
-    const error = new Error(
-      "Gemini API key is not configured."
-    );
-
+    const error = new Error("Gemini API key is not configured.");
     error.status = 503;
     error.code = "AI_KEY_MISSING";
-
     throw error;
   }
 
-  let lastError = null;
+  let lastError;
 
   for (const model of GEMINI_MODELS) {
-    for (
-      let attempt = 0;
-      attempt <= MAX_RETRIES_PER_MODEL;
-      attempt++
-    ) {
+    for (let attempt = 0; attempt < 2; attempt++) {
       try {
-        console.log(
-          `Gemini request: ${model} | attempt ${attempt + 1}`
-        );
-
-        const response =
-          await ai.models.generateContent({
-            model,
-            contents,
-            config,
-          });
-
-        console.log(`Gemini success: ${model}`);
-
-        return response;
+        return await ai.models.generateContent({
+          model,
+          contents,
+          config,
+        });
       } catch (error) {
         lastError = error;
 
-        const status =
-          getNumericErrorStatus(error);
-
-        console.error(
-          `Gemini error: ${model} | status: ${status} | attempt: ${
-            attempt + 1
-          } | message: ${error?.message || error}`
-        );
-
-        if (!isRetryableError(error)) {
+        if (!RETRYABLE_STATUS_CODES.includes(getNumericErrorStatus(error))) {
           throw error;
         }
 
-        if (
-          attempt < MAX_RETRIES_PER_MODEL
-        ) {
-          const delay =
-            1000 * Math.pow(2, attempt) +
-            Math.floor(Math.random() * 500);
-
-          await sleep(delay);
+        if (attempt === 0) {
+          await sleep(1000 + Math.floor(Math.random() * 500));
         }
       }
     }
   }
 
-  throw (
-    lastError ||
-    new Error("All Gemini models failed.")
-  );
+  throw lastError || new Error("All Gemini models failed.");
 };
 
-const uploadReceiptImage = (file, userId) =>
-  new Promise((resolve, reject) => {
-    if (
-      !process.env.CLOUDINARY_CLOUD_NAME ||
-      !process.env.CLOUDINARY_API_KEY ||
-      !process.env.CLOUDINARY_API_SECRET
-    ) {
-      const error = new Error(
-        "Cloudinary is not configured."
-      );
-
-      error.code = "CLOUDINARY_CONFIG_MISSING";
-
-      return reject(error);
-    }
-
-    const upload =
-      cloudinary.uploader.upload_stream(
-        {
-          folder: `smaxtify/receipts/${userId}`,
-          resource_type: "image",
-        },
-        (error, result) => {
-          if (error) {
-            return reject(error);
-          }
-
-          if (
-            !result?.secure_url ||
-            !result?.public_id
-          ) {
-            return reject(
-              new Error(
-                "Cloudinary did not return image details."
-              )
-            );
-          }
-
-          resolve({
-            imageUrl: result.secure_url,
-            imagePublicId: result.public_id,
-          });
-        }
-      );
-
-    upload.end(file.buffer);
-  });
-
-const sendAIError = (
-  res,
-  error,
-  defaultMessage
-) => {
+const sendAIError = (res, error, defaultMessage) => {
   const status = getNumericErrorStatus(error);
 
-  console.error(
-    "Gemini Error:",
-    error?.message || error
-  );
+  console.error("AI Controller Error:", error?.message || error);
 
-  if (
-    error?.code === "AI_KEY_MISSING"
-  ) {
+  if (error?.code === "AI_KEY_MISSING") {
     return res.status(503).json({
       success: false,
-      message:
-        "Gemini API key is not configured.",
+      message: "Gemini API key is not configured.",
       code: "AI_KEY_MISSING",
     });
   }
 
-  if (
-    error?.code ===
-    "CLOUDINARY_CONFIG_MISSING"
-  ) {
+  if (error?.code === "CLOUDINARY_CONFIG_MISSING") {
     return res.status(503).json({
       success: false,
-      message:
-        "Cloudinary is not configured. Check your Cloudinary environment variables.",
+      message: "Cloudinary is not configured. Check your environment variables.",
       code: "CLOUDINARY_CONFIG_MISSING",
     });
   }
@@ -226,20 +106,15 @@ const sendAIError = (
   if (status === 400) {
     return res.status(400).json({
       success: false,
-      message:
-        "Invalid request sent to Gemini AI.",
+      message: "Invalid request sent to Gemini AI.",
       code: "AI_BAD_REQUEST",
     });
   }
 
-  if (
-    status === 401 ||
-    status === 403
-  ) {
+  if (status === 401 || status === 403) {
     return res.status(401).json({
       success: false,
-      message:
-        "Gemini authentication failed. Check your GEMINI_API_KEY.",
+      message: "Gemini authentication failed. Check your GEMINI_API_KEY.",
       code: "AI_AUTH_ERROR",
     });
   }
@@ -247,30 +122,15 @@ const sendAIError = (
   if (status === 429) {
     return res.status(429).json({
       success: false,
-      message:
-        "AI request limit reached. Please try again later.",
+      message: "AI request limit reached. Please try again later.",
       code: "AI_RATE_LIMIT",
     });
   }
 
-  if (status === 404) {
+  if (status === 404 || [408, 500, 502, 503, 504].includes(status)) {
     return res.status(503).json({
       success: false,
-      message:
-        "The configured AI model is currently unavailable.",
-      code: "AI_MODEL_UNAVAILABLE",
-    });
-  }
-
-  if (
-    [408, 500, 502, 503, 504].includes(
-      status
-    )
-  ) {
-    return res.status(503).json({
-      success: false,
-      message:
-        "AI service is temporarily unavailable. Please try again shortly.",
+      message: "AI service is temporarily unavailable. Please try again shortly.",
       code: "AI_UNAVAILABLE",
     });
   }
@@ -282,30 +142,8 @@ const sendAIError = (
   });
 };
 
-const normalizeCategory = (category) => {
-  if (typeof category !== "string") {
-    return "";
-  }
-
-  return category
-    .replace(/^["'`]+|["'`]+$/g, "")
-    .replace(/[.!?]+$/g, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .split(" ")
-    .filter(Boolean)
-    .map(
-      (word) =>
-        word.charAt(0).toUpperCase() +
-        word.slice(1).toLowerCase()
-    )
-    .join(" ");
-};
-
 const parseAIJSON = (text) => {
-  if (typeof text !== "string") {
-    return null;
-  }
+  if (typeof text !== "string") return null;
 
   const cleaned = text
     .trim()
@@ -321,307 +159,174 @@ const parseAIJSON = (text) => {
   }
 };
 
+const normalizeCategory = (category) => {
+  if (typeof category !== "string") return "";
+
+  return category
+    .replace(/^["'`]+|["'`]+$/g, "")
+    .replace(/[.!?]+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
 const normalizeReceiptAmount = (value) => {
-  if (
-    value === null ||
-    value === undefined ||
-    value === ""
-  ) {
-    return null;
-  }
+  if (value === null || value === undefined || value === "") return null;
 
   if (typeof value === "number") {
-    return Number.isFinite(value) &&
-      value >= 0
-      ? value
-      : null;
+    return Number.isFinite(value) && value >= 0 ? value : null;
   }
 
-  if (typeof value !== "string") {
-    return null;
-  }
+  if (typeof value !== "string") return null;
 
   const cleaned = value
     .trim()
-    .replace(
-      /^(₹|rs\.?|inr|usd|eur|gbp)\s*/i,
-      ""
-    )
+    .replace(/^(₹|rs\.?|inr|usd|eur|gbp)\s*/i, "")
     .replace(/[₹$€£,\s]/g, "");
 
-  if (
-    !cleaned ||
-    !/^\d+(\.\d+)?$/.test(cleaned)
-  ) {
-    return null;
-  }
+  if (!cleaned || !/^\d+(\.\d+)?$/.test(cleaned)) return null;
 
   const amount = Number(cleaned);
-
-  return Number.isFinite(amount) &&
-    amount >= 0
-    ? amount
-    : null;
+  return Number.isFinite(amount) && amount >= 0 ? amount : null;
 };
 
 const normalizeReceiptDate = (value) => {
+  if (typeof value !== "string" || !value.trim()) return null;
+
+  const input = value.trim();
+  let year;
+  let month;
+  let day;
+
+  let match = input.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);
+
+  if (match) {
+    day = Number(match[1]);
+    month = Number(match[2]);
+    year = Number(match[3]);
+  } else {
+    match = input.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);
+
+    if (match) {
+      year = Number(match[1]);
+      month = Number(match[2]);
+      day = Number(match[3]);
+    } else {
+      const parsed = new Date(input);
+      return Number.isNaN(parsed.getTime())
+        ? null
+        : parsed.toISOString().slice(0, 10);
+    }
+  }
+
+  const date = new Date(Date.UTC(year, month - 1, day));
+
   if (
-    typeof value !== "string" ||
-    !value.trim()
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
   ) {
     return null;
   }
 
-  const date = value.trim();
-
-  const dayFirstMatch = date.match(
-    /^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/
-  );
-
-  if (dayFirstMatch) {
-    const day = Number(
-      dayFirstMatch[1]
-    );
-
-    const month = Number(
-      dayFirstMatch[2]
-    );
-
-    const year = Number(
-      dayFirstMatch[3]
-    );
-
-    const parsed = new Date(
-      Date.UTC(
-        year,
-        month - 1,
-        day
-      )
-    );
-
-    if (
-      parsed.getUTCFullYear() !== year ||
-      parsed.getUTCMonth() !== month - 1 ||
-      parsed.getUTCDate() !== day
-    ) {
-      return null;
-    }
-
-    return `${year}-${String(month).padStart(
-      2,
-      "0"
-    )}-${String(day).padStart(
-      2,
-      "0"
-    )}`;
-  }
-
-  const yearFirstMatch = date.match(
-    /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/
-  );
-
-  if (yearFirstMatch) {
-    const year = Number(
-      yearFirstMatch[1]
-    );
-
-    const month = Number(
-      yearFirstMatch[2]
-    );
-
-    const day = Number(
-      yearFirstMatch[3]
-    );
-
-    const parsed = new Date(
-      Date.UTC(
-        year,
-        month - 1,
-        day
-      )
-    );
-
-    if (
-      parsed.getUTCFullYear() !== year ||
-      parsed.getUTCMonth() !== month - 1 ||
-      parsed.getUTCDate() !== day
-    ) {
-      return null;
-    }
-
-    return `${year}-${String(month).padStart(
-      2,
-      "0"
-    )}-${String(day).padStart(
-      2,
-      "0"
-    )}`;
-  }
-
-  const parsed = new Date(date);
-
-  if (Number.isNaN(parsed.getTime())) {
-    return null;
-  }
-
-  return parsed.toISOString().slice(0, 10);
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 };
 
 const extractChartMonths = (message) => {
-  if (typeof message !== "string") {
-    return 12;
-  }
-
-  const normalized =
-    message.toLowerCase();
-
-  const match = normalized.match(
+  const match = String(message || "").toLowerCase().match(
     /\b(?:last|past|previous)\s+(\d{1,2})\s+months?\b/
   );
 
   if (match) {
     const months = Number(match[1]);
-
-    if (
-      Number.isInteger(months) &&
-      months >= 1 &&
-      months <= 24
-    ) {
+    if (Number.isInteger(months) && months >= 1 && months <= 24) {
       return months;
     }
   }
 
-  if (/\bthis\s+year\b/.test(normalized)) {
-    return Math.min(
-      new Date().getMonth() + 1,
-      24
-    );
+  if (/\bthis\s+year\b/i.test(message)) {
+    return new Date().getMonth() + 1;
   }
 
   return 12;
 };
 
-const getDeterministicChartAction = (
-  message
-) => {
-  if (typeof message !== "string") {
-    return null;
-  }
-
-  const normalized = message
+const getDeterministicChartAction = (message) => {
+  const normalized = String(message || "")
     .toLowerCase()
     .replace(/[^\w\s&/-]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 
-  if (!normalized) {
-    return null;
-  }
+  if (!normalized) return null;
 
-  const months =
-    extractChartMonths(normalized);
+  const months = extractChartMonths(normalized);
 
-  const patterns = [
+  const rules = [
     {
-      action:
-        "get_income_vs_expense_chart",
-
+      action: "get_income_vs_expense_chart",
       patterns: [
         /\bincome\s*(vs|versus|and)\s*(expense|expenses)\b/,
-        /\b(income|expenses?)\s*(comparison|compare)\b/,
-        /\bcompare\s+(my\s+)?(income|expenses?)\b/,
+        /\bcompare\s+(my\s+)?income\b/,
         /\bincome\s+against\s+(my\s+)?expenses?\b/,
         /\bincome\s+expense\s+(graph|chart)\b/,
       ],
-
-      arguments: {
-        months,
-      },
+      arguments: { months },
     },
-
     {
-      action:
-        "get_category_breakdown",
-
+      action: "get_category_breakdown",
       patterns: [
         /\bspending\s+by\s+categor(y|ies)\b/,
         /\bexpenses?\s+by\s+categor(y|ies)\b/,
         /\bcategory\s+breakdown\b/,
         /\bcategory[-\s]?wise\s+expenses?\b/,
         /\bwhere\s+am\s+i\s+spending\b/,
-        /\bshow\s+my\s+spending\s+categor(y|ies)\b/,
       ],
-
-      arguments: {
-        limit: 10,
-      },
+      arguments: { limit: 10 },
     },
-
     {
-      action:
-        "get_monthly_financial_chart",
-
+      action: "get_monthly_financial_chart",
       patterns: [
         /\bmonthly\s+financial\s+(graph|chart|overview)\b/,
-        /\bmonthly\s+(income|expense|expenses?)\s+(and|vs)\s+(expense|expenses?|income)\b/,
         /\bmonthly\s+money\s+trend\b/,
         /\bfinancial\s+trend\b/,
-        /\bmonthly\s+financial\s+trend\b/,
       ],
-
-      arguments: {
-        months,
-      },
+      arguments: { months },
     },
-
     {
       action: "get_expense_chart",
-
       patterns: [
         /\bexpense\s+graph\b/,
         /\bexpenses?\s+graph\b/,
         /\bexpense\s+chart\b/,
         /\bexpenses?\s+chart\b/,
         /\bexpense\s+trend\b/,
-        /\bexpenses?\s+trend\b/,
         /\bexpenses?\s+over\s+time\b/,
         /\bvisuali[sz]e\s+(my\s+)?expenses?\b/,
-        /\bmonthly\s+expense\s+(graph|chart)\b/,
       ],
-
-      arguments: {
-        months,
-      },
+      arguments: { months },
     },
-
     {
       action: "get_income_chart",
-
       patterns: [
         /\bincome\s+graph\b/,
         /\bincome\s+chart\b/,
         /\bincome\s+trend\b/,
-        /\bincome\s+over\s+time\b/,
         /\bvisuali[sz]e\s+(my\s+)?income\b/,
-        /\bmonthly\s+income\s+(graph|chart)\b/,
       ],
-
-      arguments: {
-        months,
-      },
+      arguments: { months },
     },
   ];
 
-  for (const item of patterns) {
-    if (
-      item.patterns.some((pattern) =>
-        pattern.test(normalized)
-      )
-    ) {
+  for (const rule of rules) {
+    if (rule.patterns.some((pattern) => pattern.test(normalized))) {
       return {
         mode: "action",
-        action: item.action,
-        arguments: item.arguments,
+        action: rule.action,
+        arguments: rule.arguments,
       };
     }
   }
@@ -629,378 +334,362 @@ const getDeterministicChartAction = (
   return null;
 };
 
-const getUserAIContext = async (
-  userId
-) => {
-  const [
-    accounts,
-    recentTransactions,
-  ] = await Promise.all([
-    Account.find({
-      user: userId,
-    })
+const getUserAIContext = async (userId) => {
+  const [accounts, transactions, receipts] = await Promise.all([
+    Account.find({ user: userId })
       .select("_id name type balance")
-      .sort({
-        createdAt: 1,
-      })
+      .sort({ createdAt: 1 })
       .lean(),
 
-    Expense.find({
-      user: userId,
-    })
-      .select(
-        "_id title amount category type date account toAccount transferAccount transferMode"
-      )
-      .populate(
-        "account",
-        "name type"
-      )
-      .populate(
-        "transferAccount",
-        "name type"
-      )
-      .sort({
-        date: -1,
-        createdAt: -1,
-      })
+    Expense.find({ user: userId })
+      .select("_id title amount category type date account toAccount transferAccount transferMode")
+      .populate("account", "name type")
+      .populate("transferAccount", "name type")
+      .sort({ date: -1, createdAt: -1 })
       .limit(20)
+      .lean(),
+
+    ReceiptScan.find({ user: userId })
+      .select("_id merchant date currency subtotal tax total items transaction createdAt")
+      .sort({ createdAt: -1 })
+      .limit(50)
       .lean(),
   ]);
 
-  return {
-    accounts: accounts.map(
-      (account) => ({
-        id: account._id.toString(),
-        name: account.name,
-        type: account.type,
-        balance: Number(
-          account.balance || 0
-        ),
+  const linkedIds = receipts
+    .filter((receipt) => receipt.transaction)
+    .map((receipt) => receipt.transaction);
+
+  const linkedTransactions = linkedIds.length
+    ? await Expense.find({
+        _id: { $in: linkedIds },
+        user: userId,
       })
-    ),
+        .select("_id title type amount")
+        .lean()
+    : [];
 
-    recentTransactions:
-      recentTransactions.map(
-        (transaction) => ({
-          id: transaction._id.toString(),
-          title:
-            transaction.title || "",
-          amount: Number(
-            transaction.amount || 0
-          ),
-          category:
-            transaction.category || "Other",
-          type: transaction.type,
-          date: transaction.date,
+  const linkedMap = new Map(
+    linkedTransactions.map((transaction) => [
+      transaction._id.toString(),
+      transaction,
+    ])
+  );
 
-          account:
-            transaction.account
-              ? {
-                  id: transaction.account._id?.toString(),
-                  name: transaction.account.name,
-                  type: transaction.account.type,
-                }
-              : null,
+  return {
+    accounts: accounts.map((account) => ({
+      id: account._id.toString(),
+      name: account.name,
+      type: account.type,
+      balance: Number(account.balance || 0),
+    })),
 
-          toAccount:
-            transaction.toAccount || "",
+    recentTransactions: transactions.map((transaction) => ({
+      id: transaction._id.toString(),
+      title: transaction.title || "",
+      amount: Number(transaction.amount || 0),
+      category: transaction.category || "Other",
+      type: transaction.type,
+      date: transaction.date,
+      account: transaction.account
+        ? {
+            id: transaction.account._id?.toString(),
+            name: transaction.account.name,
+            type: transaction.account.type,
+          }
+        : null,
+      toAccount: transaction.toAccount || "",
+      transferAccount: transaction.transferAccount
+        ? {
+            id: transaction.transferAccount._id?.toString(),
+            name: transaction.transferAccount.name,
+            type: transaction.transferAccount.type,
+          }
+        : null,
+      transferMode: transaction.transferMode || null,
+    })),
 
-          transferAccount:
-            transaction.transferAccount
-              ? {
-                  id: transaction.transferAccount._id?.toString(),
-                  name: transaction.transferAccount.name,
-                  type: transaction.transferAccount.type,
-                }
-              : null,
+    receiptScanCount: receipts.length,
 
-          transferMode:
-            transaction.transferMode ||
-            null,
-        })
-      ),
+    recentReceiptScans: receipts.map((receipt) => {
+      const linked = receipt.transaction
+        ? linkedMap.get(receipt.transaction.toString())
+        : null;
+
+      return {
+        id: receipt._id.toString(),
+        merchant: receipt.merchant || "Unknown Merchant",
+        date: receipt.date || null,
+        currency: receipt.currency || "INR",
+        subtotal: Number(receipt.subtotal || 0),
+        tax: Number(receipt.tax || 0),
+        total: Number(receipt.total || 0),
+        itemCount: Array.isArray(receipt.items) ? receipt.items.length : 0,
+        items: (receipt.items || []).slice(0, 20).map((item) => ({
+          name: item.name || "",
+          quantity: Number(item.quantity || 0),
+          price: Number(item.price || 0),
+          total: Number(item.total || 0),
+        })),
+        transactionLinked: Boolean(linked),
+        linkedTransaction: linked
+          ? {
+              title: linked.title || "",
+              type: linked.type,
+              amount: Number(linked.amount || 0),
+            }
+          : null,
+        savedAt: receipt.createdAt || null,
+      };
+    }),
   };
 };
 
-const generateAIActionDecision = async ({
-  message,
-  chat,
-  userContext,
-}) => {
-  let conversationHistory = "";
+const formatReceiptDate = (date) => {
+  if (!date) return "Date not recorded";
 
-  chat.messages
-    .slice(-20)
-    .forEach((msg) => {
-      conversationHistory += `${msg.role.toUpperCase()}: ${msg.text}\n`;
+  const parsed = new Date(date);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return "Date not recorded";
+  }
+
+  return parsed.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const formatMoney = (amount, currency = "INR") => {
+  const value = Number(amount);
+
+  if (!Number.isFinite(value)) return "Amount not recorded";
+
+  try {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: currency || "INR",
+      maximumFractionDigits: 2,
+    }).format(value);
+  } catch {
+    return `${currency || "INR"} ${value.toFixed(2)}`;
+  }
+};
+
+const getReceiptQuestionAnswer = (message, context) => {
+  const text = String(message || "").toLowerCase();
+
+  const mentionsReceipts =
+    /\b(receipt|receipts|ai scan|scanned receipt|scan history|receipt history)\b/.test(text);
+
+  if (!mentionsReceipts) return null;
+
+  const asksCount =
+    /\b(how many|count|number of|total number|total receipts|receipt count)\b/.test(text);
+
+  const asksLatest =
+    /\b(latest|last|recent|newest|most recent)\b/.test(text);
+
+  const asksList =
+    /\b(show|list|display|view|find|get)\b/.test(text) &&
+    /\b(receipt|receipts|history|scanned)\b/.test(text);
+
+  const asksFeature =
+    /\b(what is|what does|how does|how to|can i|does .* support|tell me about)\b/.test(text);
+
+  if (asksFeature && !asksCount && !asksLatest && !asksList) {
+    return (
+      "SmaXTify includes an AI Receipt Scanner. You can upload a receipt image, " +
+      "extract visible details such as merchant, date, total, tax and items, " +
+      "review the result, save it, and manage saved scans in Scan History."
+    );
+  }
+
+  const receipts = context.recentReceiptScans || [];
+  const count = Number(context.receiptScanCount || 0);
+
+  if (asksCount) {
+    if (count === 0) {
+      return (
+        "I checked your saved AI Scan receipt records and found **0 receipts** " +
+        "in the latest 50-record history query. The AI Receipt Scanner feature is available, " +
+        "but no saved receipt records were returned for your account."
+      );
+    }
+
+    return (
+      `I found **${count} saved AI Scan receipt${count === 1 ? "" : "s"}** ` +
+      "in the receipt records checked. The history query includes up to the latest 50 receipts."
+    );
+  }
+
+  if (asksLatest || asksList) {
+    if (receipts.length === 0) {
+      return (
+        "I checked your saved AI Scan history, but no receipt records were found. " +
+        "You can scan a receipt in the AI Scan section and save it to build your history."
+      );
+    }
+
+    const selected = asksLatest ? receipts.slice(0, 1) : receipts.slice(0, 10);
+
+    const lines = selected.map((receipt, index) => {
+      const items = (receipt.items || [])
+        .slice(0, 5)
+        .map((item) => item.name)
+        .filter(Boolean);
+
+      const itemText = items.length
+        ? ` Items: ${items.join(", ")}${receipt.itemCount > items.length ? ", and more" : ""}.`
+        : "";
+
+      return (
+        `${index + 1}. **${receipt.merchant || "Unknown Merchant"}** — ` +
+        `${formatMoney(receipt.total, receipt.currency)}; ` +
+        `date: ${formatReceiptDate(receipt.date)}; ` +
+        `${receipt.itemCount} item(s).${itemText}`
+      );
     });
+
+    const intro = asksLatest
+      ? "Your latest saved AI Scan receipt is:"
+      : `Here are your ${selected.length} most recent saved AI Scan receipt(s):`;
+
+    return `${intro}\n\n${lines.join("\n\n")}`;
+  }
+
+  return null;
+};
+
+const generateAIActionDecision = async ({ message, chat, userContext }) => {
+  const history = chat.messages
+    .slice(-20)
+    .map((item) => `${String(item.role).toUpperCase()}: ${item.text}`)
+    .join("\n");
 
   const prompt = `
-You are SmaXTify.AI, the intelligent assistant inside the SmaXTify personal finance application.
+You are SmaXTify.AI, the personal finance assistant built into SmaXTify.
 
-Determine whether the user's request is normal conversation or a supported application action.
+SmaXTify has an AI Receipt Scanner. Users can scan receipt images, extract merchant, date, currency, subtotal, tax, total and line items, review extracted details, save scans, and view, edit or delete saved receipt history.
 
-Security rules:
+Never claim the AI Scan feature does not exist. Receipt questions should be answered from the supplied authenticated user context. If there are no saved records, distinguish that from the feature being unavailable. The context contains up to the latest 50 saved receipt records, not necessarily all historical records.
 
-- Never invent database IDs, account IDs, or transaction IDs.
-- Use IDs only from the supplied context.
-- Never create arbitrary database queries.
-- Never execute actions yourself.
-- Return only one supported action when clearly requested.
-- If unclear, use chat mode and ask a clarification question.
-- Do not claim an action was completed unless the backend confirms it.
-- Never modify data when the user only asks to view, analyze, summarize, or visualize it.
+Other application sections include Dashboard, Accounts, Budget Planner, Savings Goals, Reports, Currency Converter, Subscription Tracker, Bill Reminders, Notifications and Settings.
 
-Supported actions:
+Never invent financial records, amounts, IDs or actions. Never claim an action completed unless the executor confirms it. Do not execute modifications for read-only requests. Ask for clarification when needed.
 
-Transactions: create_transaction, update_transaction, delete_transaction
-Accounts: get_accounts
-Financial summary: get_financial_summary
-Budget: get_budget, save_budget, delete_budget
-Savings goals: get_goals, create_goal, add_goal_savings, update_goal, delete_goal
-Subscriptions: get_subscriptions, create_subscription, update_subscription, delete_subscription
-Navigation: navigate
-Charts: get_income_chart, get_expense_chart, get_income_vs_expense_chart, get_category_breakdown, get_monthly_financial_chart
-Reports: get_report_data
+Only choose actions supported by the current action executor. Do not assume that a section name means an action exists.
 
-Visualization rules:
-
-- Graph, chart, visualization, trend, breakdown, comparison, or financial graph requests must use the appropriate chart action.
-- Income graph -> get_income_chart.
-- Expense graph -> get_expense_chart.
-- Income versus expenses -> get_income_vs_expense_chart.
-- Spending by category -> get_category_breakdown.
-- Monthly financial overview -> get_monthly_financial_chart.
-- Never say SmaXTify cannot generate graphs.
-- Default chart period is 12 months.
-- For "last 6 months", use months 6. For "last 3 months", use months 3.
-- Never invent dates.
-
-Transaction creation:
-
-- Required information normally includes type, amount, and account.
-- Expense and Income also require title and category.
-- Transfer requires transferMode and a destination account or person's name.
-- Ask for missing required information.
-
-Account selection:
-
-- Match account descriptions against the supplied account list.
-- Never invent account IDs.
-
-Modification:
-
-- Use only transaction IDs from the supplied context.
-- Ask for clarification if multiple transactions match.
-
-Read-only actions:
-
-get_accounts, get_financial_summary, get_income_chart, get_expense_chart,
+Supported action names may include:
+create_transaction, update_transaction, delete_transaction, get_accounts,
+get_financial_summary, get_income_chart, get_expense_chart,
 get_income_vs_expense_chart, get_category_breakdown,
-get_monthly_financial_chart, get_report_data.
+get_monthly_financial_chart.
 
-Conversation history:
+For chart requests, select the corresponding chart action. Default period is 12 months; use the user's requested month count when stated.
 
-${conversationHistory}
+Conversation:
+${history}
 
 Current user message:
-
 ${message}
 
-User SmaXTify context:
-
+Authenticated user data:
 ${JSON.stringify(userContext, null, 2)}
 
-Return only valid JSON.
-
-Normal chat:
-
+Return only valid JSON:
 {"mode":"chat","reply":"Your response"}
-
-Action:
-
-{"mode":"action","action":"get_income_chart","arguments":{"months":12}}
-
-Do not include markdown or explanations outside JSON.
+or
+{"mode":"action","action":"get_accounts","arguments":{}}
 `;
 
-  const response =
-    await generateGeminiContent({
-      contents: prompt,
-
-      config: {
-        temperature: 0.2,
-
-        responseMimeType:
-          "application/json",
-
-        responseSchema: {
-          type: "object",
-
-          properties: {
-            mode: {
-              type: "string",
-            },
-
-            reply: {
-              type: "string",
-            },
-
-            action: {
-              type: "string",
-            },
-
-            arguments: {
-              type: "object",
-            },
-          },
-
-          required: ["mode"],
+  const response = await generateGeminiContent({
+    contents: prompt,
+    config: {
+      temperature: 0.2,
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: "object",
+        properties: {
+          mode: { type: "string" },
+          reply: { type: "string" },
+          action: { type: "string" },
+          arguments: { type: "object" },
         },
+        required: ["mode"],
       },
-    });
+    },
+  });
 
-  const parsed = parseAIJSON(
-    response.text || ""
-  );
+  const parsed = parseAIJSON(response.text || "");
 
-  if (!parsed) {
-    throw new Error(
-      "AI returned an invalid structured response."
-    );
+  if (!parsed || !["chat", "action"].includes(parsed.mode)) {
+    throw new Error("AI returned an invalid structured response.");
   }
 
   return parsed;
 };
 
-const generateChatTitle = async (
-  prompt
-) => {
+const generateChatTitle = async (conversation) => {
   try {
-    const titlePrompt = `
-Generate a short chat title.
-
-Maximum 5 words.
-
-Do not use quotes or punctuation.
-
-Return only the title.
-
-Conversation:
-
-${prompt}
-`;
-
-    const response =
-      await generateGeminiContent({
-        contents: titlePrompt,
-
-        config: {
-          temperature: 0.2,
-        },
-      });
+    const response = await generateGeminiContent({
+      contents:
+        `Generate a short chat title of no more than 5 words. Return only the title without quotes or punctuation.\n\n${conversation}`,
+      config: { temperature: 0.2 },
+    });
 
     return (
-      response.text
-        ?.trim()
-        .replace(/^["']|["']$/g, "")
-        .replace(/[.!?]+$/g, "") ||
+      response.text?.trim().replace(/^["']|["']$/g, "").replace(/[.!?]+$/g, "") ||
       "New Chat"
     );
   } catch (error) {
-    console.error(
-      "AI Title Error:",
-      error?.message || error
-    );
-
+    console.error("AI Title Error:", error?.message || error);
     return "New Chat";
   }
 };
 
-const saveActionMessages = async ({
-  chat,
-  userMessage,
-  assistantMessage,
-}) => {
-  chat.messages.push({
-    role: "user",
-    text: userMessage,
-    time: new Date(),
-  });
+const saveMessages = async (chat, userMessage, assistantMessage) => {
+  chat.messages.push(
+    { role: "user", text: userMessage, time: new Date() },
+    { role: "assistant", text: assistantMessage, time: new Date() }
+  );
 
-  chat.messages.push({
-    role: "assistant",
-    text: assistantMessage,
-    time: new Date(),
-  });
+  if (chat.title === "New Chat") {
+    chat.title = await generateChatTitle(
+      `USER:\n${userMessage}\n\nASSISTANT:\n${assistantMessage}`
+    );
+  }
 
   await chat.save();
 };
 
-const getConfirmationDescription = (
-  action
-) => {
+const getConfirmationDescription = (action) => {
   const descriptions = {
-    update_transaction:
-      "update that transaction",
-
-    delete_transaction:
-      "delete that transaction",
-
-    update_account:
-      "update that account",
-
-    delete_account:
-      "delete that account",
-
-    save_budget:
-      "save these budget changes",
-
-    delete_budget:
-      "delete that budget",
-
-    add_goal_savings:
-      "add that amount to your savings goal",
-
-    update_goal:
-      "update that savings goal",
-
-    delete_goal:
-      "delete that savings goal",
-
-    update_subscription:
-      "update that subscription",
-
-    delete_subscription:
-      "delete that subscription",
+    update_transaction: "update that transaction",
+    delete_transaction: "delete that transaction",
+    update_account: "update that account",
+    delete_account: "delete that account",
+    save_budget: "save these budget changes",
+    delete_budget: "delete that budget",
+    add_goal_savings: "add that amount to your savings goal",
+    update_goal: "update that savings goal",
+    delete_goal: "delete that savings goal",
+    update_subscription: "update that subscription",
+    delete_subscription: "delete that subscription",
   };
 
-  return (
-    descriptions[action] ||
-    "perform this action"
-  );
+  return descriptions[action] || "perform this action";
 };
 
-exports.chatWithGemini = async (
-  req,
-  res
-) => {
+exports.chatWithGemini = async (req, res) => {
   try {
-    const {
-      message,
-      chatId,
-      confirmed = false,
-    } = req.body;
+    const { message, chatId, confirmed = false } = req.body;
 
-    if (
-      !chatId ||
-      !message ||
-      !String(message).trim()
-    ) {
+    if (!chatId || !message || !String(message).trim()) {
       return res.status(400).json({
         success: false,
-        message:
-          "chatId and message are required.",
+        message: "chatId and message are required.",
       });
     }
 
@@ -1016,65 +705,52 @@ exports.chatWithGemini = async (
       });
     }
 
-    const cleanMessage =
-      String(message).trim();
+    const cleanMessage = String(message).trim();
+    const context = await getUserAIContext(req.user.id);
 
-    const userContext =
-      await getUserAIContext(
-        req.user.id
-      );
+    // Receipt questions are answered directly from MongoDB, not by Gemini.
+    const receiptAnswer = getReceiptQuestionAnswer(cleanMessage, context);
 
-    let decision =
-      getDeterministicChartAction(
-        cleanMessage
-      );
+    if (receiptAnswer) {
+      await saveMessages(chat, cleanMessage, receiptAnswer);
 
-    if (decision) {
-      console.log(
-        `Deterministic chart action selected: ${decision.action}`
-      );
-    } else {
-      decision =
-        await generateAIActionDecision({
-          message: cleanMessage,
-          chat,
-          userContext,
-        });
+      return res.status(200).json({
+        success: true,
+        reply: receiptAnswer,
+        title: chat.title,
+        action: null,
+        executed: false,
+      });
+    }
+
+    let decision = getDeterministicChartAction(cleanMessage);
+
+    if (!decision) {
+      decision = await generateAIActionDecision({
+        message: cleanMessage,
+        chat,
+        userContext: context,
+      });
     }
 
     if (decision.mode === "action") {
       const action = decision.action;
-      const args =
-        decision.arguments || {};
-
-      const validation =
-        validateAction({
-          action,
-          args,
-        });
+      const args = decision.arguments || {};
+      const validation = validateAction({ action, args });
 
       if (!validation.valid) {
         return res.status(400).json({
           success: false,
-          message:
-            validation.errors.join(" "),
+          message: validation.errors.join(" "),
           code: "INVALID_AI_ACTION",
         });
       }
 
-      const needsConfirmation =
-        actionNeedsConfirmation(
-          action
-        );
+      const needsConfirmation = actionNeedsConfirmation(action);
 
-      if (
-        needsConfirmation &&
-        confirmed !== true
-      ) {
+      if (needsConfirmation && confirmed !== true) {
         const confirmationMessage =
-          `I can ${getConfirmationDescription(
-            action
-          )}. Please confirm if you want me to continue.`;
+          `I can ${getConfirmationDescription(action)}. Please confirm if you want me to continue.`;
 
         chat.messages.push({
           role: "assistant",
@@ -1087,135 +763,70 @@ exports.chatWithGemini = async (
         return res.status(200).json({
           success: true,
           reply: confirmationMessage,
-
           action: {
-            name:
-              validation.actionDefinition.name,
+            name: validation.actionDefinition.name,
             arguments: args,
             requiresConfirmation: true,
             confirmed: false,
           },
-
           executed: false,
         });
       }
 
-      console.log(
-        `Executing AI action: ${action}`
-      );
+      const result = await executeAIAction({
+        userId: req.user.id,
+        action,
+        args,
+      });
 
-      const actionResult =
-        await executeAIAction({
-          userId: req.user.id,
-          action,
-          args,
-        });
-
-      if (!actionResult.success) {
+      if (!result.success) {
         return res.status(400).json({
           success: false,
-          reply: actionResult.message,
-
-          action: {
-            name: action,
-            arguments: args,
-          },
-
+          reply: result.message,
+          action: { name: action, arguments: args },
           executed: false,
-          code: actionResult.code,
+          code: result.code,
         });
       }
 
-      const actionReply =
-        actionResult.message ||
-        "Action completed successfully.";
+      const reply = result.message || "Action completed successfully.";
 
-      await saveActionMessages({
-        chat,
-        userMessage: cleanMessage,
-        assistantMessage: actionReply,
-      });
+      await saveMessages(chat, cleanMessage, reply);
 
       return res.status(200).json({
         success: true,
-        reply: actionReply,
-
+        reply,
         action: {
-          name:
-            validation.actionDefinition.name,
+          name: validation.actionDefinition.name,
           arguments: args,
-          requiresConfirmation:
-            needsConfirmation,
-          confirmed:
-            needsConfirmation
-              ? true
-              : false,
+          requiresConfirmation: needsConfirmation,
+          confirmed: needsConfirmation,
         },
-
         executed: true,
-        result: actionResult.data,
+        result: result.data,
       });
     }
 
     const reply =
-      typeof decision.reply ===
-        "string" &&
-      decision.reply.trim()
+      typeof decision.reply === "string" && decision.reply.trim()
         ? decision.reply.trim()
         : "Sorry, I couldn't generate a response.";
 
-    chat.messages.push({
-      role: "user",
-      text: cleanMessage,
-      time: new Date(),
-    });
-
-    chat.messages.push({
-      role: "assistant",
-      text: reply,
-      time: new Date(),
-    });
-
-    let generatedTitle = null;
-
-    if (chat.title === "New Chat") {
-      generatedTitle =
-        await generateChatTitle(`
-USER:
-
-${cleanMessage}
-
-ASSISTANT:
-
-${reply}
-`);
-
-      chat.title =
-        generatedTitle || "New Chat";
-    }
-
-    await chat.save();
+    await saveMessages(chat, cleanMessage, reply);
 
     return res.status(200).json({
       success: true,
       reply,
-      title: generatedTitle,
+      title: chat.title,
       action: null,
       executed: false,
     });
   } catch (error) {
-    return sendAIError(
-      res,
-      error,
-      "Failed to generate AI response."
-    );
+    return sendAIError(res, error, "Failed to generate AI response.");
   }
 };
 
-exports.generateReportInsights = async (
-  req,
-  res
-) => {
+exports.generateReportInsights = async (req, res) => {
   try {
     const {
       income = 0,
@@ -1229,405 +840,150 @@ exports.generateReportInsights = async (
     if (!Array.isArray(transactions)) {
       return res.status(400).json({
         success: false,
-        message:
-          "Invalid transaction data.",
+        message: "Invalid transaction data.",
       });
     }
 
-    const transactionData =
-      transactions.map(
-        (transaction) => ({
-          title:
-            transaction.title ||
-            "Untitled",
-
-          category:
-            transaction.category ||
-            "Other",
-
-          amount:
-            Number(transaction.amount) ||
-            0,
-
-          type:
-            transaction.type ||
-            "Expense",
-
-          date:
-            transaction.date || null,
-        })
-      );
+    const data = transactions.map((transaction) => ({
+      title: transaction.title || "Untitled",
+      category: transaction.category || "Other",
+      amount: Number(transaction.amount) || 0,
+      type: transaction.type || "Expense",
+      date: transaction.date || null,
+    }));
 
     const prompt = `
 You are SmaXTify.AI, a professional personal finance analyst.
+Provide exactly 4 concise, practical insights using only the supplied data.
+Do not invent transactions, amounts, dates or categories. Do not give investment, tax or legal advice.
 
-Analyze the supplied financial report and provide exactly 4 useful, practical insights.
-
-Rules:
-
-- Use only the supplied data.
-- Never invent transactions, amounts, dates, or categories.
-- Be concise and easy to understand.
-- Focus on spending, income, savings, and financial patterns.
-- Do not give investment, tax, or legal advice.
-- Do not use markdown tables.
-- Do not mention that you are an AI model.
-
-Allowed type values: spending, income, savings, warning.
-
-Allowed priority values: positive, neutral, warning, critical.
-
-Financial summary:
-
-Income: ₹${Number(
-      income
-    ).toLocaleString("en-IN")}
-
-Expenses: ₹${Number(
-      expense
-    ).toLocaleString("en-IN")}
-
-Balance: ₹${Number(
-      balance
-    ).toLocaleString("en-IN")}
-
-Savings Rate: ${Number(savings)}%
-
-Total Transactions: ${Number(
-      totalTransactions
-    )}
+Income: ₹${Number(income).toLocaleString("en-IN")}
+Expenses: ₹${Number(expense).toLocaleString("en-IN")}
+Balance: ₹${Number(balance).toLocaleString("en-IN")}
+Savings rate: ${Number(savings)}%
+Total transactions: ${Number(totalTransactions)}
 
 Transactions:
+${JSON.stringify(data, null, 2)}
 
-${JSON.stringify(
-  transactionData,
-  null,
-  2
-)}
-
-Return only JSON:
-
-{
-  "insights": [
-    {
-      "type": "spending",
-      "title": "Short title",
-      "message": "Useful financial insight.",
-      "priority": "neutral"
-    }
-  ]
-}
+Return JSON:
+{"insights":[{"type":"spending","title":"Short title","message":"Useful insight","priority":"neutral"}]}
 `;
 
-    const response =
-      await generateGeminiContent({
-        contents: prompt,
-
-        config: {
-          responseMimeType:
-            "application/json",
-
-          responseSchema: {
-            type: "object",
-
-            properties: {
-              insights: {
-                type: "array",
-
-                items: {
-                  type: "object",
-
-                  properties: {
-                    type: {
-                      type: "string",
-                    },
-
-                    title: {
-                      type: "string",
-                    },
-
-                    message: {
-                      type: "string",
-                    },
-
-                    priority: {
-                      type: "string",
-                    },
-                  },
-
-                  required: [
-                    "type",
-                    "title",
-                    "message",
-                    "priority",
-                  ],
+    const response = await generateGeminiContent({
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "object",
+          properties: {
+            insights: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  type: { type: "string" },
+                  title: { type: "string" },
+                  message: { type: "string" },
+                  priority: { type: "string" },
                 },
+                required: ["type", "title", "message", "priority"],
               },
             },
-
-            required: ["insights"],
           },
+          required: ["insights"],
         },
-      });
+      },
+    });
 
-    const rawText =
-      response.text || "";
+    const parsed = parseAIJSON(response.text || "");
 
-    const parsed =
-      parseAIJSON(rawText);
-
-    if (
-      !parsed ||
-      !Array.isArray(parsed.insights)
-    ) {
-      console.error(
-        "AI Insights Invalid Response:",
-        rawText
-      );
-
+    if (!parsed || !Array.isArray(parsed.insights)) {
       return res.status(500).json({
         success: false,
-        message:
-          "AI returned an invalid insight format.",
+        message: "AI returned an invalid insight format.",
         code: "AI_INVALID_RESPONSE",
       });
     }
 
     return res.status(200).json({
       success: true,
-      insights:
-        parsed.insights.slice(0, 4),
+      insights: parsed.insights.slice(0, 4),
     });
   } catch (error) {
-    return sendAIError(
-      res,
-      error,
-      "Failed to generate financial insights."
-    );
+    return sendAIError(res, error, "Failed to generate financial insights.");
   }
 };
 
-exports.categorizeTransaction = async (
-  req,
-  res
-) => {
+exports.categorizeTransaction = async (req, res) => {
   try {
-    const {
-      title,
-      type,
-    } = req.body;
+    const { title, type } = req.body;
 
-    if (
-      !title ||
-      !String(title).trim()
-    ) {
+    if (!title || !String(title).trim()) {
       return res.status(400).json({
         success: false,
-        message:
-          "Transaction title is required.",
+        message: "Transaction title is required.",
         code: "TITLE_REQUIRED",
       });
     }
 
-    if (
-      type !== "Income" &&
-      type !== "Expense"
-    ) {
+    if (type !== "Income" && type !== "Expense") {
       return res.status(400).json({
         success: false,
-        message:
-          "Transaction type must be Income or Expense.",
-        code:
-          "INVALID_TRANSACTION_TYPE",
+        message: "Transaction type must be Income or Expense.",
+        code: "INVALID_TRANSACTION_TYPE",
       });
     }
-
-    if (!GEMINI_API_KEY) {
-      return res.status(503).json({
-        success: false,
-        message:
-          "Gemini API key is not configured.",
-        code: "AI_KEY_MISSING",
-      });
-    }
-
-    const cleanTitle =
-      String(title).trim();
 
     const prompt = `
-You are SmaXTify.AI's personal finance transaction categorization engine.
+You are SmaXTify.AI's financial transaction categorization engine.
+Choose one accurate category. Use Title Case, maximum 3 words, no punctuation.
+Use Other only if there is genuinely insufficient information.
+Return only JSON: {"category":"Category Name"}
 
-Analyze the complete transaction title and return exactly one accurate financial category.
-
-Transaction title: "${cleanTitle}"
-
+Transaction title: "${String(title).trim()}"
 Transaction type: "${type}"
 
-Rules:
-
-- Use your language understanding, not a fixed keyword list.
-- Understand products, brands, services, medicines, food, bills, subscriptions, education, clothing, household items, and financial transactions.
-- Understand Indian and international products and services.
-- Use the transaction type to resolve ambiguity.
-- Create a sensible category if needed.
-- Maximum 3 words, Title Case, no punctuation.
-- Never return an empty category.
-- Use Other only when there is genuinely insufficient information.
-- Return only valid JSON.
-
-Category guidance:
-
-Food, cake, juice -> Food or Food & Beverages.
-
-Vegetables, fruits, groceries, dairy, spices -> Groceries.
-
-Medicines, doctors, hospitals, pharmacies, tests -> Healthcare.
-
-Stationery, notebooks, pens, office supplies -> Stationery.
-
-Books and educational materials -> Education.
-
-Skincare, cosmetics, grooming, hygiene -> Personal Care.
-
-Clothing, footwear, fashion accessories -> Shopping.
-
-Phones, laptops, chargers, electronics -> Electronics.
-
-Cars, motorcycles, bicycles -> Vehicle.
-
-Petrol, diesel, CNG, vehicle fuel -> Fuel.
-
-Uber, Ola, Rapido, taxi, bus, metro -> Transport.
-
-Electricity payments -> Electricity.
-
-Water payments -> Water Bill.
-
-Cooking gas -> Gas Bill.
-
-Internet, Wi-Fi, broadband -> Internet.
-
-Mobile recharge -> Mobile Recharge.
-
-Rent -> Rent.
-
-Insurance -> Insurance.
-
-Movies, cinema, concerts, games -> Entertainment.
-
-Netflix, Spotify, recurring digital services -> Subscription.
-
-Flights, trains, holidays, trips -> Travel.
-
-Hotels, resorts, lodging -> Accommodation.
-
-Gym, sports, fitness, yoga -> Fitness & Sports.
-
-Pet expenses -> Pet Care.
-
-Loans and EMI -> Loan & EMI.
-
-Taxes -> Taxes.
-
-Donations and charity -> Donation.
-
-Bank fees -> Bank Charges.
-
-Salary and employment income -> Salary.
-
-Freelance income -> Freelance.
-
-Business income -> Business.
-
-Investment returns -> Investment.
-
-Bank interest -> Interest.
-
-Bonuses -> Bonus.
-
-Rental income -> Rental Income.
-
-Refunds and cashback -> Refund.
-
-Context examples:
-
-- "book" with Expense -> Education.
-- "hotel booking" -> Accommodation.
-- "flight booking" -> Travel.
-- "job" with Income -> Salary.
-- "apple" -> Groceries.
-- "Apple iPhone" -> Electronics.
-- "phone recharge" -> Mobile Recharge.
-- "car petrol" -> Fuel.
-- "car insurance" -> Insurance.
-- "shampoo" -> Personal Care.
-- "salary" with Income -> Salary.
-
-Return only:
-
-{"category":"Category Name"}
+Examples:
+Food, cake, juice -> Food & Beverages
+Vegetables, fruits, groceries -> Groceries
+Medicines, doctors, hospitals -> Healthcare
+Books and educational materials -> Education
+Skincare and grooming -> Personal Care
+Clothing and footwear -> Shopping
+Phones and laptops -> Electronics
+Petrol and diesel -> Fuel
+Taxi, bus, metro -> Transport
+Electricity payments -> Electricity
+Internet and broadband -> Internet
+Netflix and recurring digital services -> Subscription
+Hotels and lodging -> Accommodation
+Salary -> Salary
+Freelance income -> Freelance
+Refunds and cashback -> Refund
 `;
 
-    const response =
-      await generateGeminiContent({
-        contents: prompt,
-
-        config: {
-          temperature: 0.2,
-
-          responseMimeType:
-            "application/json",
-
-          responseSchema: {
-            type: "object",
-
-            properties: {
-              category: {
-                type: "string",
-              },
-            },
-
-            required: ["category"],
-          },
+    const response = await generateGeminiContent({
+      contents: prompt,
+      config: {
+        temperature: 0.2,
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "object",
+          properties: { category: { type: "string" } },
+          required: ["category"],
         },
-      });
+      },
+    });
 
-    const rawText =
-      response.text || "";
-
-    const parsed =
-      parseAIJSON(rawText);
-
-    let category = "";
-
-    if (
-      parsed &&
-      typeof parsed.category ===
-        "string"
-    ) {
-      category =
-        parsed.category.trim();
-    } else {
-      const match = rawText.match(
-        /"category"\s*:\s*"([^"]+)"/i
-      );
-
-      if (match) {
-        category =
-          match[1].trim();
-      }
-    }
-
-    category =
-      normalizeCategory(category);
+    const parsed = parseAIJSON(response.text || "");
+    const category = normalizeCategory(parsed?.category || "");
 
     if (!category) {
       return res.status(500).json({
         success: false,
-        message:
-          "AI did not return a valid category. Please enter the category manually.",
-        code:
-          "AI_INVALID_CATEGORY",
+        message: "AI did not return a valid category. Please enter it manually.",
+        code: "AI_INVALID_CATEGORY",
       });
     }
 
@@ -1645,18 +1001,47 @@ Return only:
   }
 };
 
-exports.scanReceipt = async (
-  req,
-  res
-) => {
+const uploadReceiptImage = (file, userId) =>
+  new Promise((resolve, reject) => {
+    if (
+      !process.env.CLOUDINARY_CLOUD_NAME ||
+      !process.env.CLOUDINARY_API_KEY ||
+      !process.env.CLOUDINARY_API_SECRET
+    ) {
+      const error = new Error("Cloudinary is not configured.");
+      error.code = "CLOUDINARY_CONFIG_MISSING";
+      return reject(error);
+    }
+
+    const upload = cloudinary.uploader.upload_stream(
+      {
+        folder: `smaxtify/receipts/${userId}`,
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) return reject(error);
+
+        if (!result?.secure_url || !result?.public_id) {
+          return reject(new Error("Cloudinary did not return image details."));
+        }
+
+        resolve({
+          imageUrl: result.secure_url,
+          imagePublicId: result.public_id,
+        });
+      }
+    );
+
+    upload.end(file.buffer);
+  });
+
+exports.scanReceipt = async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message:
-          "Please upload a receipt image.",
-        code:
-          "RECEIPT_IMAGE_REQUIRED",
+        message: "Please upload a receipt image.",
+        code: "RECEIPT_IMAGE_REQUIRED",
       });
     }
 
@@ -1668,54 +1053,23 @@ exports.scanReceipt = async (
       "image/heif",
     ];
 
-    if (
-      !allowedMimeTypes.includes(
-        req.file.mimetype
-      )
-    ) {
+    if (!allowedMimeTypes.includes(req.file.mimetype)) {
       return res.status(400).json({
         success: false,
-        message:
-          "Unsupported image format. Please upload a JPG, PNG, or WebP image.",
-        code:
-          "UNSUPPORTED_IMAGE_FORMAT",
-      });
-    }
-
-    if (!GEMINI_API_KEY) {
-      return res.status(503).json({
-        success: false,
-        message:
-          "Gemini API key is not configured.",
-        code: "AI_KEY_MISSING",
+        message: "Unsupported image format. Please upload a JPG, PNG, WebP, HEIC or HEIF image.",
+        code: "UNSUPPORTED_IMAGE_FORMAT",
       });
     }
 
     const prompt = `
 You are SmaXTify.AI, a receipt information extraction assistant.
-
-Analyze the uploaded image and extract only information clearly visible.
-
-Rules:
-
-- Do not invent missing information.
-- Use null for unavailable amounts or dates.
-- Amounts must be JSON numbers, not strings.
-- Remove currency symbols and commas from amounts.
-- Return the total amount payable, not subtotal, when both are visible.
-- Extract tax separately when shown.
-- Do not calculate or guess missing amounts.
-- Preserve the receipt currency where identifiable.
-- Return item names and visible quantities and prices.
-- If the image is not a receipt, set isReceipt to false.
-- For dates, use YYYY-MM-DD format whenever possible.
-- If the date is unclear, return null.
-- Return only valid JSON with these fields:
-  isReceipt, merchant, date, currency, subtotal, tax, total, items.
-- Each item must contain name, quantity, and price.
-
-Example:
-
+Extract only information clearly visible in the uploaded image.
+Do not invent missing information. Use null for unavailable amounts or dates.
+Amounts must be JSON numbers. Return the total payable when visible.
+Extract merchant, date, currency, subtotal, tax, total and item names, quantities and prices.
+If the image is not a receipt, set isReceipt to false.
+Use YYYY-MM-DD dates where possible.
+Return only JSON:
 {
   "isReceipt": true,
   "merchant": "Example Store",
@@ -1724,152 +1078,68 @@ Example:
   "subtotal": 100,
   "tax": 5,
   "total": 105,
-  "items": [
-    {
-      "name": "Example Item",
-      "quantity": 1,
-      "price": 100
-    }
-  ]
+  "items": [{"name":"Example Item","quantity":1,"price":100}]
 }
 `;
 
-    const response =
-      await generateGeminiContent({
-        contents: [
-          {
-            role: "user",
-
-            parts: [
-              {
-                text: prompt,
+    const response = await generateGeminiContent({
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { text: prompt },
+            {
+              inlineData: {
+                mimeType: req.file.mimetype,
+                data: req.file.buffer.toString("base64"),
               },
-
-              {
-                inlineData: {
-                  mimeType:
-                    req.file.mimetype,
-
-                  data:
-                    req.file.buffer.toString(
-                      "base64"
-                    ),
-                },
-              },
-            ],
-          },
-        ],
-
-        config: {
-          temperature: 0.1,
-
-          responseMimeType:
-            "application/json",
+            },
+          ],
         },
-      });
+      ],
+      config: {
+        temperature: 0.1,
+        responseMimeType: "application/json",
+      },
+    });
 
-    const rawText =
-      response.text || "";
-
-    const extracted =
-      parseAIJSON(rawText);
+    const extracted = parseAIJSON(response.text || "");
 
     if (
       !extracted ||
-      typeof extracted.isReceipt !==
-        "boolean" ||
-      !Array.isArray(
-        extracted.items
-      )
+      typeof extracted.isReceipt !== "boolean" ||
+      !Array.isArray(extracted.items)
     ) {
-      console.error(
-        "Invalid receipt response:",
-        rawText
-      );
-
       return res.status(500).json({
         success: false,
-        message:
-          "AI returned an invalid receipt format. Please try another image.",
-        code:
-          "AI_INVALID_RECEIPT_RESPONSE",
+        message: "AI returned an invalid receipt format. Please try another image.",
+        code: "AI_INVALID_RECEIPT_RESPONSE",
       });
     }
 
     if (!extracted.isReceipt) {
       return res.status(400).json({
         success: false,
-        message:
-          "The uploaded image does not appear to be a receipt.",
+        message: "The uploaded image does not appear to be a receipt.",
         code: "NOT_A_RECEIPT",
       });
     }
 
-    const subtotal =
-      normalizeReceiptAmount(
-        extracted.subtotal
-      );
-
-    const tax =
-      normalizeReceiptAmount(
-        extracted.tax
-      );
-
-    const total =
-      normalizeReceiptAmount(
-        extracted.total
-      );
-
-    const items =
-      extracted.items.map((item) => ({
-        name:
-          typeof item?.name === "string"
-            ? item.name.trim()
-            : "",
-
-        quantity:
-          normalizeReceiptAmount(
-            item?.quantity
-          ),
-
-        price:
-          normalizeReceiptAmount(
-            item?.price
-          ),
-      }));
-
-    const receiptDate =
-      normalizeReceiptDate(
-        extracted.date
-      );
-
-    let cloudinaryImage;
+    let image;
 
     try {
-      cloudinaryImage =
-        await uploadReceiptImage(
-          req.file,
-          req.user.id
-        );
+      image = await uploadReceiptImage(req.file, req.user.id);
     } catch (uploadError) {
-      console.error(
-        "Receipt image upload error:",
-        uploadError?.message ||
-          uploadError
-      );
+      console.error("Receipt image upload error:", uploadError?.message || uploadError);
 
       return res.status(502).json({
         success: false,
-
         message:
-          uploadError?.code ===
-          "CLOUDINARY_CONFIG_MISSING"
+          uploadError?.code === "CLOUDINARY_CONFIG_MISSING"
             ? "Cloudinary is not configured. Check your environment variables."
             : "Receipt was scanned, but its image could not be uploaded. Please try again.",
-
         code:
-          uploadError?.code ===
-          "CLOUDINARY_CONFIG_MISSING"
+          uploadError?.code === "CLOUDINARY_CONFIG_MISSING"
             ? "CLOUDINARY_CONFIG_MISSING"
             : "RECEIPT_IMAGE_UPLOAD_FAILED",
       });
@@ -1877,45 +1147,24 @@ Example:
 
     return res.status(200).json({
       success: true,
-
-      message:
-        "Receipt scanned successfully. Please review the extracted details.",
-
+      message: "Receipt scanned successfully. Please review the extracted details.",
       receipt: {
-        merchant:
-          typeof extracted.merchant ===
-          "string"
-            ? extracted.merchant.trim()
-            : null,
-
-        date: receiptDate,
-
-        currency:
-          typeof extracted.currency ===
-          "string"
-            ? extracted.currency.trim()
-            : "INR",
-
-        subtotal,
-
-        tax,
-
-        total,
-
-        items,
-
-        imageUrl:
-          cloudinaryImage.imageUrl,
-
-        imagePublicId:
-          cloudinaryImage.imagePublicId,
+        merchant: typeof extracted.merchant === "string" ? extracted.merchant.trim() : null,
+        date: normalizeReceiptDate(extracted.date),
+        currency: typeof extracted.currency === "string" ? extracted.currency.trim() : "INR",
+        subtotal: normalizeReceiptAmount(extracted.subtotal),
+        tax: normalizeReceiptAmount(extracted.tax),
+        total: normalizeReceiptAmount(extracted.total),
+        items: extracted.items.map((item) => ({
+          name: typeof item?.name === "string" ? item.name.trim() : "",
+          quantity: normalizeReceiptAmount(item?.quantity),
+          price: normalizeReceiptAmount(item?.price),
+        })),
+        imageUrl: image.imageUrl,
+        imagePublicId: image.imagePublicId,
       },
     });
   } catch (error) {
-    return sendAIError(
-      res,
-      error,
-      "Failed to scan receipt. Please try again."
-    );
+    return sendAIError(res, error, "Failed to scan receipt. Please try again.");
   }
 };
