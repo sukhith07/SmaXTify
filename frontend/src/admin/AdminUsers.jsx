@@ -21,7 +21,7 @@ import {
 } from "react";
 
 const API_URL =
-  "http://localhost:5000/api";
+  "https://smaxtify.onrender.com/api";
 
 function AdminUsers() {
   const [users, setUsers] =

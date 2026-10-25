@@ -28,7 +28,7 @@ import {
 } from "react-icons/fa";
 import "../components/styles/settings.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://smaxtify.onrender.com/api";
 
 const currencies = [
   { code: "INR", symbol: "₹", name: "Indian Rupee", country: "India" },

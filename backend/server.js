@@ -2,10 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
+const dns = require("node:dns");
 
 dotenv.config({
   path: path.join(__dirname, ".env"),
 });
+
+dns.setServers(["1.1.1.1", "1.0.0.1"]);
 
 console.log(
   "Gemini API Key Loaded:",
@@ -26,127 +29,45 @@ app.use(express.json());
 // ROUTES
 // ===============================
 
-const authRoutes =
-  require("./routes/authRoutes");
-
-const expenseRoutes =
-  require("./routes/expenseRoutes");
-
-const budgetRoutes =
-  require("./routes/budgetRoutes");
-
-const goalRoutes =
-  require("./routes/goalRoutes");
-
-const aiRoutes =
-  require("./routes/aiRoutes");
-
-const chatRoutes =
-  require("./routes/chatRoutes");
-
-const reportRoutes =
-  require("./routes/reportRoutes");
-
-const currencyRoutes =
-  require("./routes/currencyRoutes");
-
-const subscriptionRoutes =
-  require("./routes/subscriptionRoutes");
-
-const notificationRoutes =
-  require("./routes/notificationRoutes");
-
-const accountRoutes =
-  require("./routes/accountRoutes");
-
-const settingsRoutes =
-  require("./routes/settingsRoutes");
-
-// Admin routes
-const adminRoutes =
-  require("./routes/adminRoutes");
-
+const authRoutes = require("./routes/authRoutes");
+const expenseRoutes = require("./routes/expenseRoutes");
+const budgetRoutes = require("./routes/budgetRoutes");
+const goalRoutes = require("./routes/goalRoutes");
+const aiRoutes = require("./routes/aiRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const reportRoutes = require("./routes/reportRoutes");
+const currencyRoutes = require("./routes/currencyRoutes");
+const subscriptionRoutes = require("./routes/subscriptionRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const accountRoutes = require("./routes/accountRoutes");
+const settingsRoutes = require("./routes/settingsRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 // ===============================
 // API ROUTES
 // ===============================
 
-app.use(
-  "/api/auth",
-  authRoutes
-);
-
-app.use(
-  "/api/expenses",
-  expenseRoutes
-);
-
-app.use(
-  "/api/budget",
-  budgetRoutes
-);
-
-app.use(
-  "/api/goals",
-  goalRoutes
-);
-
-app.use(
-  "/api/ai",
-  aiRoutes
-);
-
-app.use(
-  "/api/chats",
-  chatRoutes
-);
-
-app.use(
-  "/api/reports",
-  reportRoutes
-);
-
-app.use(
-  "/api/currency",
-  currencyRoutes
-);
-
-app.use(
-  "/api/subscriptions",
-  subscriptionRoutes
-);
-
-app.use(
-  "/api/notifications",
-  notificationRoutes
-);
-
-app.use(
-  "/api/accounts",
-  accountRoutes
-);
-
-app.use(
-  "/api/settings",
-  settingsRoutes
-);
-
-app.use(
-  "/api/admin",
-  adminRoutes
-);
-
+app.use("/api/auth", authRoutes);
+app.use("/api/expenses", expenseRoutes);
+app.use("/api/budget", budgetRoutes);
+app.use("/api/goals", goalRoutes);
+app.use("/api/ai", aiRoutes);
+app.use("/api/chats", chatRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/currency", currencyRoutes);
+app.use("/api/subscriptions", subscriptionRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/accounts", accountRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/api/admin", adminRoutes);
 
 // ===============================
 // ROOT ROUTE
 // ===============================
 
 app.get("/", (req, res) => {
-  res.send(
-    "🚀 SmaXTify Backend Running Successfully"
-  );
+  res.send("🚀 SmaXTify Backend Running Successfully");
 });
-
 
 // ===============================
 // 404 HANDLER
@@ -159,16 +80,12 @@ app.use((req, res) => {
   });
 });
 
-
 // ===============================
 // START SERVER
 // ===============================
 
-const PORT =
-  process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(
-    `🚀 Server running on http://localhost:${PORT}`
-  );
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });

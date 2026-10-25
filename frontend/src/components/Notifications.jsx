@@ -29,7 +29,7 @@ import {
 import "./styles/notifications.css";
 
 const API_URL =
-  "http://localhost:5000/api";
+  "https://smaxtify.onrender.com/api";
 
 function Notifications() {
   const navigate = useNavigate();

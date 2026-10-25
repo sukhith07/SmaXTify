@@ -22,7 +22,7 @@ import {
 } from "react-icons/fa6";
 
 const API_URL =
-  "http://localhost:5000/api";
+  "https://smaxtify.onrender.com/api";
 
 function AdminTransactions() {
   const [data, setData] =

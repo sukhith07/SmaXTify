@@ -28,7 +28,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import LogoutConfirmModal from "../LogoutConfirmModal";
 import "./../styles/sidebar.css";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = (
+  import.meta.env.VITE_API_URL ||
+  "https://smaxtify.onrender.com/api"
+).replace(/\/+$/, "");
+
+const BACKEND_URL = API_URL.replace(/\/api$/, "");
+
 const SIDEBAR_SCROLL_KEY = "smaxtify-sidebar-scroll-position";
 const SIDEBAR_COLLAPSED_KEY = "smaxtify-sidebar-collapsed";
 
@@ -41,6 +47,17 @@ function getStoredUser() {
   } catch {
     return {};
   }
+}
+
+function getUserRole(user) {
+  return String(user?.role || user?.user?.role || "")
+    .trim()
+    .toLowerCase();
+}
+
+function isAdminUser(user) {
+  const role = getUserRole(user);
+  return role === "admin" || role === "superadmin";
 }
 
 function getUserName(user) {
@@ -66,7 +83,7 @@ function getUserPhoto(user) {
   }
 
   if (photo.startsWith("/")) {
-    return `http://localhost:5000${photo}`;
+    return `${BACKEND_URL}${photo}`;
   }
 
   return photo;
@@ -93,7 +110,6 @@ function Sidebar() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [currentUser, setCurrentUser] = useState(getStoredUser);
   const [photoFailed, setPhotoFailed] = useState(false);
 
@@ -105,6 +121,7 @@ function Sidebar() {
 
   const userName = getUserName(currentUser);
   const userPhoto = getUserPhoto(currentUser);
+  const isAdmin = isAdminUser(currentUser);
 
   const saveScrollPosition = useCallback((position) => {
     const safePosition = Math.max(0, Number(position) || 0);
@@ -161,17 +178,14 @@ function Sidebar() {
 
     const loadCurrentUser = async () => {
       const token = localStorage.getItem("token");
+      const storedUser = getStoredUser();
 
       if (!token) {
         if (isMounted) {
-          setIsAdmin(false);
           setCurrentUser({});
         }
-
         return;
       }
-
-      const storedUser = getStoredUser();
 
       if (isMounted) {
         setCurrentUser(storedUser);
@@ -188,16 +202,16 @@ function Sidebar() {
         const data = await response.json();
 
         if (!response.ok) {
-          if (isMounted) {
-            setIsAdmin(false);
-          }
-
+          console.error(
+            "Failed to load current user:",
+            data?.message || response.status
+          );
           return;
         }
 
         const fetchedUser = data?.user || data?.data?.user;
 
-        if (fetchedUser) {
+        if (fetchedUser && isMounted) {
           const updatedUser = {
             ...storedUser,
             ...fetchedUser,
@@ -208,22 +222,10 @@ function Sidebar() {
             JSON.stringify(updatedUser)
           );
 
-          if (isMounted) {
-            setCurrentUser(updatedUser);
-            setIsAdmin(
-              fetchedUser.role === "admin" ||
-                fetchedUser.role === "superadmin"
-            );
-          }
-        } else if (isMounted) {
-          setIsAdmin(false);
+          setCurrentUser(updatedUser);
         }
       } catch (error) {
         console.error("Current User Error:", error);
-
-        if (isMounted) {
-          setIsAdmin(false);
-        }
       }
     };
 
@@ -240,6 +242,8 @@ function Sidebar() {
       handleUserUpdated
     );
 
+    window.addEventListener("storage", handleUserUpdated);
+
     return () => {
       isMounted = false;
 
@@ -247,6 +251,8 @@ function Sidebar() {
         "smaxtify-user-updated",
         handleUserUpdated
       );
+
+      window.removeEventListener("storage", handleUserUpdated);
     };
   }, []);
 
@@ -429,7 +435,6 @@ function Sidebar() {
 
     setShowLogoutModal(false);
     setMobileOpen(false);
-    setIsAdmin(false);
     setCurrentUser({});
 
     navigate("/", { replace: true });

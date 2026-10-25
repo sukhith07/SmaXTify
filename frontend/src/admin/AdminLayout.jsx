@@ -15,7 +15,7 @@ import AdminNavbar from "./AdminNavbar";
 import "../components/styles/admin.css";
 
 const API_URL =
-  "http://localhost:5000/api";
+  "https://smaxtify.onrender.com/api";
 
 function AdminLayout() {
   const location =

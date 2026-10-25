@@ -16,7 +16,7 @@ import {
   FaRotate,
 } from "react-icons/fa6";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://smaxtify.onrender.com/api";
 
 function AdminDashboard() {
   const [dashboardData, setDashboardData] =

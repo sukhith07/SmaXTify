@@ -26,7 +26,7 @@ import {
 import "./styles/notification-panel.css";
 
 const API_URL =
-  "http://localhost:5000/api";
+  "https://smaxtify.onrender.com/api";
 
 function NotificationPanel() {
   const navigate = useNavigate();
