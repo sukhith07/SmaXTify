@@ -1,4 +1,4 @@
-const User = require("../models/User");
+﻿const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
@@ -253,97 +253,76 @@ const getCurrentUser = async (
 // Send OTP
 // ============================
 
-const sendOTP = async (
-  req,
-  res
-) => {
+const sendOTP = async (req, res) => {
   try {
-    const {
-      email,
-    } = req.body;
+    const email = String(req.body.email || "").trim().toLowerCase();
 
-    const user =
-      await User.findOne({
-        email,
-      });
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
 
-    if (!user) {
-      return res.status(404).json({
-        message:
-          "Email not registered",
+    if (!process.env.RESEND_API_KEY) {
+      console.error("RESEND_API_KEY is not configured");
+      return res.status(500).json({
+        message: "Email service is not configured"
       });
     }
 
-    const otp =
-      Math.floor(
-        100000 +
-          Math.random() *
-            900000
-      ).toString();
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Email not registered"
+      });
+    }
+
+    const otp = require("crypto").randomInt(100000, 1000000).toString();
+
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
+        to: [user.email],
+        subject: "SmaXTify Password Reset OTP",
+        html: `
+          <div style="font-family:Arial,sans-serif">
+            <h2>SmaXTify</h2>
+            <p>Your password reset verification code is:</p>
+            <h1 style="letter-spacing:5px;color:#2563eb">${otp}</h1>
+            <p>This OTP expires in <b>5 minutes</b>.</p>
+            <p>If you did not request this, you can ignore this email.</p>
+          </div>
+        `
+      })
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      console.error("Resend email API error:", response.status, result);
+      return res.status(502).json({
+        message: "Unable to send OTP email. Check the email service configuration."
+      });
+    }
 
     user.resetOTP = otp;
-
-    user.resetOTPExpire =
-      Date.now() +
-      5 * 60 * 1000;
-
+    user.resetOTPExpire = Date.now() + 5 * 60 * 1000;
     await user.save();
 
-    const transporter =
-      nodemailer.createTransport({
-        service: "gmail",
-
-        auth: {
-          user:
-            process.env.EMAIL_USER,
-
-          pass:
-            process.env.EMAIL_PASS,
-        },
-      });
-
-    await transporter.sendMail({
-      from:
-        `"SmaXTify" <${process.env.EMAIL_USER}>`,
-
-      to: user.email,
-
-      subject:
-        "SmaXTify Password Reset OTP",
-
-      html: `
-      <div style="font-family:Arial">
-        <h2>SmaXTify</h2>
-
-        <p>Your OTP is</p>
-
-        <h1 style="letter-spacing:5px;color:#2563eb">
-          ${otp}
-        </h1>
-
-        <p>
-          This OTP expires in
-          <b>5 minutes</b>.
-        </p>
-      </div>
-      `,
-    });
-
-    res.status(200).json({
-      message:
-        "OTP sent successfully",
+    return res.status(200).json({
+      message: "OTP sent successfully"
     });
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      message:
-        "Failed to send OTP",
+    console.error("Send OTP Error:", error.message);
+    return res.status(500).json({
+      message: "Failed to send OTP"
     });
   }
 };
-
-
 // ============================
 // Verify OTP
 // ============================

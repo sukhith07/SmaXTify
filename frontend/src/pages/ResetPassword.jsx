@@ -80,7 +80,7 @@ function ResetPassword() {
           <h1>Reset Password</h1>
 
           <p>
-            Create a strong password for your Smart ET
+            Create a strong password for your SmaXTify
             account.
           </p>
 
