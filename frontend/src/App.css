@@ -49,9 +49,7 @@ input {
   outline: none;
 }
 
-/* =========================================================
-   SHARED APPLICATION PAGE LAYOUT
-   ========================================================= */
+/* Shared application layout */
 
 .app-page-shell {
   display: flex;
@@ -76,11 +74,7 @@ input {
   padding: 0;
 }
 
-/* =========================================================
-   FIXED NAVBAR CONTENT OFFSET
-   Navbar is fixed to the viewport, so reserve its space
-   before the page's main content.
-   ========================================================= */
+/* Fixed navbar spacing */
 
 .app-route-content .dashboard-content,
 .app-route-content .accounts-content,
@@ -94,9 +88,7 @@ input {
   padding-top: var(--smaxtify-navbar-height, 108px);
 }
 
-/* =========================================================
-   GLOBAL FOOTER
-   ========================================================= */
+/* Global footer */
 
 .app-page-shell > .global-footer {
   position: relative;
@@ -109,8 +101,10 @@ input {
   box-sizing: border-box;
   transition:
     padding-left var(--smaxtify-sidebar-transition, 320ms)
-      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
+    var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
 }
+
+/* Desktop footer offset for the fixed sidebar */
 
 .app-page-shell:has(.dashboard) > .global-footer,
 .app-page-shell:has(.aiscan-page) > .global-footer,
@@ -124,9 +118,7 @@ input {
   padding-left: var(--smaxtify-sidebar-width, 276px);
 }
 
-/* =========================================================
-   DASHBOARD CONTENT
-   ========================================================= */
+/* Dashboard content */
 
 .dashboard-content {
   display: flex;
@@ -135,37 +127,31 @@ input {
   margin-left: var(--smaxtify-sidebar-width, 276px);
   transition:
     width var(--smaxtify-sidebar-transition, 320ms)
-      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1)),
     margin-left var(--smaxtify-sidebar-transition, 320ms)
-      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
+    var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
-/* =========================================================
-   AI SCAN CONTENT
-   ========================================================= */
+/* AI scan content */
 
 .aiscan-content {
   width: calc(100% - var(--smaxtify-sidebar-width, 276px));
   margin-left: var(--smaxtify-sidebar-width, 276px);
   transition:
     width var(--smaxtify-sidebar-transition, 320ms)
-      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1)),
     margin-left var(--smaxtify-sidebar-transition, 320ms)
-      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
+    var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
-/* =========================================================
-   ADMIN PAGES
-   ========================================================= */
+/* Admin pages */
 
 .app-page-shell--admin {
   min-height: 100vh;
   min-height: 100dvh;
 }
 
-/* =========================================================
-   MEDIA AND FORM ELEMENTS
-   ========================================================= */
+/* Media and form elements */
 
 img,
 video,
@@ -181,17 +167,13 @@ textarea {
   font: inherit;
 }
 
-/* =========================================================
-   ACCESSIBILITY
-   ========================================================= */
+/* Accessibility */
 
 :focus-visible {
   scroll-margin-block: 16px;
 }
 
-/* =========================================================
-   TABLET AND MOBILE
-   ========================================================= */
+/* Tablet and mobile */
 
 @media (max-width: 1366px) and (min-width: 1101px) {
   :root {
@@ -204,8 +186,35 @@ textarea {
     --smaxtify-navbar-height: 88px;
   }
 
-  .app-page-shell > .global-footer {
+  .app-page-shell,
+  .app-route-content {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
     padding-left: 0;
+  }
+
+  .app-page-shell > .global-footer,
+  .app-page-shell:has(.dashboard) > .global-footer,
+  .app-page-shell:has(.aiscan-page) > .global-footer,
+  .app-page-shell:has(.accounts-page) > .global-footer,
+  .app-page-shell:has(.budget-page) > .global-footer,
+  .app-page-shell:has(.goals-page) > .global-footer,
+  .app-page-shell:has(.reports-page) > .global-footer,
+  .app-page-shell:has(.currency-page) > .global-footer,
+  .app-page-shell:has(.subscriptions-page) > .global-footer,
+  .app-page-shell:has(.settings-page) > .global-footer {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .global-footer-container {
+    width: calc(100% - 36px);
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .dashboard-content,
@@ -225,11 +234,34 @@ textarea {
   :root {
     --smaxtify-navbar-height: 70px;
   }
+
+  .global-footer-container {
+    width: calc(100% - 32px);
+  }
+
+  .global-footer-main {
+    min-width: 0;
+  }
+
+  .global-footer-brand,
+  .global-footer-column {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .global-footer-bottom {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
 }
 
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
+@media (max-width: 420px) {
+  .global-footer-container {
+    width: calc(100% - 28px);
+  }
+}
+
+/* Reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
   html {

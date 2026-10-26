@@ -1,171 +1,188 @@
 /* =========================================================
    SMAXTIFY - GLOBAL FIXED NAVBAR
-   Shared across all authenticated modules
+   Responsive desktop, tablet and mobile layout
    ========================================================= */
 
 :root {
-    --smaxtify-navbar-height: 108px;
+  --smaxtify-navbar-height: 108px;
+  --smaxtify-navbar-mobile-height: 76px;
+  --smaxtify-navbar-bg: rgba(255, 255, 255, 0.96);
+  --smaxtify-navbar-text: #172033;
+  --smaxtify-navbar-muted: #71809a;
+  --smaxtify-navbar-border: rgba(148, 163, 184, 0.16);
+  --smaxtify-navbar-transition: 320ms;
 }
 
 .navbar {
-    position: fixed !important;
-    top: 0 !important;
-    left: var(--smaxtify-sidebar-width, 276px);
-    right: 0;
-    z-index: 1100;
+  position: fixed !important;
+  top: 0 !important;
+  left: var(--smaxtify-sidebar-width, 276px);
+  right: 0;
+  z-index: 1100;
 
-    width: auto;
-    min-width: 0;
-    min-height: var(--smaxtify-navbar-height);
-    padding: 18px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
+  width: auto;
+  min-width: 0;
+  min-height: var(--smaxtify-navbar-height);
+  padding: 18px 30px;
 
-    box-sizing: border-box;
+  box-sizing: border-box;
+  background: var(--smaxtify-navbar-bg) !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--smaxtify-navbar-border) !important;
+  border-radius: 0 0 30px 30px !important;
 
-    background: rgba(255, 255, 255, 0.94) !important;
-    border: 0 !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.9) !important;
-    border-radius: 0 0 32px 32px !important;
+  box-shadow:
+    0 12px 30px rgba(31, 41, 55, 0.07),
+    0 2px 8px rgba(59, 130, 246, 0.035);
 
-    box-shadow:
-        0 12px 30px rgba(31, 41, 55, 0.08),
-        0 2px 8px rgba(59, 130, 246, 0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+  overflow: visible;
 
-    overflow: visible;
+  transition:
+    left var(--smaxtify-navbar-transition)
+      var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1)),
+    padding 200ms ease,
+    min-height 200ms ease;
+}
 
-    transition:
-        left var(--smaxtify-sidebar-transition, 320ms)
-        var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
+.navbar *,
+.navbar *::before,
+.navbar *::after {
+  box-sizing: border-box;
 }
 
 .navbar-left {
-    flex: 1 1 auto;
-    min-width: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .navbar-left h1 {
-    margin: 0;
-    color: #172033;
-    font-size: 30px;
-    line-height: 1.15;
-    font-weight: 800;
-    letter-spacing: -0.8px;
+  margin: 0;
+  color: var(--smaxtify-navbar-text);
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  overflow-wrap: anywhere;
 }
 
 .navbar-left p {
-    margin: 6px 0 0;
-    color: #71809a;
-    font-size: 13px;
-    font-weight: 500;
+  margin: 6px 0 0;
+  color: var(--smaxtify-navbar-muted);
+  font-size: 13px;
+  line-height: 1.45;
+  font-weight: 500;
 }
 
 .navbar-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-left: auto;
-    flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-left: auto;
+  flex: 0 0 auto;
+  min-width: 0;
 }
 
 .navbar-glass-btn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 50px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 50px;
 
-    width: 50px;
-    height: 50px;
-    padding: 0;
+  width: 50px;
+  height: 50px;
+  padding: 0;
 
-    border: 1px solid rgba(249, 250, 253, 0.9);
-    border-radius: 16px;
+  border: 1px solid rgba(249, 250, 253, 0.9);
+  border-radius: 16px;
+  cursor: pointer;
 
-    cursor: pointer;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(248, 250, 252, 0.88)
+  );
 
-    background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.98),
-        rgba(248, 250, 252, 0.85)
-    );
+  color: inherit;
 
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
 
-    box-shadow:
-        0 8px 24px rgba(15, 23, 42, 0.09),
-        inset 0 1px 1px rgba(255, 255, 255, 0.95);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .navbar-glass-btn svg {
-    font-size: 18px;
+  display: block;
+  flex-shrink: 0;
+  font-size: 18px;
 }
 
 .navbar-glass-btn:hover {
-    transform: translateY(-2px);
-    box-shadow:
-        0 12px 30px rgba(15, 23, 42, 0.14),
-        inset 0 1px 1px rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.13),
+    inset 0 1px 1px rgba(255, 255, 255, 1);
 }
 
 .navbar-glass-btn:active {
-    transform: translateY(0);
+  transform: translateY(0);
 }
 
 .calendar-btn {
-    color: #4f46e5;
+  color: #4f46e5;
 }
 
 .calculator-btn {
-    color: #059669;
+  color: #059669;
 }
 
 .notification-btn {
-    color: #e71a21;
+  color: #e71a21;
 }
 
 .notification-dot {
-    position: absolute;
-    top: -4px;
-    right: -4px;
+  position: absolute;
+  top: -4px;
+  right: -4px;
 
-    min-width: 17px;
-    height: 17px;
-    padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
 
-    border-radius: 20px;
-    background: #ef4444;
-    color: #ffffff;
-    border: 2px solid #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 20px;
+  background: #ef4444;
+  color: #ffffff;
 
-    font-size: 7px;
-    font-weight: 800;
-    line-height: 1;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
 
-    box-sizing: border-box;
-    pointer-events: none;
+  pointer-events: none;
 }
 
 .navbar-glass-btn:focus-visible {
-    outline: 3px solid rgba(79, 70, 229, 0.18);
-    outline-offset: 3px;
+  outline: 3px solid rgba(79, 70, 229, 0.25);
+  outline-offset: 3px;
 }
 
 /* =========================================================
@@ -173,158 +190,260 @@
    ========================================================= */
 
 @media (max-width: 1366px) and (min-width: 1101px) {
-    :root {
-        --smaxtify-navbar-height: 98px;
-    }
+  :root {
+    --smaxtify-navbar-height: 98px;
+  }
 
-    .navbar {
-        min-height: var(--smaxtify-navbar-height);
-        padding: 15px 24px;
-    }
+  .navbar {
+    padding: 15px 24px;
+  }
 
-    .navbar-left h1 {
-        font-size: 27px;
-    }
+  .navbar-left h1 {
+    font-size: 27px;
+  }
 }
 
 /* =========================================================
-   TABLET AND MOBILE SIDEBAR OVERLAY
+   TABLET
    ========================================================= */
 
 @media (max-width: 1100px) {
-    :root {
-        --smaxtify-navbar-height: 88px;
-    }
+  :root {
+    --smaxtify-navbar-height: 88px;
+  }
 
-    .navbar {
-        left: 0;
-        min-height: var(--smaxtify-navbar-height);
-        padding: 15px 22px;
-    }
+  .navbar {
+    left: 0;
+    min-height: var(--smaxtify-navbar-height);
+    padding: 14px 20px;
+    gap: 14px;
+  }
 
-    .navbar-left h1 {
-        font-size: 25px;
-    }
+  .navbar-left h1 {
+    font-size: 25px;
+  }
 }
 
 @media (max-width: 900px) {
-    :root {
-        --smaxtify-navbar-height: 78px;
-    }
+  :root {
+    --smaxtify-navbar-height: 78px;
+  }
 
-    .navbar {
-        min-height: var(--smaxtify-navbar-height);
-        padding: 14px 20px;
-    }
+  .navbar {
+    padding: 12px 16px;
+    gap: 12px;
+  }
 
-    .navbar-left h1 {
-        font-size: 24px;
-    }
+  .navbar-left h1 {
+    font-size: 22px;
+    letter-spacing: -0.5px;
+  }
 
-    .navbar-left p {
-        font-size: 12px;
-    }
+  .navbar-left p {
+    margin-top: 4px;
+    font-size: 12px;
+  }
 
-    .navbar-glass-btn {
-        flex-basis: 45px;
-        width: 45px;
-        height: 45px;
-        border-radius: 14px;
-    }
+  .navbar-actions {
+    gap: 8px;
+  }
 
-    .navbar-glass-btn svg {
-        font-size: 16px;
-    }
+  .navbar-glass-btn {
+    flex-basis: 43px;
+    width: 43px;
+    height: 43px;
+    border-radius: 13px;
+  }
+
+  .navbar-glass-btn svg {
+    font-size: 16px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   The menu button must not overlap the greeting.
+   The sidebar's .mobile-menu-btn is positioned separately.
+   ========================================================= */
+
+@media (max-width: 768px) {
+  :root {
+    --smaxtify-navbar-height: 72px;
+  }
+
+  .navbar {
+    left: 0 !important;
+    right: 0 !important;
+    min-height: var(--smaxtify-navbar-height);
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 0 0 20px 20px !important;
+  }
+
+  .navbar-left {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .navbar-left h1 {
+    max-width: 100%;
+    margin: 0;
+    font-size: clamp(15px, 3.5vw, 20px);
+    line-height: 1.25;
+    letter-spacing: -0.35px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .navbar-left p {
+    margin-top: 3px;
+    font-size: 10px;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .navbar-actions {
+    flex: 0 0 auto;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .navbar-glass-btn {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+
+  .navbar-glass-btn svg {
+    font-size: 14px;
+  }
+
+  .notification-dot {
+    top: -4px;
+    right: -4px;
+    min-width: 15px;
+    height: 15px;
+    font-size: 7px;
+  }
 }
 
 /* =========================================================
    SMALL MOBILE
    ========================================================= */
 
-@media (max-width: 768px) {
-    :root {
-        --smaxtify-navbar-height: 70px;
-    }
+@media (max-width: 480px) {
+  :root {
+    --smaxtify-navbar-height: 66px;
+  }
 
-    .navbar {
-        min-height: var(--smaxtify-navbar-height);
-        padding: 11px 14px;
-        gap: 10px;
-        border-radius: 0 0 20px 20px !important;
-    }
+  .navbar {
+    padding: 9px 10px;
+    gap: 7px;
+    border-radius: 0 0 16px 16px !important;
+  }
 
-    .navbar-left {
-        flex: 1 1 auto;
-        min-width: 0;
-    }
+  .navbar-left h1 {
+    font-size: clamp(13px, 3.6vw, 17px);
+    letter-spacing: -0.3px;
+  }
 
-    .navbar-left h1 {
-        font-size: 19px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+  .navbar-left p {
+    margin-top: 2px;
+    font-size: 9px;
+  }
 
-    .navbar-left p {
-        margin-top: 3px;
-        font-size: 10px;
-    }
+  .navbar-actions {
+    gap: 4px;
+  }
 
-    .navbar-actions {
-        gap: 7px;
-    }
+  .navbar-glass-btn {
+    flex-basis: 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+  }
 
-    .navbar-glass-btn {
-        flex-basis: 40px;
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-    }
-
-    .navbar-glass-btn svg {
-        font-size: 14px;
-    }
-
-    .notification-dot {
-        top: -3px;
-        right: -3px;
-    }
+  .navbar-glass-btn svg {
+    font-size: 12px;
+  }
 }
 
-@media (max-width: 420px) {
-    .navbar {
-        padding: 10px;
-        gap: 7px;
-    }
+/* =========================================================
+   VERY NARROW SCREENS
+   ========================================================= */
 
-    .navbar-left h1 {
-        font-size: 16px;
-        letter-spacing: -0.4px;
-    }
+@media (max-width: 360px) {
+  :root {
+    --smaxtify-navbar-height: 62px;
+  }
 
-    .navbar-left p {
-        font-size: 9px;
-    }
+  .navbar {
+    padding: 8px;
+    gap: 5px;
+  }
 
-    .navbar-actions {
-        gap: 5px;
-    }
+  .navbar-left h1 {
+    font-size: 13px;
+  }
 
-    .navbar-glass-btn {
-        flex-basis: 36px;
-        width: 36px;
-        height: 36px;
-        border-radius: 11px;
-    }
+  .navbar-left p {
+    font-size: 8px;
+  }
 
-    .navbar-glass-btn svg {
-        font-size: 13px;
-    }
+  .navbar-actions {
+    gap: 3px;
+  }
+
+  .navbar-glass-btn {
+    flex-basis: 29px;
+    width: 29px;
+    height: 29px;
+    border-radius: 8px;
+  }
+
+  .navbar-glass-btn svg {
+    font-size: 11px;
+  }
 }
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+
+html[data-theme="dark"] .navbar,
+body[data-theme="dark"] .navbar {
+  --smaxtify-navbar-bg: rgba(17, 24, 39, 0.96);
+  --smaxtify-navbar-text: #f3f4f6;
+  --smaxtify-navbar-muted: #a8b4c8;
+  --smaxtify-navbar-border: rgba(148, 163, 184, 0.14);
+
+  background: var(--smaxtify-navbar-bg) !important;
+  border-bottom-color: var(--smaxtify-navbar-border) !important;
+}
+
+html[data-theme="dark"] .navbar-glass-btn,
+body[data-theme="dark"] .navbar-glass-btn {
+  background: linear-gradient(
+    145deg,
+    rgba(31, 41, 55, 0.98),
+    rgba(17, 24, 39, 0.94)
+  );
+  border-color: rgba(148, 163, 184, 0.14);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-    .navbar,
-    .navbar-glass-btn {
-        transition: none;
-    }
+  .navbar,
+  .navbar-glass-btn {
+    transition: none !important;
+  }
 }

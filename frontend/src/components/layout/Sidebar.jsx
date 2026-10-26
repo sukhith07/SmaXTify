@@ -37,9 +37,7 @@ const BACKEND_URL = API_URL.replace(/\/api$/, "");
 
 const SIDEBAR_SCROLL_KEY = "smaxtify-sidebar-scroll-position";
 const SIDEBAR_COLLAPSED_KEY = "smaxtify-sidebar-collapsed";
-
-const SIDEBAR_EXPANDED_WIDTH = "276px";
-const SIDEBAR_COLLAPSED_WIDTH = "88px";
+const MOBILE_BREAKPOINT = 1100;
 
 function getStoredUser() {
   try {
@@ -82,30 +80,24 @@ function getUserPhoto(user) {
     return "";
   }
 
-  if (photo.startsWith("/")) {
-    return `${BACKEND_URL}${photo}`;
-  }
-
-  return photo;
+  return photo.startsWith("/")
+    ? `${BACKEND_URL}${photo}`
+    : photo;
 }
 
-function getSavedScrollPosition() {
-  const savedPosition = Number(
-    sessionStorage.getItem(SIDEBAR_SCROLL_KEY) || 0
-  );
-
-  return Number.isFinite(savedPosition) && savedPosition >= 0
-    ? savedPosition
-    : 0;
+function isMobileViewport() {
+  return window.matchMedia(
+    `(max-width: ${MOBILE_BREAKPOINT}px)`
+  ).matches;
 }
 
 function Sidebar() {
   const [collapsed, setCollapsed] = useState(() => {
-    const savedState = sessionStorage.getItem(
+    const saved = sessionStorage.getItem(
       SIDEBAR_COLLAPSED_KEY
     );
 
-    return savedState === null ? false : savedState === "true";
+    return saved === null ? false : saved === "true";
   });
 
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -122,13 +114,34 @@ function Sidebar() {
   const userName = getUserName(currentUser);
   const userPhoto = getUserPhoto(currentUser);
   const isAdmin = isAdminUser(currentUser);
+  const isAdminPage = location.pathname.startsWith("/admin");
+
+  const mobileViewport = isMobileViewport();
+
+  const menuItems = [
+    { title: "Dashboard", icon: <FaHome />, path: "/dashboard" },
+    { title: "AI Scan", icon: <FaReceipt />, path: "/ai-scan" },
+    { title: "Accounts", icon: <FaUniversity />, path: "/accounts" },
+    { title: "Budget Planner", icon: <FaWallet />, path: "/budget" },
+    { title: "Savings Goals", icon: <FaBullseye />, path: "/goals" },
+    { title: "Reports", icon: <FaChartBar />, path: "/reports" },
+    {
+      title: "Currency Converter",
+      icon: <FaExchangeAlt />,
+      path: "/currency",
+    },
+    {
+      title: "Subscription Tracker",
+      icon: <FaCreditCard />,
+      path: "/subscriptions",
+    },
+    { title: "Settings", icon: <FaCog />, path: "/settings" },
+  ];
 
   const saveScrollPosition = useCallback((position) => {
-    const safePosition = Math.max(0, Number(position) || 0);
-
     sessionStorage.setItem(
       SIDEBAR_SCROLL_KEY,
-      String(safePosition)
+      String(Math.max(0, Number(position) || 0))
     );
   }, []);
 
@@ -145,15 +158,22 @@ function Sidebar() {
 
       cancelPendingRestore();
 
-      element.scrollTop = getSavedScrollPosition();
-
-      scrollFrameRef.current = requestAnimationFrame(() => {
+      const restore = () => {
         if (element.isConnected) {
-          element.scrollTop = getSavedScrollPosition();
+          const saved = Number(
+            sessionStorage.getItem(SIDEBAR_SCROLL_KEY) || 0
+          );
+
+          element.scrollTop = Math.max(0, saved);
         }
 
         scrollFrameRef.current = null;
-      });
+      };
+
+      restore();
+
+      scrollFrameRef.current =
+        requestAnimationFrame(restore);
     },
     [cancelPendingRestore]
   );
@@ -169,31 +189,39 @@ function Sidebar() {
     [restoreScrollPosition]
   );
 
+  const closeMobileSidebar = useCallback(() => {
+    setMobileOpen(false);
+  }, []);
+
+  const openMobileSidebar = useCallback(() => {
+    if (isMobileViewport()) {
+      setMobileOpen(true);
+    }
+  }, []);
+
   useEffect(() => {
     setPhotoFailed(false);
   }, [userPhoto]);
 
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
 
     const loadCurrentUser = async () => {
-      const token = localStorage.getItem("token");
+      const token =
+        localStorage.getItem("token") ||
+        localStorage.getItem("smaxtify-token");
+
       const storedUser = getStoredUser();
 
       if (!token) {
-        if (isMounted) {
-          setCurrentUser({});
-        }
+        if (mounted) setCurrentUser({});
         return;
       }
 
-      if (isMounted) {
-        setCurrentUser(storedUser);
-      }
+      if (mounted) setCurrentUser(storedUser);
 
       try {
         const response = await fetch(`${API_URL}/auth/me`, {
-          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -211,7 +239,7 @@ function Sidebar() {
 
         const fetchedUser = data?.user || data?.data?.user;
 
-        if (fetchedUser && isMounted) {
+        if (fetchedUser && mounted) {
           const updatedUser = {
             ...storedUser,
             ...fetchedUser,
@@ -229,106 +257,64 @@ function Sidebar() {
       }
     };
 
-    loadCurrentUser();
-
     const handleUserUpdated = () => {
-      if (isMounted) {
-        setCurrentUser(getStoredUser());
-      }
+      if (mounted) setCurrentUser(getStoredUser());
     };
+
+    loadCurrentUser();
 
     window.addEventListener(
       "smaxtify-user-updated",
       handleUserUpdated
     );
-
     window.addEventListener("storage", handleUserUpdated);
 
     return () => {
-      isMounted = false;
+      mounted = false;
 
       window.removeEventListener(
         "smaxtify-user-updated",
         handleUserUpdated
       );
-
-      window.removeEventListener("storage", handleUserUpdated);
+      window.removeEventListener(
+        "storage",
+        handleUserUpdated
+      );
     };
   }, []);
 
-  const menuItems = [
-    {
-      title: "Dashboard",
-      icon: <FaHome />,
-      path: "/dashboard",
-    },
-    {
-      title: "AI Scan",
-      icon: <FaReceipt />,
-      path: "/ai-scan",
-    },
-    {
-      title: "Accounts",
-      icon: <FaUniversity />,
-      path: "/accounts",
-    },
-    {
-      title: "Budget Planner",
-      icon: <FaWallet />,
-      path: "/budget",
-    },
-    {
-      title: "Savings Goals",
-      icon: <FaBullseye />,
-      path: "/goals",
-    },
-    {
-      title: "Reports",
-      icon: <FaChartBar />,
-      path: "/reports",
-    },
-    {
-      title: "Currency Converter",
-      icon: <FaExchangeAlt />,
-      path: "/currency",
-    },
-    {
-      title: "Subscription Tracker",
-      icon: <FaCreditCard />,
-      path: "/subscriptions",
-    },
-    {
-      title: "Settings",
-      icon: <FaCog />,
-      path: "/settings",
-    },
-  ];
-
   useEffect(() => {
-    const sidebarWidth = collapsed
-      ? SIDEBAR_COLLAPSED_WIDTH
-      : SIDEBAR_EXPANDED_WIDTH;
+    const updateSidebarWidth = () => {
+      const width = isMobileViewport()
+        ? "0px"
+        : collapsed
+          ? "88px"
+          : "276px";
 
-    document.documentElement.style.setProperty(
-      "--smaxtify-sidebar-width",
-      sidebarWidth
-    );
+      document.documentElement.style.setProperty(
+        "--smaxtify-sidebar-width",
+        width
+      );
+    };
+
+    updateSidebarWidth();
 
     document.body.classList.toggle(
       "smaxtify-sidebar-collapsed",
       collapsed
     );
-
     document.body.classList.toggle(
       "smaxtify-sidebar-expanded",
       !collapsed
     );
 
-    return () => {
-      document.documentElement.style.removeProperty(
-        "--smaxtify-sidebar-width"
-      );
+    window.addEventListener("resize", updateSidebarWidth);
 
+    return () => {
+      window.removeEventListener(
+        "resize",
+        updateSidebarWidth
+      );
       document.body.classList.remove(
         "smaxtify-sidebar-collapsed",
         "smaxtify-sidebar-expanded"
@@ -337,19 +323,24 @@ function Sidebar() {
   }, [collapsed]);
 
   useEffect(() => {
-    document.body.classList.toggle(
-      "mobile-sidebar-open",
-      mobileOpen
-    );
+    const previousOverflow = document.body.style.overflow;
+
+    if (mobileOpen) {
+      document.body.classList.add("mobile-sidebar-open");
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.classList.remove("mobile-sidebar-open");
+      document.body.style.overflow = previousOverflow;
+    }
 
     return () => {
       document.body.classList.remove("mobile-sidebar-open");
+      document.body.style.overflow = previousOverflow;
     };
   }, [mobileOpen]);
 
   useEffect(() => {
     const menu = sidebarMenuRef.current;
-
     if (!menu) return;
 
     const handleScroll = () => {
@@ -370,58 +361,75 @@ function Sidebar() {
   }, [location.pathname, restoreScrollPosition]);
 
   useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closeMobileSidebar();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
+    };
+  }, [closeMobileSidebar]);
+
+  useEffect(() => {
+    closeMobileSidebar();
+  }, [location.pathname, closeMobileSidebar]);
+
+  useEffect(() => {
     return () => {
       cancelPendingRestore();
 
       if (sidebarMenuRef.current) {
-        saveScrollPosition(sidebarMenuRef.current.scrollTop);
+        saveScrollPosition(
+          sidebarMenuRef.current.scrollTop
+        );
       }
     };
   }, [cancelPendingRestore, saveScrollPosition]);
 
   const toggleSidebar = () => {
+    if (isMobileViewport()) {
+      setMobileOpen((open) => !open);
+      return;
+    }
+
     setCollapsed((previous) => {
-      const nextState = !previous;
+      const next = !previous;
 
       sessionStorage.setItem(
         SIDEBAR_COLLAPSED_KEY,
-        String(nextState)
+        String(next)
       );
 
-      return nextState;
+      return next;
     });
   };
 
   const handleNavigation = (path) => {
     if (sidebarMenuRef.current) {
-      saveScrollPosition(sidebarMenuRef.current.scrollTop);
+      saveScrollPosition(
+        sidebarMenuRef.current.scrollTop
+      );
     }
 
-    setMobileOpen(false);
+    closeMobileSidebar();
 
     if (location.pathname !== path) {
       navigate(path);
     }
   };
 
-  const closeMobileSidebar = () => {
-    setMobileOpen(false);
-  };
-
-  const isAdminPage = location.pathname.startsWith("/admin");
-
-  const handleAdminPanel = () => {
-    if (isAdmin) {
-      handleNavigation("/admin");
-    }
-  };
-
-  const handleProfile = () => {
-    handleNavigation("/settings");
-  };
-
   const handleLogout = () => {
+    closeMobileSidebar();
+
     localStorage.removeItem("token");
+    localStorage.removeItem("smaxtify-token");
     localStorage.removeItem("user");
 
     sessionStorage.removeItem(SIDEBAR_COLLAPSED_KEY);
@@ -429,70 +437,96 @@ function Sidebar() {
 
     cancelPendingRestore();
 
-    if (sidebarMenuRef.current) {
-      sidebarMenuRef.current.scrollTop = 0;
-    }
-
     setShowLogoutModal(false);
-    setMobileOpen(false);
     setCurrentUser({});
+
+    window.dispatchEvent(new Event("smaxtify-auth-change"));
+    window.dispatchEvent(new Event("smaxtify-user-updated"));
 
     navigate("/", { replace: true });
   };
 
   return (
     <>
-      <button
-        type="button"
-        className="mobile-menu-btn"
-        onClick={() => setMobileOpen(true)}
-        aria-label="Open navigation menu"
-      >
-        <FaBars />
-      </button>
+      {!mobileOpen && (
+        <button
+          type="button"
+          className="mobile-menu-btn"
+          onClick={openMobileSidebar}
+          aria-label="Open navigation menu"
+          aria-expanded={false}
+          aria-controls="smaxtify-sidebar"
+          aria-hidden={!mobileViewport}
+          tabIndex={mobileViewport ? 0 : -1}
+        >
+          <FaBars aria-hidden="true" />
+        </button>
+      )}
 
       {mobileOpen && (
-        <div
+        <button
+          type="button"
           className="mobile-sidebar-overlay"
           onClick={closeMobileSidebar}
-          aria-hidden="true"
+          aria-label="Close navigation menu"
         />
       )}
 
       <aside
+        id="smaxtify-sidebar"
         className={[
           "sidebar",
-          collapsed ? "collapsed" : "",
+          collapsed && !mobileOpen ? "collapsed" : "",
           mobileOpen ? "mobile-open" : "",
         ]
           .filter(Boolean)
           .join(" ")}
+        aria-label="SmaXTify sidebar"
+        aria-hidden={mobileViewport && !mobileOpen}
+        inert={mobileViewport && !mobileOpen ? true : undefined}
       >
         <div className="sidebar-top">
-          {!collapsed && (
-            <div
-              className="sidebar-logo"
-              onClick={() => handleNavigation("/dashboard")}
-            >
-              <div className="logo-circle">
-                <FaWallet />
-              </div>
-
-              <div className="sidebar-logo-text">
-                <h2>SmaXTify</h2>
-                <p>Personal Finance</p>
-              </div>
+          <div
+            className="sidebar-logo"
+            onClick={() => handleNavigation("/dashboard")}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) => {
+              if (
+                event.key === "Enter" ||
+                event.key === " "
+              ) {
+                event.preventDefault();
+                handleNavigation("/dashboard");
+              }
+            }}
+          >
+            <div className="logo-circle">
+              <FaWallet aria-hidden="true" />
             </div>
-          )}
+
+            <div className="sidebar-logo-text">
+              <h2>SmaXTify</h2>
+              <p>Personal Finance</p>
+            </div>
+          </div>
 
           <button
             type="button"
             className="sidebar-menu-toggle"
             onClick={toggleSidebar}
-            aria-label={collapsed ? "Open sidebar" : "Close sidebar"}
-            title={collapsed ? "Open sidebar" : "Close sidebar"}
+            aria-label={
+              collapsed
+                ? "Expand sidebar"
+                : "Collapse sidebar"
+            }
+            title={
+              collapsed
+                ? "Expand sidebar"
+                : "Collapse sidebar"
+            }
           >
-            <FaBars />
+            <FaBars aria-hidden="true" />
           </button>
         </div>
 
@@ -501,15 +535,16 @@ function Sidebar() {
           className="mobile-sidebar-close"
           onClick={closeMobileSidebar}
           aria-label="Close navigation menu"
+          tabIndex={mobileOpen ? 0 : -1}
         >
-          <FaTimes />
+          <FaTimes aria-hidden="true" />
         </button>
 
         <div className="sidebar-user">
           <button
             type="button"
             className="sidebar-profile-avatar-button"
-            onClick={handleProfile}
+            onClick={() => handleNavigation("/settings")}
             aria-label="Open profile settings"
             title="Open profile settings"
           >
@@ -525,11 +560,9 @@ function Sidebar() {
             )}
           </button>
 
-          {!collapsed && (
-            <div className="sidebar-user-text">
-              <h3 title={userName}>{userName}</h3>
-            </div>
-          )}
+          <div className="sidebar-user-text">
+            <h3 title={userName}>{userName}</h3>
+          </div>
         </div>
 
         <nav
@@ -540,26 +573,45 @@ function Sidebar() {
             className="sidebar-menu"
             ref={setSidebarMenuRef}
           >
-            {menuItems.map((item) => (
-              <li
-                key={item.path}
-                className={
-                  location.pathname === item.path ? "active" : ""
-                }
-                onClick={() => handleNavigation(item.path)}
-                title={collapsed ? item.title : undefined}
-              >
-                <span className="sidebar-menu-icon">
-                  {item.icon}
-                </span>
+            {menuItems.map((item) => {
+              const isActive =
+                location.pathname === item.path ||
+                (item.path !== "/dashboard" &&
+                  location.pathname.startsWith(
+                    `${item.path}/`
+                  ));
 
-                {!collapsed && (
-                  <span className="sidebar-menu-title">
-                    {item.title}
-                  </span>
-                )}
-              </li>
-            ))}
+              return (
+                <li
+                  key={item.path}
+                  className={isActive ? "active" : ""}
+                  title={
+                    collapsed && !mobileOpen
+                      ? item.title
+                      : undefined
+                  }
+                >
+                  <button
+                    type="button"
+                    className="sidebar-menu-item"
+                    onClick={() =>
+                      handleNavigation(item.path)
+                    }
+                    aria-current={
+                      isActive ? "page" : undefined
+                    }
+                  >
+                    <span className="sidebar-menu-icon">
+                      {item.icon}
+                    </span>
+
+                    <span className="sidebar-menu-title">
+                      {item.title}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
@@ -570,30 +622,28 @@ function Sidebar() {
               className={`admin-panel-btn ${
                 isAdminPage ? "active" : ""
               }`}
-              onClick={handleAdminPanel}
-              title={collapsed ? "Admin Panel" : undefined}
+              onClick={() => handleNavigation("/admin")}
             >
               <span className="admin-panel-icon">
-                <FaUserShield />
+                <FaUserShield aria-hidden="true" />
               </span>
 
-              {!collapsed && (
-                <span className="admin-panel-text">
-                  Admin Panel
-                </span>
-              )}
+              <span className="admin-panel-text">
+                Admin Panel
+              </span>
             </button>
           )}
 
           <button
             type="button"
             className="logout-btn"
-            onClick={() => setShowLogoutModal(true)}
-            title={collapsed ? "Logout" : undefined}
+            onClick={() => {
+              closeMobileSidebar();
+              setShowLogoutModal(true);
+            }}
           >
-            <FaSignOutAlt />
-
-            {!collapsed && <span>Logout</span>}
+            <FaSignOutAlt aria-hidden="true" />
+            <span>Logout</span>
           </button>
         </div>
       </aside>
