@@ -1,8 +1,12 @@
-* {
-  margin: 0;
-  padding: 0;
+/* =========================================================
+   SMAXTIFY — GLOBAL APPLICATION STYLES
+   Responsive layout + shared appearance variables
+   ========================================================= */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  font-family: "Inter", Arial, sans-serif;
 }
 
 :root {
@@ -12,12 +16,67 @@
   --smaxtify-sidebar-transition: 320ms;
   --smaxtify-sidebar-easing: cubic-bezier(0.22, 1, 0.36, 1);
   --smaxtify-navbar-height: 108px;
+
+  --smaxtify-menu-gradient: linear-gradient(135deg, #2563eb, #06b6d4);
+
+  /* Shared light appearance */
+  --smaxtify-bg: #f5f7fb;
+  --smaxtify-surface: #ffffff;
+  --smaxtify-surface-secondary: #f8fafc;
+  --smaxtify-surface-hover: #f1f5f9;
+  --smaxtify-text: #172033;
+  --smaxtify-text-secondary: #64748b;
+  --smaxtify-text-muted: #94a3b8;
+  --smaxtify-border: #e2e8f0;
+  --smaxtify-border-strong: #cbd5e1;
+  --smaxtify-primary: #2563eb;
+  --smaxtify-primary-hover: #1d4ed8;
+  --smaxtify-primary-soft: #eff6ff;
+  --smaxtify-success: #059669;
+  --smaxtify-danger: #dc2626;
+  --smaxtify-warning: #d97706;
+  --smaxtify-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+  --smaxtify-overlay: rgba(15, 23, 42, 0.48);
+  --smaxtify-input-bg: #ffffff;
+  --smaxtify-navbar-bg: rgba(255, 255, 255, 0.94);
+  --smaxtify-card-radius: 18px;
+  --smaxtify-control-radius: 12px;
+
+  color-scheme: light;
 }
 
+/* Apply dark variables to all theme-aware modules */
+html[data-theme="dark"],
+body[data-theme="dark"] {
+  color-scheme: dark;
+
+  --smaxtify-bg: #0b1220;
+  --smaxtify-surface: #111c2e;
+  --smaxtify-surface-secondary: #172338;
+  --smaxtify-surface-hover: #22314a;
+  --smaxtify-text: #f1f5f9;
+  --smaxtify-text-secondary: #bdc9da;
+  --smaxtify-text-muted: #91a1b8;
+  --smaxtify-border: #29384e;
+  --smaxtify-border-strong: #3b4b63;
+  --smaxtify-primary: #60a5fa;
+  --smaxtify-primary-hover: #93c5fd;
+  --smaxtify-primary-soft: #172e4c;
+  --smaxtify-success: #34d399;
+  --smaxtify-danger: #f87171;
+  --smaxtify-warning: #fbbf24;
+  --smaxtify-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+  --smaxtify-overlay: rgba(0, 0, 0, 0.68);
+  --smaxtify-input-bg: #172338;
+  --smaxtify-navbar-bg: rgba(17, 28, 46, 0.94);
+}
+
+/* Global document */
 html,
 body,
 #root {
   width: 100%;
+  min-width: 0;
   min-height: 100%;
   margin: 0;
   padding: 0;
@@ -26,12 +85,19 @@ body,
 html {
   min-height: 100%;
   scroll-behavior: smooth;
+  background: var(--smaxtify-bg);
 }
 
 body {
   min-width: 320px;
   min-height: 100vh;
-  overflow-x: hidden;
+  min-height: 100dvh;
+  overflow-x: clip;
+  background: var(--smaxtify-bg);
+  color: var(--smaxtify-text);
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
 }
 
 #root {
@@ -39,18 +105,32 @@ body {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  background: var(--smaxtify-bg);
 }
 
 button {
   cursor: pointer;
 }
 
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
 input {
   outline: none;
 }
 
-/* Shared application layout */
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
 
+/* Shared application page layout */
 .app-page-shell {
   display: flex;
   flex-direction: column;
@@ -61,6 +141,8 @@ input {
   min-height: 100dvh;
   margin: 0;
   padding: 0;
+  background: var(--smaxtify-bg);
+  color: var(--smaxtify-text);
 }
 
 .app-route-content {
@@ -72,10 +154,11 @@ input {
   min-height: 0;
   margin: 0;
   padding: 0;
+  background: var(--smaxtify-bg);
+  color: var(--smaxtify-text);
 }
 
-/* Fixed navbar spacing */
-
+/* Reserve space for the fixed navbar */
 .app-route-content .dashboard-content,
 .app-route-content .accounts-content,
 .app-route-content .budget-content,
@@ -89,14 +172,12 @@ input {
 }
 
 /* Global footer */
-
 .app-page-shell > .global-footer {
   position: relative;
   flex: 0 0 auto;
   width: 100%;
   min-width: 0;
-  margin-top: auto;
-  margin-left: 0;
+  margin: auto 0 0;
   padding-left: 0;
   box-sizing: border-box;
   transition:
@@ -105,7 +186,6 @@ input {
 }
 
 /* Desktop footer offset for the fixed sidebar */
-
 .app-page-shell:has(.dashboard) > .global-footer,
 .app-page-shell:has(.aiscan-page) > .global-footer,
 .app-page-shell:has(.accounts-page) > .global-footer,
@@ -118,12 +198,12 @@ input {
   padding-left: var(--smaxtify-sidebar-width, 276px);
 }
 
-/* Dashboard content */
-
+/* Dashboard layout */
 .dashboard-content {
   display: flex;
   flex-direction: column;
   width: calc(100% - var(--smaxtify-sidebar-width, 276px));
+  min-width: 0;
   margin-left: var(--smaxtify-sidebar-width, 276px);
   transition:
     width var(--smaxtify-sidebar-transition, 320ms)
@@ -132,10 +212,10 @@ input {
     var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
-/* AI scan content */
-
+/* AI scan layout */
 .aiscan-content {
   width: calc(100% - var(--smaxtify-sidebar-width, 276px));
+  min-width: 0;
   margin-left: var(--smaxtify-sidebar-width, 276px);
   transition:
     width var(--smaxtify-sidebar-transition, 320ms)
@@ -144,43 +224,80 @@ input {
     var(--smaxtify-sidebar-easing, cubic-bezier(0.22, 1, 0.36, 1));
 }
 
-/* Admin pages */
-
+/* Admin layout */
 .app-page-shell--admin {
   min-height: 100vh;
   min-height: 100dvh;
 }
 
-/* Media and form elements */
-
-img,
-video,
-canvas,
-svg {
-  max-width: 100%;
+/* Shared theme-aware elements
+   Modules can use these classes or CSS variables in their stylesheets. */
+.smaxtify-theme-surface {
+  background: var(--smaxtify-surface);
+  color: var(--smaxtify-text);
+  border-color: var(--smaxtify-border);
 }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
+.smaxtify-theme-card {
+  background: var(--smaxtify-surface);
+  color: var(--smaxtify-text);
+  border: 1px solid var(--smaxtify-border);
+  border-radius: var(--smaxtify-card-radius);
+  box-shadow: var(--smaxtify-shadow);
+}
+
+.smaxtify-theme-muted {
+  color: var(--smaxtify-text-secondary);
+}
+
+.smaxtify-theme-input {
+  background: var(--smaxtify-input-bg);
+  color: var(--smaxtify-text);
+  border: 1px solid var(--smaxtify-border);
+}
+
+.smaxtify-theme-input::placeholder {
+  color: var(--smaxtify-text-muted);
+}
+
+.smaxtify-theme-button {
+  background: var(--smaxtify-primary);
+  color: #ffffff;
+  border: 1px solid transparent;
+}
+
+.smaxtify-theme-button:hover {
+  filter: brightness(0.96);
 }
 
 /* Accessibility */
-
 :focus-visible {
   scroll-margin-block: 16px;
 }
 
-/* Tablet and mobile */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Laptop */
 @media (max-width: 1366px) and (min-width: 1101px) {
   :root {
     --smaxtify-navbar-height: 98px;
   }
 }
 
+/* Tablet and mobile */
 @media (max-width: 1100px) {
   :root {
     --smaxtify-navbar-height: 88px;
@@ -239,16 +356,9 @@ textarea {
     width: calc(100% - 32px);
   }
 
-  .global-footer-main {
-    min-width: 0;
-  }
-
+  .global-footer-main,
   .global-footer-brand,
-  .global-footer-column {
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-
+  .global-footer-column,
   .global-footer-bottom {
     min-width: 0;
     overflow-wrap: anywhere;
@@ -258,19 +368,5 @@ textarea {
 @media (max-width: 420px) {
   .global-footer-container {
     width: calc(100% - 28px);
-  }
-}
-
-/* Reduced motion */
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .app-page-shell > .global-footer,
-  .dashboard-content,
-  .aiscan-content {
-    transition: none;
   }
 }

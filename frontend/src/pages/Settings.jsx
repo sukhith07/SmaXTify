@@ -298,6 +298,7 @@ function Settings() {
   const showMessage = (message) => window.alert(message);
 
   const applyTheme = (selectedTheme) => {
+    localStorage.setItem("smaxtify-theme", selectedTheme);
     let resolvedTheme = "light";
 
     if (selectedTheme === "dark") {

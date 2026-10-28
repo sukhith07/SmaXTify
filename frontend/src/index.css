@@ -8,3 +8,108 @@ width:100%;
 body{
 background:#f4f6fa;
 }
+
+/* Shared theme tokens and cross-module surfaces. These rules are loaded after
+   the page styles so every route, dialog, and fixed utility follows one theme. */
+:root {
+  color-scheme: light;
+  --smaxtify-theme-page: #f4f6fa;
+  --smaxtify-theme-surface: #ffffff;
+  --smaxtify-theme-surface-raised: #f8fafc;
+  --smaxtify-theme-text: #172033;
+  --smaxtify-theme-muted: #64748b;
+  --smaxtify-theme-border: #e2e8f0;
+  --smaxtify-theme-input: #ffffff;
+}
+
+html[data-theme="dark"],
+body[data-theme="dark"] {
+  color-scheme: dark;
+  --smaxtify-theme-page: #0b1220;
+  --smaxtify-theme-surface: #111c2e;
+  --smaxtify-theme-surface-raised: #172438;
+  --smaxtify-theme-text: #e5edf8;
+  --smaxtify-theme-muted: #a3b2c7;
+  --smaxtify-theme-border: #2a3a50;
+  --smaxtify-theme-input: #0d1729;
+  background: var(--smaxtify-theme-page);
+  color: var(--smaxtify-theme-text);
+}
+
+html[data-theme="dark"] body,
+body[data-theme="dark"] {
+  background: var(--smaxtify-theme-page);
+}
+
+html[data-theme="dark"] :is(.app-page-shell, .app-route-content, .dashboard,
+  .dashboard-main, .accounts-page, .accounts-main, .budget-page,
+  .budget-page-content, .budget-main, .goals-page, .goals-main,
+  .reports-page, .reports-main, .currency-page, .currency-main,
+  .subscriptions-page, .subscriptions-main, .settings-page, .settings-main,
+  .aiscan-page, .aiscan-main, .calendar-page, .notifications-page,
+  .admin-page, .admin-main, .legal-page, .legal-container, .legal-content) {
+  background-color: var(--smaxtify-theme-page);
+  color: var(--smaxtify-theme-text);
+}
+
+html[data-theme="dark"] :is([class*="-card"], [class*="-panel"],
+  [class*="-widget"], [class*="-table-wrapper"], .chart-card,
+  .expense-card, .income-card, .balance-card, .goal-card, .account-card,
+  .alert-card, .insight-card, .legend-card, .monthly-chart-card,
+  .currency-converter-card, .currency-secondary-card, .next-payment-card,
+  .settings-card, .danger-card, .admin-system-card, .admin-stat-card,
+  .admin-overview-card, .admin-audit-card, .admin-users-card,
+  .admin-account-overview-card, .admin-user-financial-card,
+  .admin-subscription-user-card) {
+  background-color: var(--smaxtify-theme-surface) !important;
+  border-color: var(--smaxtify-theme-border) !important;
+  color: var(--smaxtify-theme-text);
+}
+
+html[data-theme="dark"] :is(h1, h2, h3, h4, h5, h6, p, label, small,
+  th, td, dt, dd, figcaption, .settings-card-content strong,
+  .settings-card-content p, .account-card, .goal-card, .expense-card,
+  .notification-item, .admin-table, .admin-table th, .admin-table td) {
+  color: var(--smaxtify-theme-text);
+}
+
+html[data-theme="dark"] :is(input:not([type="checkbox"]):not([type="radio"]),
+  select, textarea, .react-select__control, .settings-dropdown-trigger,
+  .settings-dropdown-menu, .settings-confirm-modal, .modal-content,
+  .notification-panel, .calendar-popup, .calculator-modal) {
+  background-color: var(--smaxtify-theme-input);
+  border-color: var(--smaxtify-theme-border);
+  color: var(--smaxtify-theme-text);
+}
+
+html[data-theme="dark"] :is(input, select, textarea)::placeholder {
+  color: var(--smaxtify-theme-muted);
+}
+
+html[data-theme="dark"] :is(button, a) {
+  scrollbar-color: #475569 #111c2e;
+}
+
+html[data-theme="dark"] .navbar {
+  --smaxtify-navbar-bg: rgba(17, 28, 46, 0.96);
+  --smaxtify-navbar-text: #e5edf8;
+  --smaxtify-navbar-muted: #a3b2c7;
+  --smaxtify-navbar-border: rgba(148, 163, 184, 0.2);
+}
+
+html[data-theme="dark"] .global-footer {
+  background: var(--smaxtify-theme-page);
+  color: var(--smaxtify-theme-muted);
+}
+
+html[data-theme="dark"] {
+  scrollbar-color: #475569 #0b1220;
+}
+
+html[data-theme="dark"]::-webkit-scrollbar-track {
+  background: #0b1220;
+}
+
+html[data-theme="dark"]::-webkit-scrollbar-thumb {
+  background: #475569;
+}

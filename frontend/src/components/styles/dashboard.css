@@ -1,17 +1,69 @@
 
 /* =========================================================
    SMAxTIFY - DASHBOARD PAGE
-   Single page-level vertical scrolling
+   Theme-aware dashboard with responsive vertical scrolling
    ========================================================= */
 
 .dashboard {
+    --dashboard-bg: #ffffff;
+    --dashboard-surface: #ffffff;
+    --dashboard-surface-secondary: #f8fafc;
+    --dashboard-text: #172033;
+    --dashboard-text-secondary: #475569;
+    --dashboard-text-muted: #64748b;
+    --dashboard-border: #e2e8f0;
+    --dashboard-input-bg: #ffffff;
+    --dashboard-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+
     display: flex;
     align-items: stretch;
     width: 100%;
     min-height: 100vh;
     min-height: 100dvh;
-    background: #ffffff;
+    background: var(--dashboard-bg);
+    color: var(--dashboard-text);
     box-sizing: border-box;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+/* =========================================================
+   DASHBOARD DARK THEME
+   ========================================================= */
+
+html[data-theme="dark"] .dashboard,
+body[data-theme="dark"] .dashboard {
+    --dashboard-bg: #0b1220;
+    --dashboard-surface: #111c2e;
+    --dashboard-surface-secondary: #172438;
+    --dashboard-text: #edf3fc;
+    --dashboard-text-secondary: #bdc9da;
+    --dashboard-text-muted: #91a1b8;
+    --dashboard-border: #2a3a50;
+    --dashboard-input-bg: #0d1729;
+    --dashboard-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
+}
+
+html[data-theme="dark"] .dashboard,
+body[data-theme="dark"] .dashboard {
+    color-scheme: dark;
+}
+
+html[data-theme="dark"] .dashboard :is(
+    .dashboard-content,
+    .dashboard-main,
+    .left-panel,
+    .right-panel
+),
+body[data-theme="dark"] .dashboard :is(
+    .dashboard-content,
+    .dashboard-main,
+    .left-panel,
+    .right-panel
+) {
+    background-color: var(--dashboard-bg);
+    color: var(--dashboard-text);
 }
 
 /* =========================================================
@@ -30,9 +82,13 @@
     margin-left: 280px;
     box-sizing: border-box;
     overflow: visible;
+    background: var(--dashboard-bg);
+    color: var(--dashboard-text);
     transition:
         width 0.35s ease,
-        margin-left 0.35s ease;
+        margin-left 0.35s ease,
+        background-color 0.2s ease,
+        color 0.2s ease;
 }
 
 .dashboard:has(.sidebar.collapsed) .dashboard-content {
@@ -56,6 +112,8 @@
     box-sizing: border-box;
     overflow: visible;
     scrollbar-gutter: auto;
+    background: var(--dashboard-bg);
+    color: var(--dashboard-text);
 }
 
 /* =========================================================
@@ -85,6 +143,7 @@
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
+    color: var(--dashboard-text);
 }
 
 .left-panel > *,
@@ -125,6 +184,159 @@
     gap: 28px;
     width: 100%;
     margin: 30px 0;
+}
+
+/* =========================================================
+   DASHBOARD THEME-AWARE PANELS
+   ========================================================= */
+
+html[data-theme="dark"] .dashboard :is(
+    .expense-form,
+    .chart-card,
+    .monthly-chart-card,
+    .summary-card,
+    .summary-item,
+    .transaction-card,
+    .transactions-card,
+    .budget-card,
+    .budget-summary-card,
+    .budget-progress-card,
+    .goal-card,
+    .savings-card,
+    .account-card,
+    .accounts-card,
+    .report-card,
+    .insight-card
+),
+body[data-theme="dark"] .dashboard :is(
+    .expense-form,
+    .chart-card,
+    .monthly-chart-card,
+    .summary-card,
+    .summary-item,
+    .transaction-card,
+    .transactions-card,
+    .budget-card,
+    .budget-summary-card,
+    .budget-progress-card,
+    .goal-card,
+    .savings-card,
+    .account-card,
+    .accounts-card,
+    .report-card,
+    .insight-card
+) {
+    background-color: var(--dashboard-surface);
+    color: var(--dashboard-text);
+    border-color: var(--dashboard-border);
+    box-shadow: var(--dashboard-shadow);
+}
+
+/* =========================================================
+   TRANSACTION FORM
+   ========================================================= */
+
+html[data-theme="dark"] .dashboard .expense-form,
+body[data-theme="dark"] .dashboard .expense-form {
+    background-color: var(--dashboard-surface);
+    color: var(--dashboard-text);
+}
+
+html[data-theme="dark"] .dashboard .expense-form :is(
+    h1, h2, h3, h4, label, p, span, legend
+),
+body[data-theme="dark"] .dashboard .expense-form :is(
+    h1, h2, h3, h4, label, p, span, legend
+) {
+    color: var(--dashboard-text);
+}
+
+html[data-theme="dark"] .dashboard .expense-form :is(
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea
+),
+body[data-theme="dark"] .dashboard .expense-form :is(
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea
+) {
+    background-color: var(--dashboard-input-bg);
+    color: var(--dashboard-text);
+    border-color: var(--dashboard-border);
+}
+
+html[data-theme="dark"] .dashboard .expense-form :is(
+    input,
+    textarea
+)::placeholder,
+body[data-theme="dark"] .dashboard .expense-form :is(
+    input,
+    textarea
+)::placeholder {
+    color: var(--dashboard-text-muted);
+    opacity: 1;
+}
+
+html[data-theme="dark"] .dashboard .expense-form :is(
+    .input-box,
+    .form-group,
+    .form-field
+),
+body[data-theme="dark"] .dashboard .expense-form :is(
+    .input-box,
+    .form-group,
+    .form-field
+) {
+    color: var(--dashboard-text);
+}
+
+/* =========================================================
+   DASHBOARD CARD TEXT
+   ========================================================= */
+
+html[data-theme="dark"] .dashboard :is(
+    .chart-card,
+    .monthly-chart-card,
+    .transaction-card,
+    .transactions-card,
+    .budget-card,
+    .budget-summary-card,
+    .budget-progress-card,
+    .goal-card,
+    .savings-card,
+    .account-card,
+    .accounts-card,
+    .report-card,
+    .insight-card
+) :is(
+    h1, h2, h3, h4, p, label, small, span
+) {
+    color: var(--dashboard-text);
+}
+
+html[data-theme="dark"] .dashboard :is(
+    .chart-card,
+    .monthly-chart-card,
+    .transaction-card,
+    .transactions-card,
+    .budget-card,
+    .budget-summary-card,
+    .budget-progress-card,
+    .goal-card,
+    .savings-card,
+    .account-card,
+    .accounts-card,
+    .report-card,
+    .insight-card
+) :is(
+    .subtitle,
+    .description,
+    .muted,
+    .text-muted,
+    .secondary-text
+) {
+    color: var(--dashboard-text-muted);
 }
 
 /* =========================================================

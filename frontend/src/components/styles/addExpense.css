@@ -1,13 +1,44 @@
+
 .expense-form {
+    --expense-bg: #ffffff;
+    --expense-surface: #f1f0f5;
+    --expense-input-bg: #ffffff;
+    --expense-text: #334155;
+    --expense-heading: #312e81;
+    --expense-label: #475569;
+    --expense-muted: #64748b;
+    --expense-placeholder: #94a3b8;
+    --expense-border: #e2e8f0;
+    --expense-hover: #f5f3ff;
+    --expense-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+
     position: relative;
     width: 100%;
-    background: #ffffff;
+    background: var(--expense-bg);
+    color: var(--expense-text);
+    border: 1px solid var(--expense-border);
     border-radius: 22px;
     padding: 28px;
     box-sizing: border-box;
-    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+    box-shadow: var(--expense-shadow);
     overflow: visible !important;
     z-index: 1;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+html[data-theme="dark"] .expense-form,
+body[data-theme="dark"] .expense-form {
+    --expense-bg: #111c2e;
+    --expense-surface: #1b2a40;
+    --expense-input-bg: #0d1729;
+    --expense-text: #edf3fc;
+    --expense-heading: #e0d7ff;
+    --expense-label: #d3deee;
+    --expense-muted: #a3b2c7;
+    --expense-placeholder: #8395ae;
+    --expense-border: #34445b;
+    --expense-hover: #253650;
+    --expense-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
 .expense-form:has(.select-menu) {
@@ -19,7 +50,7 @@
     align-items: center;
     gap: 12px;
     margin: 0 0 22px;
-    color: #312e81;
+    color: var(--expense-heading);
     font-size: 26px;
     font-weight: 800;
     line-height: 1.2;
@@ -38,7 +69,8 @@
     gap: 5px;
     padding: 4px;
     margin-bottom: 20px;
-    background: #f1f0f5;
+    background: var(--expense-surface);
+    border: 1px solid var(--expense-border);
     border-radius: 14px;
     box-sizing: border-box;
 }
@@ -48,7 +80,7 @@
     border: none;
     border-radius: 11px;
     background: transparent;
-    color: #64748b;
+    color: var(--expense-muted);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -67,8 +99,8 @@
 }
 
 .transaction-type-tab:hover:not(:disabled) {
-    background: #ffffff;
-    color: #475569;
+    background: var(--expense-bg);
+    color: var(--expense-text);
 }
 
 .transaction-type-tab.active.expense {
@@ -122,7 +154,7 @@
     display: block;
     width: 100%;
     margin: 0;
-    color: #475569;
+    color: var(--expense-label);
     font-size: 13px;
     font-weight: 700;
     line-height: 18px;
@@ -132,9 +164,10 @@
     width: 100%;
     height: 54px;
     padding: 0 15px;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--expense-border);
     border-radius: 14px;
-    background: #ffffff;
+    background: var(--expense-input-bg);
+    color: var(--expense-text);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -143,17 +176,17 @@
 }
 
 .input-box:hover {
-    border-color: #d8dce8;
+    border-color: #a78bfa;
 }
 
 .input-box:focus-within {
     border-color: #7c3aed;
-    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.08);
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
 }
 
 .input-box > svg {
     flex-shrink: 0;
-    color: #7c3aed;
+    color: #8b5cf6;
     font-size: 16px;
 }
 
@@ -166,14 +199,15 @@
     border: none;
     outline: none;
     background: transparent;
-    color: #334155;
+    color: var(--expense-text);
     font-family: inherit;
     font-size: 14px;
     font-weight: 500;
 }
 
 .input-box input::placeholder {
-    color: #94a3b8;
+    color: var(--expense-placeholder);
+    opacity: 1;
 }
 
 .form-two-column {
@@ -212,9 +246,10 @@
     height: 54px;
     min-height: 54px;
     padding: 0 14px;
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--expense-border);
     border-radius: 14px;
-    background: #ffffff;
+    background: var(--expense-input-bg);
+    color: var(--expense-text);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -228,8 +263,12 @@
     border-color: #7c3aed;
 }
 
+.select-btn:focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+}
+
 .select-btn:focus {
-    outline: none;
     border-color: #7c3aed;
     box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.08);
 }
@@ -246,14 +285,14 @@
     align-items: center;
     gap: 8px;
     overflow: hidden;
-    color: #334155;
+    color: var(--expense-text);
     font-size: 13px;
     font-weight: 600;
 }
 
 .selected-item > svg {
     flex-shrink: 0;
-    color: #7c3aed;
+    color: #8b5cf6;
     font-size: 14px;
 }
 
@@ -266,7 +305,7 @@
 
 .select-btn > svg {
     flex-shrink: 0;
-    color: #64748b;
+    color: var(--expense-muted);
     font-size: 12px;
     transition: transform 0.25s ease;
 }
@@ -283,8 +322,9 @@
     max-height: 220px;
     overflow-y: auto;
     overflow-x: hidden;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: var(--expense-bg);
+    color: var(--expense-text);
+    border: 1px solid var(--expense-border);
     border-radius: 13px;
     box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
     z-index: 10002 !important;
@@ -303,7 +343,7 @@
 }
 
 .select-menu::-webkit-scrollbar-thumb {
-    background: #c4b5fd;
+    background: #a78bfa;
     border-radius: 10px;
 }
 
@@ -315,15 +355,16 @@
     align-items: center;
     gap: 10px;
     box-sizing: border-box;
-    color: #334155;
-    background: #ffffff;
+    color: var(--expense-text);
+    background: var(--expense-bg);
+    border: none;
     cursor: pointer;
     transition: background 0.2s ease;
 }
 
 .select-option svg {
     flex-shrink: 0;
-    color: #7c3aed;
+    color: #8b5cf6;
     font-size: 14px;
 }
 
@@ -335,7 +376,7 @@
 }
 
 .select-option:hover:not(.active) {
-    background: #f5f3ff;
+    background: var(--expense-hover);
 }
 
 .select-option.active {
@@ -354,8 +395,8 @@
     gap: 6px;
     padding: 4px;
     margin: 0 0 8px;
-    background: #f1f0f5;
-    border: 1px solid #e5e7eb;
+    background: var(--expense-surface);
+    border: 1px solid var(--expense-border);
     border-radius: 14px;
     box-sizing: border-box;
 }
@@ -367,7 +408,7 @@
     border: none;
     border-radius: 11px;
     background: transparent;
-    color: #64748b;
+    color: var(--expense-muted);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -386,23 +427,18 @@
 }
 
 .transfer-mode-btn:hover:not(:disabled) {
-    background: #ffffff;
-    color: #475569;
+    background: var(--expense-bg);
+    color: var(--expense-text);
 }
 
 .transfer-mode-btn.active {
     color: #ffffff !important;
     background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-    box-shadow: 0 7px 18px rgba(59, 130, 246, 0.22) !important;
+    box-shadow: 0 7px 18px rgba(59, 130, 246, 0.22);
 }
 
 .transfer-mode-btn.active svg {
     color: #ffffff !important;
-}
-
-.transfer-mode-btn.active:hover:not(:disabled) {
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
 }
 
 .transfer-mode-btn:disabled {
@@ -415,7 +451,7 @@
     min-height: 18px;
     margin: 0 0 2px;
     padding: 0 4px;
-    color: #64748b;
+    color: var(--expense-muted);
     font-size: 11px;
     font-weight: 600;
     line-height: 18px;
@@ -445,7 +481,7 @@
     outline: none !important;
     background: transparent !important;
     box-shadow: none !important;
-    color: #334155 !important;
+    color: var(--expense-text) !important;
     font-family: inherit;
     font-size: 14px;
     font-weight: 600;
@@ -456,8 +492,6 @@
     cursor: not-allowed;
 }
 
-/* Calendar container */
-
 .expense-calendar-container {
     position: absolute !important;
     top: 0 !important;
@@ -467,8 +501,6 @@
     pointer-events: none !important;
     z-index: 999999 !important;
 }
-
-/* Calendar popper */
 
 .expense-calendar-container .react-datepicker-popper,
 .expense-calendar-container .custom-calendar-popper {
@@ -486,16 +518,12 @@
     transform: none !important;
 }
 
-/* Center calendar inside Add Transaction card */
-
 .expense-form .expense-calendar-container .react-datepicker-popper,
 .expense-form .expense-calendar-container .custom-calendar-popper {
     left: 50% !important;
     top: 50% !important;
     transform: translate(-50%, -50%) !important;
 }
-
-/* Calendar */
 
 .react-datepicker,
 .custom-calendar {
@@ -505,10 +533,11 @@
     max-width: 320px !important;
     padding: 0 !important;
     margin: 0 !important;
-    border: none !important;
+    border: 1px solid var(--expense-border) !important;
     border-radius: 18px !important;
     overflow: hidden !important;
-    background: #ffffff !important;
+    background: var(--expense-bg) !important;
+    color: var(--expense-text) !important;
     box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18), 0 5px 15px rgba(15, 23, 42, 0.08) !important;
     font-family: inherit !important;
     box-sizing: border-box !important;
@@ -623,7 +652,7 @@
     float: none !important;
     padding: 0 !important;
     margin: 0 !important;
-    background: #ffffff !important;
+    background: var(--expense-bg) !important;
     box-sizing: border-box !important;
 }
 
@@ -648,7 +677,7 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    color: #64748b !important;
+    color: var(--expense-muted) !important;
     font-size: 10px !important;
     font-weight: 800 !important;
     line-height: 30px !important;
@@ -685,7 +714,7 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    color: #1e293b !important;
+    color: var(--expense-text) !important;
     font-size: 12px !important;
     font-weight: 600 !important;
     line-height: 34px !important;
@@ -694,12 +723,12 @@
 }
 
 .react-datepicker__day:hover {
-    background: #ede9fe !important;
-    color: #6d28d9 !important;
+    background: var(--expense-hover) !important;
+    color: #8b5cf6 !important;
 }
 
 .react-datepicker__day--today {
-    color: #7c3aed !important;
+    color: #8b5cf6 !important;
     font-weight: 800 !important;
 }
 
@@ -718,22 +747,17 @@
 }
 
 .react-datepicker__day--outside-month {
-    color: #cbd5e1 !important;
-}
-
-.react-datepicker__day--outside-month:hover {
-    background: #f8fafc !important;
-    color: #94a3b8 !important;
+    color: var(--expense-placeholder) !important;
 }
 
 .react-datepicker__day--disabled {
-    color: #cbd5e1 !important;
+    color: var(--expense-placeholder) !important;
+    opacity: 0.55;
     cursor: not-allowed !important;
 }
 
 .react-datepicker__day--disabled:hover {
     background: transparent !important;
-    color: #cbd5e1 !important;
 }
 
 .react-datepicker__triangle {
@@ -915,6 +939,10 @@
     color: #dc2626;
 }
 
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
 @media (max-width: 1199px) {
     .expense-form {
         padding: 24px;
@@ -937,12 +965,7 @@
     }
 
     .react-datepicker,
-    .custom-calendar {
-        width: 310px !important;
-        min-width: 310px !important;
-        max-width: 310px !important;
-    }
-
+    .custom-calendar,
     .expense-calendar-container .react-datepicker-popper,
     .expense-calendar-container .custom-calendar-popper {
         width: 310px !important;
@@ -992,12 +1015,10 @@
         font-size: 12px;
     }
 
-    .form-two-column {
-        grid-template-columns: 1fr 1fr;
-    }
-
+    .form-two-column,
     .transfer-note-date-row {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
     }
 
     .input-box,
@@ -1013,12 +1034,7 @@
     }
 
     .react-datepicker,
-    .custom-calendar {
-        width: 300px !important;
-        min-width: 300px !important;
-        max-width: 300px !important;
-    }
-
+    .custom-calendar,
     .expense-calendar-container .react-datepicker-popper,
     .expense-calendar-container .custom-calendar-popper {
         width: 300px !important;
@@ -1075,7 +1091,7 @@
 
     .form-two-column,
     .transfer-note-date-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         gap: 16px;
     }
 
@@ -1095,12 +1111,7 @@
     }
 
     .react-datepicker,
-    .custom-calendar {
-        width: 290px !important;
-        min-width: 290px !important;
-        max-width: 290px !important;
-    }
-
+    .custom-calendar,
     .expense-calendar-container .react-datepicker-popper,
     .expense-calendar-container .custom-calendar-popper {
         width: 290px !important;
@@ -1190,12 +1201,7 @@
     }
 
     .react-datepicker,
-    .custom-calendar {
-        width: 280px !important;
-        min-width: 280px !important;
-        max-width: 280px !important;
-    }
-
+    .custom-calendar,
     .expense-calendar-container .react-datepicker-popper,
     .expense-calendar-container .custom-calendar-popper {
         width: 280px !important;
@@ -1256,5 +1262,16 @@
 
     .react-datepicker__week {
         height: 37px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .expense-form,
+    .transaction-type-tab,
+    .input-box,
+    .select-btn,
+    .select-option,
+    .add-btn {
+        transition: none;
     }
 }
