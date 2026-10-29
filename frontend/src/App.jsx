@@ -21,6 +21,7 @@ import NotificationPanel from "./components/NotificationPanel";
 import Notifications from "./components/Notifications";
 import GlobalFooter from "./components/GlobalFooter";
 import SmaXTifyAI from "./components/ai/SmaXTifyAI";
+import SplashScreen from "./components/SplashScreen";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -90,6 +91,16 @@ function App() {
   const [token, setToken] = useState(() =>
     localStorage.getItem("token")
   );
+
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setShowSplash(false);
+    }, 3000);
+
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
@@ -190,6 +201,10 @@ function App() {
     !isAuthRoute && !isAdminRoute;
 
   const isAuthenticated = Boolean(token);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   return (
     <NotificationProvider>
