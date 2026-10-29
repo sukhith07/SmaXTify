@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
@@ -10,7 +10,6 @@ import MonthlyChart from "../components/MonthlyChart";
 import ExpenseList from "../components/ExpenseList";
 
 import AIAdvisorModal from "../components/AIAdvisorModal";
-import SplashScreen from "../components/SplashScreen";
 
 import API from "../services/api";
 
@@ -21,12 +20,14 @@ function Dashboard() {
   const [accounts, setAccounts] = useState([]);
   const [showAI, setShowAI] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState(false);
 
-  const loadDashboardData = useCallback(async () => {
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
     try {
       setLoading(true);
-      setLoadError(false);
 
       const [expensesResponse, accountsResponse] =
         await Promise.all([
@@ -34,31 +35,38 @@ function Dashboard() {
           API.get("/accounts"),
         ]);
 
-      const expenseList = Array.isArray(expensesResponse.data)
-        ? expensesResponse.data
-        : Array.isArray(expensesResponse.data?.expenses)
+      const expenseList =
+        Array.isArray(expensesResponse.data)
+          ? expensesResponse.data
+          : Array.isArray(
+              expensesResponse.data?.expenses
+            )
           ? expensesResponse.data.expenses
           : [];
 
-      const accountList = Array.isArray(accountsResponse.data)
-        ? accountsResponse.data
-        : Array.isArray(accountsResponse.data?.accounts)
+      const accountList =
+        Array.isArray(accountsResponse.data)
+          ? accountsResponse.data
+          : Array.isArray(
+              accountsResponse.data?.accounts
+            )
           ? accountsResponse.data.accounts
           : [];
 
       setExpenses(expenseList);
       setAccounts(accountList);
     } catch (error) {
-      console.error("Failed to load dashboard data:", error);
-      setLoadError(true);
+      console.error(
+        "Failed to load dashboard data:",
+        error
+      );
+
+      setExpenses([]);
+      setAccounts([]);
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  useEffect(() => {
-    loadDashboardData();
-  }, [loadDashboardData]);
+  };
 
   const totalAccountBalance = accounts.reduce(
     (total, account) =>
@@ -71,61 +79,53 @@ function Dashboard() {
     loadDashboardData();
   };
 
-  if (loading) {
-    return <SplashScreen />;
-  }
-
   return (
     <div className="dashboard">
       <Sidebar />
 
       <div className="dashboard-content">
-        <Navbar openAI={() => setShowAI(true)} />
+        <Navbar
+          openAI={() => setShowAI(true)}
+        />
 
         <main className="dashboard-main">
-          {loadError && (
-            <div className="dashboard-load-error" role="alert">
-              <p>
-                We couldn't load your latest financial data.
-                Please check your connection and try again.
-              </p>
-
-              <button
-                type="button"
-                onClick={loadDashboardData}
-              >
-                Try again
-              </button>
-            </div>
-          )}
-
           <Summary
             expenses={expenses}
             accounts={accounts}
-            totalAccountBalance={totalAccountBalance}
+            totalAccountBalance={
+              totalAccountBalance
+            }
           />
 
           <section className="dashboard-row">
             <div className="left-panel">
               <AddExpense
                 expenses={expenses}
-                setExpenses={handleExpensesChange}
+                setExpenses={
+                  handleExpensesChange
+                }
               />
             </div>
 
             <div className="right-panel">
-              <ExpenseChart expenses={expenses} />
+              <ExpenseChart
+                expenses={expenses}
+              />
             </div>
           </section>
 
           <section className="monthly-section">
-            <MonthlyChart expenses={expenses} />
+            <MonthlyChart
+              expenses={expenses}
+            />
           </section>
 
           <section className="transactions-section">
             <ExpenseList
               expenses={expenses}
-              setExpenses={handleExpensesChange}
+              setExpenses={
+                handleExpensesChange
+              }
             />
           </section>
         </main>
