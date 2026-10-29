@@ -1,0 +1,27 @@
+
+{
+  "id": "/",
+  "name": "SmaXTify - Smart Expense Tracker",
+  "short_name": "SmaXTify",
+  "description": "Manage income, expenses, budgets, savings goals, bills, and subscriptions with SmaXTify.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080808",
+  "theme_color": "#080808",
+  "icons": [
+    {
+      "src": "/SmaXTify-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/SmaXTify.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
