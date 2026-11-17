@@ -703,3 +703,13 @@ body:has(.legal-page) .global-footer-legal-links a:hover {
     transition: none;
   }
 }
+/* Hide footer on mobile application pages, but keep it visible on landing */
+@media screen and (max-width: 600px) and (hover: none) and (pointer: coarse) {
+  .global-footer:not(.global-footer--landing) {
+    display: none !important;
+  }
+
+  .global-footer--landing {
+    display: block !important;
+  }
+}

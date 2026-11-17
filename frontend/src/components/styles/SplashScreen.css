@@ -68,8 +68,8 @@
 
 .smaxtify-splash__logo-ring {
   position: absolute;
-  inset: -12px;
-  border: 1px solid rgba(36, 220, 177, 0.28);
+  inset: -20px;
+  border: 1px solid rgba(36, 220, 177, 1.28);
   border-radius: 32%;
   animation: smaxtify-splash-ring 3.5s ease-in-out infinite;
 }

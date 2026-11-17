@@ -1,3 +1,4 @@
+
 import {
   Routes,
   Route,
@@ -59,6 +60,26 @@ const AUTH_ROUTES = [
   "/reset-password",
 ];
 
+const SPLASH_SESSION_KEY = "smaxtify-mobile-splash-shown";
+const MOBILE_QUERY = "(max-width: 767px) and (pointer: coarse)";
+
+function isPhoneDevice() {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia(MOBILE_QUERY).matches
+  );
+}
+
+function shouldShowMobileSplash() {
+  if (!isPhoneDevice()) return false;
+
+  try {
+    return sessionStorage.getItem(SPLASH_SESSION_KEY) !== "true";
+  } catch {
+    return false;
+  }
+}
+
 function ScrollToTop() {
   const { pathname } = useLocation();
 
@@ -92,15 +113,25 @@ function App() {
     localStorage.getItem("token")
   );
 
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() =>
+    shouldShowMobileSplash()
+  );
 
   useEffect(() => {
+    if (!showSplash) return;
+
+    try {
+      sessionStorage.setItem(SPLASH_SESSION_KEY, "true");
+    } catch {
+      // Continue without session persistence if storage is unavailable.
+    }
+
     const timer = window.setTimeout(() => {
       setShowSplash(false);
     }, 3000);
 
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [showSplash]);
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
