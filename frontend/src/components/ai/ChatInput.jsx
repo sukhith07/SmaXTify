@@ -1,3 +1,4 @@
+
 import React from "react";
 import { SendHorizontal } from "lucide-react";
 
@@ -10,9 +11,7 @@ const ChatInput = ({
 }) => {
   return (
     <div className="chat-input-container">
-
       <div className="chat-input-wrapper">
-
         <textarea
           className="chat-input"
           placeholder="Message SmaXTify.AI..."
@@ -21,23 +20,20 @@ const ChatInput = ({
           onKeyDown={handleKeyDown}
           rows={1}
           disabled={loading}
+          aria-label="Type your message to SmaXTify.AI"
         />
 
         <button
+          type="button"
           className="send-button"
           onClick={sendMessage}
           disabled={loading || !input.trim()}
           title="Send Message"
+          aria-label="Send message"
         >
           <SendHorizontal size={20} />
         </button>
-
       </div>
-
-      <p className="chat-footer">
-        SmaXTify.AI can make mistakes. Verify important information before relying on it.
-      </p>
-
     </div>
   );
 };
